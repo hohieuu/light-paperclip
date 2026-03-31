@@ -47,7 +47,6 @@ export type PlannedIssueInsert = {
   targetCreatedByAgentId: string | null;
   targetProjectId: string | null;
   targetProjectWorkspaceId: string | null;
-  targetGoalId: string | null;
   projectResolution: "preserved" | "cleared" | "mapped" | "imported";
   mappedProjectName: string | null;
   adjustments: ImportAdjustment[];
@@ -174,7 +173,6 @@ export type PlannedAttachmentSkip = {
 export type PlannedProjectImport = {
   source: ProjectRow;
   targetLeadAgentId: string | null;
-  targetGoalId: string | null;
   workspaces: ProjectWorkspaceRow[];
 };
 
@@ -355,7 +353,6 @@ export function buildWorktreeMergePlan(input: {
   targetAgents: AgentRow[];
   targetProjects: ProjectRow[];
   targetProjectWorkspaces: ProjectWorkspaceRow[];
-  targetGoals: GoalRow[];
   importProjectIds?: Iterable<string>;
   projectIdOverrides?: Record<string, string | null | undefined>;
 }): WorktreeMergePlan {
@@ -365,7 +362,6 @@ export function buildWorktreeMergePlan(input: {
   const targetProjectIds = new Set(input.targetProjects.map((project) => project.id));
   const targetProjectsById = new Map(input.targetProjects.map((project) => [project.id, project]));
   const targetProjectWorkspaceIds = new Set(input.targetProjectWorkspaces.map((workspace) => workspace.id));
-  const targetGoalIds = new Set(input.targetGoals.map((goal) => goal.id));
   const sourceProjectsById = new Map((input.sourceProjects ?? []).map((project) => [project.id, project]));
   const sourceProjectWorkspaces = input.sourceProjectWorkspaces ?? [];
   const sourceProjectWorkspacesByProjectId = groupBy(sourceProjectWorkspaces, (workspace) => workspace.projectId);
@@ -394,10 +390,6 @@ export function buildWorktreeMergePlan(input: {
       targetLeadAgentId:
         sourceProject.leadAgentId && targetAgentIds.has(sourceProject.leadAgentId)
           ? sourceProject.leadAgentId
-          : null,
-      targetGoalId:
-        sourceProject.goalId && targetGoalIds.has(sourceProject.goalId)
-          ? sourceProject.goalId
           : null,
       workspaces: [...(sourceProjectWorkspacesByProjectId.get(projectId) ?? [])].sort((left, right) => {
         const primaryDelta = Number(right.isPrimary) - Number(left.isPrimary);
