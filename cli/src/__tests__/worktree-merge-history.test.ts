@@ -195,7 +195,6 @@ describe("worktree merge history planner", () => {
       targetAgents: [],
       targetProjects: [],
       targetProjectWorkspaces: [],
-      targetGoals: [{ id: "goal-1" }] as any,
     });
 
     expect(plan.counts.issuesToInsert).toBe(1);
@@ -229,7 +228,6 @@ describe("worktree merge history planner", () => {
       targetAgents: [],
       targetProjects: [],
       targetProjectWorkspaces: [],
-      targetGoals: [],
     });
 
     const insert = plan.issuePlans[0] as any;
@@ -237,7 +235,6 @@ describe("worktree merge history planner", () => {
     expect(insert.targetAssigneeAgentId).toBeNull();
     expect(insert.targetProjectId).toBeNull();
     expect(insert.targetProjectWorkspaceId).toBeNull();
-    expect(insert.targetGoalId).toBeNull();
     expect(insert.adjustments).toEqual([
       "clear_assignee_agent",
       "clear_project",
@@ -268,7 +265,6 @@ describe("worktree merge history planner", () => {
       targetAgents: [],
       targetProjects: [{ id: "target-project-1", name: "Mapped project", status: "in_progress" }] as any,
       targetProjectWorkspaces: [],
-      targetGoals: [{ id: "goal-1" }] as any,
       projectIdOverrides: {
         "source-project-1": "target-project-1",
       },
@@ -317,14 +313,12 @@ describe("worktree merge history planner", () => {
       targetAgents: [],
       targetProjects: [],
       targetProjectWorkspaces: [],
-      targetGoals: [{ id: "goal-1" }] as any,
       importProjectIds: ["source-project-1"],
     });
 
     expect(plan.counts.projectsToImport).toBe(1);
     expect(plan.projectImports[0]).toMatchObject({
       source: { id: "source-project-1", name: "Paperclip Evals" },
-      targetGoalId: "goal-1",
       workspaces: [{ id: "source-workspace-1" }],
     });
 
@@ -365,7 +359,6 @@ describe("worktree merge history planner", () => {
       targetAgents: [],
       targetProjects: [],
       targetProjectWorkspaces: [],
-      targetGoals: [{ id: "goal-1" }] as any,
     });
 
     expect(plan.counts.commentsToInsert).toBe(2);

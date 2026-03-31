@@ -1673,7 +1673,6 @@ async function collectMergePlan(input: {
     targetProjectsRows,
     targetAgentsRows,
     targetProjectWorkspaceRows,
-    targetGoalsRows,
     runCountRows,
   ] = await Promise.all([
     input.targetDb
@@ -1886,7 +1885,6 @@ async function collectMergePlan(input: {
     targetAgents: targetAgentsRows,
     targetProjects: targetProjectsRows,
     targetProjectWorkspaces: targetProjectWorkspaceRows,
-    targetGoals: targetGoalsRows,
     importProjectIds: input.importProjectIds,
     projectIdOverrides: input.projectIdOverrides,
   });
