@@ -426,7 +426,6 @@ describe("worktree merge history planner", () => {
       targetAgents: [],
       targetProjects: [],
       targetProjectWorkspaces: [],
-      targetGoals: [{ id: "goal-1" }] as any,
     });
 
     expect(plan.counts.documentsToMerge).toBe(1);
@@ -471,7 +470,6 @@ describe("worktree merge history planner", () => {
       targetAgents: [],
       targetProjects: [],
       targetProjectWorkspaces: [],
-      targetGoals: [{ id: "goal-1" }] as any,
     });
 
     expect(plan.counts.attachmentsToInsert).toBe(1);
