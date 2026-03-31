@@ -922,6 +922,7 @@ export function issueService(db: Db) {
         throw unprocessable("in_progress issues require an assignee");
       }
       return db.transaction(async (tx) => {
+        const projectGoalId = null;
         let projectWorkspaceId = issueData.projectWorkspaceId ?? null;
         let executionWorkspaceId = issueData.executionWorkspaceId ?? null;
         let executionWorkspacePreference = issueData.executionWorkspacePreference ?? null;
@@ -1118,13 +1119,6 @@ export function issueService(db: Db) {
         if (issueData.projectId !== undefined && issueData.projectId !== existing.projectId) {
           patch.projectId = issueData.projectId;
         }
-          currentGoalId: existing.goalId,
-          currentProjectGoalId,
-          projectId: issueData.projectId,
-          goalId: issueData.goalId,
-          projectGoalId: nextProjectGoalId,
-          defaultGoalId: defaultCompanyGoal?.id ?? null,
-        });
         const updated = await tx
           .update(issues)
           .set(patch)
