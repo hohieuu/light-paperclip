@@ -47,7 +47,7 @@ function readRememberedInstanceSettingsPath(): string {
 
 export function Layout() {
   const { sidebarOpen, setSidebarOpen, toggleSidebar, isMobile } = useSidebar();
-  const { openNewIssue, openOnboarding } = useDialog();
+  const { openNewIssue } = useDialog();
   const { togglePanelVisible } = usePanel();
   const {
     companies,
@@ -88,11 +88,8 @@ export function Layout() {
   useEffect(() => {
     if (companiesLoading || onboardingTriggered.current) return;
     if (health?.deploymentMode === "authenticated") return;
-    if (companies.length === 0) {
-      onboardingTriggered.current = true;
-      openOnboarding();
-    }
-  }, [companies, companiesLoading, openOnboarding, health?.deploymentMode]);
+    onboardingTriggered.current = true;
+  }, [companies, companiesLoading, health?.deploymentMode]);
 
   useEffect(() => {
     if (!companyPrefix || companiesLoading || companies.length === 0) return;
