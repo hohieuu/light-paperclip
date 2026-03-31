@@ -143,4 +143,8 @@ export const queryKeys = {
     dashboard: (pluginId: string) => ["plugins", pluginId, "dashboard"] as const,
     logs: (pluginId: string) => ["plugins", pluginId, "logs"] as const,
   },
+  modelProfiles: {
+    list: ["model-profiles"] as const,
+    detail: (id: string) => ["model-profiles", id] as const,
+  },
 };
