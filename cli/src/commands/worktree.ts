@@ -30,7 +30,6 @@ import {
   documents,
   ensurePostgresDatabase,
   formatDatabaseBackupResult,
-  goals,
   heartbeatRuns,
   inspectMigrations,
   issueAttachments,
@@ -2126,7 +2125,6 @@ async function applyMergePlan(input: {
       await tx.insert(projects).values({
         id: project.source.id,
         companyId,
-        goalId: project.targetGoalId,
         name: project.source.name,
         description: project.source.description,
         status: project.source.status,
@@ -2206,7 +2204,6 @@ async function applyMergePlan(input: {
         companyId,
         projectId: issue.targetProjectId,
         projectWorkspaceId: issue.targetProjectWorkspaceId,
-        goalId: issue.targetGoalId,
         parentId: issue.source.parentId,
         title: issue.source.title,
         description: issue.source.description,

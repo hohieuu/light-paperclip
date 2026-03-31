@@ -2,7 +2,6 @@ import {
   agents,
   assets,
   documentRevisions,
-  goals,
   issueAttachments,
   issueComments,
   issueDocuments,
@@ -221,7 +220,6 @@ function compareIssueCoreFields(source: IssueRow, target: IssueRow): string[] {
   if ((source.parentId ?? null) !== (target.parentId ?? null)) driftKeys.push("parentId");
   if ((source.projectId ?? null) !== (target.projectId ?? null)) driftKeys.push("projectId");
   if ((source.projectWorkspaceId ?? null) !== (target.projectWorkspaceId ?? null)) driftKeys.push("projectWorkspaceId");
-  if ((source.goalId ?? null) !== (target.goalId ?? null)) driftKeys.push("goalId");
   if ((source.assigneeAgentId ?? null) !== (target.assigneeAgentId ?? null)) driftKeys.push("assigneeAgentId");
   if ((source.assigneeUserId ?? null) !== (target.assigneeUserId ?? null)) driftKeys.push("assigneeUserId");
   return driftKeys;
@@ -477,13 +475,6 @@ export function buildWorktreeMergePlan(input: {
     if (issue.projectWorkspaceId && !targetProjectWorkspaceId) {
       adjustments.push("clear_project_workspace");
       incrementAdjustment(adjustmentCounts, "clear_project_workspace");
-    }
-
-    const targetGoalId =
-      issue.goalId && targetGoalIds.has(issue.goalId) ? issue.goalId : null;
-    if (issue.goalId && !targetGoalId) {
-      adjustments.push("clear_goal");
-      incrementAdjustment(adjustmentCounts, "clear_goal");
     }
 
     let targetStatus = issue.status;
