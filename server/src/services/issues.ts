@@ -922,8 +922,6 @@ export function issueService(db: Db) {
         throw unprocessable("in_progress issues require an assignee");
       }
       return db.transaction(async (tx) => {
-        const defaultCompanyGoal = await getDefaultCompanyGoal(tx, companyId);
-        const projectGoalId = await getProjectDefaultGoalId(tx, companyId, issueData.projectId);
         let projectWorkspaceId = issueData.projectWorkspaceId ?? null;
         let executionWorkspaceId = issueData.executionWorkspaceId ?? null;
         let executionWorkspacePreference = issueData.executionWorkspacePreference ?? null;
@@ -1116,17 +1114,10 @@ export function issueService(db: Db) {
       }
 
       return db.transaction(async (tx) => {
-        const defaultCompanyGoal = await getDefaultCompanyGoal(tx, existing.companyId);
-        const [currentProjectGoalId, nextProjectGoalId] = await Promise.all([
-          getProjectDefaultGoalId(tx, existing.companyId, existing.projectId),
-          getProjectDefaultGoalId(
-            tx,
-            existing.companyId,
-            issueData.projectId !== undefined ? issueData.projectId : existing.projectId,
-          ),
-        ]);
-        patch.goalId = resolveNextIssueGoalId({
-          currentProjectId: existing.projectId,
+        const [currentProjectGoalId, nextProjectGoalId] = [null, null];
+        if (issueData.projectId !== undefined && issueData.projectId !== existing.projectId) {
+          patch.projectId = issueData.projectId;
+        }
           currentGoalId: existing.goalId,
           currentProjectGoalId,
           projectId: issueData.projectId,

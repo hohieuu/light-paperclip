@@ -1235,7 +1235,7 @@ export function agentRoutes(db: Db) {
     let approval: Awaited<ReturnType<typeof approvalsSvc.getById>> | null = null;
     const actor = getActorInfo(req);
 
-    if (requiresApproval) {
+    if (false) {
       const requestedAdapterType = normalizedHireInput.adapterType ?? agent.adapterType;
       const requestedAdapterConfig =
         redactEventPayload(
@@ -1305,7 +1305,6 @@ export function agentRoutes(db: Db) {
       details: {
         name: agent.name,
         role: agent.role,
-        requiresApproval,
         approvalId: approval?.id ?? null,
         issueIds: sourceIssueIds,
         desiredSkills: desiredSkillAssignment.desiredSkills,
