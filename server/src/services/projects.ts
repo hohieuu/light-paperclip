@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import type { Db } from "@paperclipai/db";
-import { projects, projectGoals, goals, projectWorkspaces, workspaceRuntimeServices } from "@paperclipai/db";
+import { projects, projectWorkspaces, workspaceRuntimeServices } from "@paperclipai/db";
 import {
   PROJECT_COLORS,
   deriveProjectUrlKey,
@@ -8,8 +8,6 @@ import {
   normalizeProjectUrlKey,
   type ProjectCodebase,
   type ProjectExecutionWorkspacePolicy,
-  type ProjectGoalRef,
-  type ProjectWorkspaceRuntimeConfig,
   type ProjectWorkspace,
   type WorkspaceRuntimeService,
 } from "@paperclipai/shared";
@@ -44,7 +42,7 @@ type UpdateWorkspaceInput = Partial<CreateWorkspaceInput>;
 interface ProjectWithGoals extends Omit<ProjectRow, "executionWorkspacePolicy"> {
   urlKey: string;
   goalIds: string[];
-  goals: ProjectGoalRef[];
+  goals: Array<{ id: string; title: string }>;
   executionWorkspacePolicy: ProjectExecutionWorkspacePolicy | null;
   codebase: ProjectCodebase;
   workspaces: ProjectWorkspace[];
@@ -60,40 +58,13 @@ interface ResolveProjectNameOptions {
   excludeProjectId?: string | null;
 }
 
-/** Batch-load goal refs for a set of projects. */
 async function attachGoals(db: Db, rows: ProjectRow[]): Promise<ProjectWithGoals[]> {
-  if (rows.length === 0) return [];
-
-  const projectIds = rows.map((r) => r.id);
-
-  // Fetch join rows + goal titles in one query
-  const links = await db
-    .select({
-      projectId: projectGoals.projectId,
-      goalId: projectGoals.goalId,
-      goalTitle: goals.title,
-    })
-    .from(projectGoals)
-    .innerJoin(goals, eq(projectGoals.goalId, goals.id))
-    .where(inArray(projectGoals.projectId, projectIds));
-
-  const map = new Map<string, ProjectGoalRef[]>();
-  for (const link of links) {
-    let arr = map.get(link.projectId);
-    if (!arr) {
-      arr = [];
-      map.set(link.projectId, arr);
-    }
-    arr.push({ id: link.goalId, title: link.goalTitle });
-  }
-
   return rows.map((r) => {
-    const g = map.get(r.id) ?? [];
     return {
       ...r,
       urlKey: deriveProjectUrlKey(r.name, r.id),
-      goalIds: g.map((x) => x.id),
-      goals: g,
+      goalIds: [],
+      goals: [],
       executionWorkspacePolicy: parseProjectExecutionWorkspacePolicy(r.executionWorkspacePolicy),
     } as ProjectWithGoals;
   });
@@ -265,19 +236,6 @@ async function attachWorkspaces(db: Db, rows: ProjectWithGoals[]): Promise<Proje
       primaryWorkspace,
     };
   });
-}
-
-/** Sync the project_goals join table for a single project. */
-async function syncGoalLinks(db: Db, projectId: string, companyId: string, goalIds: string[]) {
-  // Delete existing links
-  await db.delete(projectGoals).where(eq(projectGoals.projectId, projectId));
-
-  // Insert new links
-  if (goalIds.length > 0) {
-    await db.insert(projectGoals).values(
-      goalIds.map((goalId) => ({ projectId, goalId, companyId })),
-    );
-  }
 }
 
 /** Resolve goalIds from input, handling the legacy goalId field. */
@@ -458,10 +416,6 @@ export function projectService(db: Db) {
         .returning()
         .then((rows) => rows[0]);
 
-      if (ids && ids.length > 0) {
-        await syncGoalLinks(db, row.id, companyId, ids);
-      }
-
       const [withGoals] = await attachGoals(db, [row]);
       const [enriched] = withGoals ? await attachWorkspaces(db, [withGoals]) : [];
       return enriched!;
@@ -510,10 +464,6 @@ export function projectService(db: Db) {
         .returning()
         .then((rows) => rows[0] ?? null);
       if (!row) return null;
-
-      if (ids !== undefined) {
-        await syncGoalLinks(db, id, row.companyId, ids);
-      }
 
       const [withGoals] = await attachGoals(db, [row]);
       const [enriched] = withGoals ? await attachWorkspaces(db, [withGoals]) : [];
