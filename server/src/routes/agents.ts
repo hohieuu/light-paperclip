@@ -1268,8 +1268,8 @@ export function agentRoutes(db: Db) {
         runId: actor.runId,
         action: "approval.created",
         entityType: "approval",
-        entityId: approval.id,
-        details: { type: approval.type, linkedAgentId: agent.id },
+        entityId: approval!.id,
+        details: { type: approval!.type, linkedAgentId: agent.id },
       });
     }
 

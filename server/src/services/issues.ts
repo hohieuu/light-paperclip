@@ -1789,14 +1789,13 @@ export function issueService(db: Db) {
           id: parent.id, identifier: parent.identifier ?? null, title: parent.title, description: parent.description ?? null,
           status: parent.status, priority: parent.priority,
           assigneeAgentId: parent.assigneeAgentId ?? null,
-          projectId: parent.projectId ?? null, goalId: parent.goalId ?? null,
+          projectId: parent.projectId ?? null,
         });
         currentId = parent.parentId ?? null;
       }
 
-      // Batch-fetch referenced projects and goals
       const projectIds = [...new Set(raw.map(a => a.projectId).filter((id): id is string => id != null))];
-      const goalIds = [...new Set(raw.map(a => a.goalId).filter((id): id is string => id != null))];
+
 
       const projectMap = new Map<string, {
         id: string;

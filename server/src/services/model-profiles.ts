@@ -49,7 +49,7 @@ export function modelProfileService(db: Db) {
     },
 
     async list(filters?: { provider?: string; isActive?: boolean }) {
-      let query = db.select().from(modelProfiles);
+      let query = db.select().from(modelProfiles) as any;
 
       if (filters?.provider) {
         query = query.where(eq(modelProfiles.provider, filters.provider));

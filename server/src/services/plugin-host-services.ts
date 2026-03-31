@@ -7,7 +7,6 @@ import type {
   Agent,
   Project,
   Issue,
-  Goal,
   PluginWorkspace,
   IssueComment,
 } from "@paperclipai/plugin-sdk";
@@ -15,7 +14,6 @@ import { companyService } from "./companies.js";
 import { agentService } from "./agents.js";
 import { projectService } from "./projects.js";
 import { issueService } from "./issues.js";
-import { goalService } from "./goals.js";
 import { documentService } from "./documents.js";
 import { heartbeatService } from "./heartbeat.js";
 import { subscribeCompanyLiveEvents } from "./live-events.js";
@@ -759,7 +757,7 @@ export function buildHostServices(
       async list(params) {
         const companyId = ensureCompanyId(params.companyId);
         await ensurePluginAvailableForCompany(companyId);
-        return applyWindow((await issues.list(companyId, params as any)) as Issue[], params);
+        return applyWindow((await issues.list(companyId, params as any)) as any[], params);
       },
       async get(params) {
         const companyId = ensureCompanyId(params.companyId);
@@ -878,45 +876,6 @@ export function buildHostServices(
         });
         if (!run) throw new Error("Agent wakeup was skipped by heartbeat policy");
         return { runId: run.id };
-      },
-    },
-
-    goals: {
-      async list(params) {
-        const companyId = ensureCompanyId(params.companyId);
-        await ensurePluginAvailableForCompany(companyId);
-        const rows = await goals.list(companyId);
-        return applyWindow(
-          rows.filter((goal) =>
-            (!params.level || goal.level === params.level) &&
-            (!params.status || goal.status === params.status),
-          ) as Goal[],
-          params,
-        );
-      },
-      async get(params) {
-        const companyId = ensureCompanyId(params.companyId);
-        await ensurePluginAvailableForCompany(companyId);
-        const goal = await goals.getById(params.goalId);
-        return (inCompany(goal, companyId) ? goal : null) as Goal | null;
-      },
-      async create(params) {
-        const companyId = ensureCompanyId(params.companyId);
-        await ensurePluginAvailableForCompany(companyId);
-        return (await goals.create(companyId, {
-          title: params.title,
-          description: params.description,
-          level: params.level as any,
-          status: params.status as any,
-          parentId: params.parentId,
-          ownerAgentId: params.ownerAgentId,
-        })) as Goal;
-      },
-      async update(params) {
-        const companyId = ensureCompanyId(params.companyId);
-        await ensurePluginAvailableForCompany(companyId);
-        requireInCompany("Goal", await goals.getById(params.goalId), companyId);
-        return (await goals.update(params.goalId, params.patch as any)) as Goal;
       },
     },
 
