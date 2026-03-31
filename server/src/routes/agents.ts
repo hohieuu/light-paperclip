@@ -1259,20 +1259,6 @@ export function agentRoutes(db: Db) {
       actor.actorType === "user" ? actor.actorId : null,
     );
 
-    if (approval) {
-      await logActivity(db, {
-        companyId,
-        actorType: actor.actorType,
-        actorId: actor.actorId,
-        agentId: actor.agentId,
-        runId: actor.runId,
-        action: "approval.created",
-        entityType: "approval",
-        entityId: approval!.id,
-        details: { type: approval!.type, linkedAgentId: agent.id },
-      });
-    }
-
     res.status(201).json({ agent, approval });
   });
 

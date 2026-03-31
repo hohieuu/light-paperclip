@@ -1771,7 +1771,7 @@ export function issueService(db: Db) {
       const raw: Array<{
         id: string; identifier: string | null; title: string; description: string | null;
         status: string; priority: string;
-        assigneeAgentId: string | null; projectId: string | null; goalId: string | null;
+        assigneeAgentId: string | null; projectId: string | null;
       }> = [];
       const visited = new Set<string>([issueId]);
       const start = await db.select().from(issues).where(eq(issues.id, issueId)).then(r => r[0] ?? null);
@@ -1795,7 +1795,6 @@ export function issueService(db: Db) {
       }
 
       const projectIds = [...new Set(raw.map(a => a.projectId).filter((id): id is string => id != null))];
-
 
       const projectMap = new Map<string, {
         id: string;
@@ -1870,14 +1869,7 @@ export function issueService(db: Db) {
             workspaces,
             primaryWorkspace,
           });
-          // Also collect goalIds from projects
-          if (r.goalId && !goalIds.includes(r.goalId)) goalIds.push(r.goalId);
         }
-      }
-
-      if (false) {
-        const goalIds: string[] = [];
-        const goalMap = new Map();
       }
 
       return raw.map(a => ({

@@ -9,6 +9,7 @@ import {
   type ProjectCodebase,
   type ProjectExecutionWorkspacePolicy,
   type ProjectWorkspace,
+  type ProjectWorkspaceRuntimeConfig,
   type WorkspaceRuntimeService,
 } from "@paperclipai/shared";
 import { listWorkspaceRuntimeServicesForProjectWorkspaces } from "./workspace-runtime.js";
@@ -41,8 +42,6 @@ type UpdateWorkspaceInput = Partial<CreateWorkspaceInput>;
 
 interface ProjectWithGoals extends Omit<ProjectRow, "executionWorkspacePolicy"> {
   urlKey: string;
-  goalIds: string[];
-  goals: Array<{ id: string; title: string }>;
   executionWorkspacePolicy: ProjectExecutionWorkspacePolicy | null;
   codebase: ProjectCodebase;
   workspaces: ProjectWorkspace[];
@@ -63,8 +62,6 @@ async function attachGoals(db: Db, rows: ProjectRow[]): Promise<ProjectWithGoals
     return {
       ...r,
       urlKey: deriveProjectUrlKey(r.name, r.id),
-      goalIds: [],
-      goals: [],
       executionWorkspacePolicy: parseProjectExecutionWorkspacePolicy(r.executionWorkspacePolicy),
     } as ProjectWithGoals;
   });

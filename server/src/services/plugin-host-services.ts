@@ -450,7 +450,6 @@ export function buildHostServices(
   const projects = projectService(db);
   const issues = issueService(db);
   const documents = documentService(db);
-  const goals = goalService(db);
   const activity = activityService(db);
   const costs = costService(db);
   const assets = assetService(db);
