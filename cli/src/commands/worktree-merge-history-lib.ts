@@ -15,7 +15,6 @@ type CommentRow = typeof issueComments.$inferSelect;
 type AgentRow = typeof agents.$inferSelect;
 type ProjectRow = typeof projects.$inferSelect;
 type ProjectWorkspaceRow = typeof projectWorkspaces.$inferSelect;
-type GoalRow = typeof goals.$inferSelect;
 type IssueDocumentLinkRow = typeof issueDocuments.$inferSelect;
 type DocumentRevisionTableRow = typeof documentRevisions.$inferSelect;
 type IssueAttachmentTableRow = typeof issueAttachments.$inferSelect;
@@ -498,7 +497,6 @@ export function buildWorktreeMergePlan(input: {
       targetCreatedByAgentId,
       targetProjectId,
       targetProjectWorkspaceId,
-      targetGoalId,
       projectResolution,
       mappedProjectName,
       adjustments,

@@ -1853,8 +1853,8 @@ async function collectMergePlan(input: {
       .where(eq(projectWorkspaces.companyId, companyId)),
     input.targetDb
       .select()
-      .from(goals)
-      .where(eq(goals.companyId, companyId)),
+      .from(heartbeatRuns)
+      .where(eq(heartbeatRuns.companyId, companyId)),
     input.sourceDb
       .select({ count: sql<number>`count(*)::int` })
       .from(heartbeatRuns)
