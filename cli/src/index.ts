@@ -1,5 +1,4 @@
 import { Command } from "commander";
-import { onboard } from "./commands/onboard.js";
 import { doctor } from "./commands/doctor.js";
 import { envCommand } from "./commands/env.js";
 import { configure } from "./commands/configure.js";
@@ -39,15 +38,6 @@ program.hook("preAction", (_thisCommand, actionCommand) => {
   });
   loadPaperclipEnvFile(options.config);
 });
-
-program
-  .command("onboard")
-  .description("Interactive first-run setup wizard")
-  .option("-c, --config <path>", "Path to config file")
-  .option("-d, --data-dir <path>", DATA_DIR_OPTION_HELP)
-  .option("-y, --yes", "Accept defaults (quickstart + start immediately)", false)
-  .option("--run", "Start Paperclip immediately after saving config", false)
-  .action(onboard);
 
 program
   .command("doctor")
@@ -99,7 +89,7 @@ program
 
 program
   .command("run")
-  .description("Bootstrap local setup (onboard + doctor) and run Paperclip")
+  .description("Run Paperclip with doctor checks")
   .option("-c, --config <path>", "Path to config file")
   .option("-d, --data-dir <path>", DATA_DIR_OPTION_HELP)
   .option("-i, --instance <id>", "Local instance id (default: default)")
