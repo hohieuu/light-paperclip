@@ -1850,10 +1850,6 @@ async function collectMergePlan(input: {
       .select()
       .from(projectWorkspaces)
       .where(eq(projectWorkspaces.companyId, companyId)),
-    input.targetDb
-      .select()
-      .from(heartbeatRuns)
-      .where(eq(heartbeatRuns.companyId, companyId)),
     input.sourceDb
       .select({ count: sql<number>`count(*)::int` })
       .from(heartbeatRuns)
