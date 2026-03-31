@@ -8,7 +8,6 @@ import type {
   Issue,
   IssueComment,
   Agent,
-  Goal,
 } from "@paperclipai/shared";
 import type {
   EventFilter,
@@ -44,14 +43,13 @@ export interface TestHarnessLogEntry {
 export interface TestHarness {
   /** Fully-typed in-memory plugin context passed to `plugin.setup(ctx)`. */
   ctx: PluginContext;
-  /** Seed host entities for `ctx.companies/projects/issues/agents/goals` reads. */
+  /** Seed host entities for `ctx.companies/projects/issues/agents` reads. */
   seed(input: {
     companies?: Company[];
     projects?: Project[];
     issues?: Issue[];
     issueComments?: IssueComment[];
     agents?: Agent[];
-    goals?: Goal[];
   }): void;
   setConfig(config: Record<string, unknown>): void;
   /** Dispatch a host or plugin event to registered handlers. */
@@ -141,7 +139,6 @@ export function createTestHarness(options: TestHarnessOptions): TestHarness {
   const issues = new Map<string, Issue>();
   const issueComments = new Map<string, IssueComment[]>();
   const agents = new Map<string, Agent>();
-  const goals = new Map<string, Goal>();
   const projectWorkspaces = new Map<string, PluginWorkspace[]>();
 
   const sessions = new Map<string, AgentSession>();
@@ -547,54 +544,6 @@ export function createTestHarness(options: TestHarnessOptions): TestHarness {
         },
       },
     },
-    goals: {
-      async list(input) {
-        requireCapability(manifest, capabilitySet, "goals.read");
-        const companyId = requireCompanyId(input?.companyId);
-        let out = [...goals.values()];
-        out = out.filter((goal) => goal.companyId === companyId);
-        if (input?.level) out = out.filter((goal) => goal.level === input.level);
-        if (input?.status) out = out.filter((goal) => goal.status === input.status);
-        if (input?.offset) out = out.slice(input.offset);
-        if (input?.limit) out = out.slice(0, input.limit);
-        return out;
-      },
-      async get(goalId, companyId) {
-        requireCapability(manifest, capabilitySet, "goals.read");
-        const goal = goals.get(goalId);
-        return isInCompany(goal, companyId) ? goal : null;
-      },
-      async create(input) {
-        requireCapability(manifest, capabilitySet, "goals.create");
-        const now = new Date();
-        const record: Goal = {
-          id: randomUUID(),
-          companyId: input.companyId,
-          title: input.title,
-          description: input.description ?? null,
-          level: input.level ?? "task",
-          status: input.status ?? "planned",
-          parentId: input.parentId ?? null,
-          ownerAgentId: input.ownerAgentId ?? null,
-          createdAt: now,
-          updatedAt: now,
-        };
-        goals.set(record.id, record);
-        return record;
-      },
-      async update(goalId, patch, companyId) {
-        requireCapability(manifest, capabilitySet, "goals.update");
-        const record = goals.get(goalId);
-        if (!isInCompany(record, companyId)) throw new Error(`Goal not found: ${goalId}`);
-        const updated: Goal = {
-          ...record,
-          ...patch,
-          updatedAt: new Date(),
-        };
-        goals.set(goalId, updated);
-        return updated;
-      },
-    },
     data: {
       register(key, handler) {
         dataHandlers.set(key, handler);
@@ -659,7 +608,6 @@ export function createTestHarness(options: TestHarnessOptions): TestHarness {
         issueComments.set(row.issueId, list);
       }
       for (const row of input.agents ?? []) agents.set(row.id, row);
-      for (const row of input.goals ?? []) goals.set(row.id, row);
     },
     setConfig(config) {
       currentConfig = { ...config };

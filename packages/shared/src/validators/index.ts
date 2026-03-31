@@ -167,13 +167,6 @@ export {
 } from "./execution-workspace.js";
 
 export {
-  createGoalSchema,
-  updateGoalSchema,
-  type CreateGoal,
-  type UpdateGoal,
-} from "./goal.js";
-
-export {
   createApprovalSchema,
   resolveApprovalSchema,
   requestApprovalRevisionSchema,

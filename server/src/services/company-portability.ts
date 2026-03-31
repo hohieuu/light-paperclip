@@ -2304,10 +2304,6 @@ function buildManifestFromPackageFiles(
       description: asString(companyFrontmatter.description),
       brandColor: asString(paperclipCompany.brandColor),
       logoPath: asString(paperclipCompany.logoPath) ?? asString(paperclipCompany.logo),
-      requireBoardApprovalForNewAgents:
-        typeof paperclipCompany.requireBoardApprovalForNewAgents === "boolean"
-          ? paperclipCompany.requireBoardApprovalForNewAgents
-          : readCompanyApprovalDefault(companyFrontmatter),
     },
     sidebar: paperclipSidebar,
     agents: [],
@@ -3224,7 +3220,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
         company: stripEmptyValues({
           brandColor: company.brandColor ?? null,
           logoPath: companyLogoPath,
-          requireBoardApprovalForNewAgents: company.requireBoardApprovalForNewAgents ? undefined : false,
         }),
         sidebar: stripEmptyValues(sidebarOrder),
         agents: Object.keys(paperclipAgents).length > 0 ? paperclipAgents : undefined,
@@ -3731,9 +3726,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
         name: companyName,
         description: include.company ? (sourceManifest.company?.description ?? null) : null,
         brandColor: include.company ? (sourceManifest.company?.brandColor ?? null) : null,
-        requireBoardApprovalForNewAgents: include.company
-          ? (sourceManifest.company?.requireBoardApprovalForNewAgents ?? true)
-          : true,
       });
       if (mode === "agent_safe" && options?.sourceCompanyId) {
         await access.copyActiveUserMemberships(options.sourceCompanyId, created.id);
@@ -3750,7 +3742,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
           name: sourceManifest.company.name,
           description: sourceManifest.company.description,
           brandColor: sourceManifest.company.brandColor,
-          requireBoardApprovalForNewAgents: sourceManifest.company.requireBoardApprovalForNewAgents,
         });
         targetCompany = updated ?? targetCompany;
         companyAction = "updated";

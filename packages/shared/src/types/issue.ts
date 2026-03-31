@@ -1,5 +1,4 @@
 import type { IssueOriginKind, IssuePriority, IssueStatus } from "../constants.js";
-import type { Goal } from "./goal.js";
 import type { Project, ProjectWorkspace } from "./project.js";
 import type { ExecutionWorkspace, IssueExecutionWorkspaceSettings } from "./workspace-runtime.js";
 import type { IssueWorkProduct } from "./work-product.js";
@@ -9,17 +8,8 @@ export interface IssueAncestorProject {
   name: string;
   description: string | null;
   status: string;
-  goalId: string | null;
   workspaces: ProjectWorkspace[];
   primaryWorkspace: ProjectWorkspace | null;
-}
-
-export interface IssueAncestorGoal {
-  id: string;
-  title: string;
-  description: string | null;
-  level: string;
-  status: string;
 }
 
 export interface IssueAncestor {
@@ -32,9 +22,7 @@ export interface IssueAncestor {
   assigneeAgentId: string | null;
   assigneeUserId: string | null;
   projectId: string | null;
-  goalId: string | null;
   project: IssueAncestorProject | null;
-  goal: IssueAncestorGoal | null;
 }
 
 export interface IssueLabel {
@@ -135,7 +123,6 @@ export interface Issue {
   documentSummaries?: IssueDocumentSummary[];
   legacyPlanDocument?: LegacyPlanDocument | null;
   project?: Project | null;
-  goal?: Goal | null;
   currentExecutionWorkspace?: ExecutionWorkspace | null;
   workProducts?: IssueWorkProduct[];
   mentionedProjects?: Project[];

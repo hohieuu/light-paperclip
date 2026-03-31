@@ -189,14 +189,6 @@ export interface HostServices {
     sendMessage(params: WorkerToHostMethods["agents.sessions.sendMessage"][0]): Promise<WorkerToHostMethods["agents.sessions.sendMessage"][1]>;
     close(params: WorkerToHostMethods["agents.sessions.close"][0]): Promise<void>;
   };
-
-  /** Provides `goals.list`, `goals.get`, `goals.create`, `goals.update`. */
-  goals: {
-    list(params: WorkerToHostMethods["goals.list"][0]): Promise<WorkerToHostMethods["goals.list"][1]>;
-    get(params: WorkerToHostMethods["goals.get"][0]): Promise<WorkerToHostMethods["goals.get"][1]>;
-    create(params: WorkerToHostMethods["goals.create"][0]): Promise<WorkerToHostMethods["goals.create"][1]>;
-    update(params: WorkerToHostMethods["goals.update"][0]): Promise<WorkerToHostMethods["goals.update"][1]>;
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -324,12 +316,6 @@ const METHOD_CAPABILITY_MAP: Record<WorkerToHostMethodName, PluginCapability | n
   "agents.sessions.list": "agent.sessions.list",
   "agents.sessions.sendMessage": "agent.sessions.send",
   "agents.sessions.close": "agent.sessions.close",
-
-  // Goals
-  "goals.list": "goals.read",
-  "goals.get": "goals.read",
-  "goals.create": "goals.create",
-  "goals.update": "goals.update",
 };
 
 // ---------------------------------------------------------------------------
@@ -540,20 +526,6 @@ export function createHostClientHandlers(
     }),
     "agents.sessions.close": gated("agents.sessions.close", async (params) => {
       return services.agentSessions.close(params);
-    }),
-
-    // Goals
-    "goals.list": gated("goals.list", async (params) => {
-      return services.goals.list(params);
-    }),
-    "goals.get": gated("goals.get", async (params) => {
-      return services.goals.get(params);
-    }),
-    "goals.create": gated("goals.create", async (params) => {
-      return services.goals.create(params);
-    }),
-    "goals.update": gated("goals.update", async (params) => {
-      return services.goals.update(params);
     }),
   };
 }

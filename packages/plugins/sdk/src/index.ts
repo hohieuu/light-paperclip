@@ -176,7 +176,6 @@ export type {
   AgentSession,
   AgentSessionEvent,
   AgentSessionSendResult,
-  PluginGoalsClient,
   PluginDataClient,
   PluginActionsClient,
   PluginStreamsClient,
@@ -203,7 +202,6 @@ export type {
   Issue,
   IssueComment,
   Agent,
-  Goal,
 } from "./types.js";
 
 // Manifest and constant types re-exported from @paperclipai/shared

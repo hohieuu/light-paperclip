@@ -21,7 +21,7 @@ import {
   type ToolResult,
   type ToolRunContext,
 } from "@paperclipai/plugin-sdk";
-import type { Goal, Issue } from "@paperclipai/shared";
+import type { Issue } from "@paperclipai/shared";
 import {
   DEFAULT_CONFIG,
   JOB_KEYS,
@@ -235,10 +235,6 @@ async function listIssuesForCompany(ctx: PluginContext, companyId: string, limit
   return await ctx.issues.list({ companyId, limit, offset: 0 });
 }
 
-async function listGoalsForCompany(ctx: PluginContext, companyId: string, limit = 50): Promise<Goal[]> {
-  return await ctx.goals.list({ companyId, limit, offset: 0 });
-}
-
 function recentRecordsSnapshot(): DemoRecord[] {
   return recentRecords.slice(0, 20);
 }
@@ -258,7 +254,6 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
     const companies = await ctx.companies.list({ limit: 200, offset: 0 });
     const projects = companyId ? await ctx.projects.list({ companyId, limit: 200, offset: 0 }) : [];
     const issues = companyId ? await listIssuesForCompany(ctx, companyId, 200) : [];
-    const goals = companyId ? await listGoalsForCompany(ctx, companyId, 200) : [];
     const agents = companyId ? await ctx.agents.list({ companyId, limit: 200, offset: 0 }) : [];
     const lastJob = await readInstanceState(ctx, "last-job-run");
     const lastWebhook = await readInstanceState(ctx, "last-webhook");
@@ -274,7 +269,6 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
         companies: companies.length,
         projects: projects.length,
         issues: issues.length,
-        goals: goals.length,
         agents: agents.length,
         entities: entityRecords.length,
       },
@@ -303,11 +297,6 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
   ctx.data.register("issues", async (params) => {
     const companyId = getCurrentCompanyId(params);
     return await listIssuesForCompany(ctx, companyId, getListLimit(params));
-  });
-
-  ctx.data.register("goals", async (params) => {
-    const companyId = getCurrentCompanyId(params);
-    return await listGoalsForCompany(ctx, companyId, getListLimit(params));
   });
 
   ctx.data.register("agents", async (params) => {
@@ -376,9 +365,6 @@ async function registerDataHandlers(ctx: PluginContext): Promise<void> {
     }
     if (entityType === "issue") {
       return await ctx.issues.get(entityId, companyId);
-    }
-    if (entityType === "goal") {
-      return await ctx.goals.get(entityId, companyId);
     }
     if (entityType === "agent") {
       return await ctx.agents.get(entityId, companyId);
@@ -502,38 +488,6 @@ async function registerActionHandlers(ctx: PluginContext): Promise<void> {
       message: `Updated issue ${issue.id} to ${issue.status}`,
     });
     return issue;
-  });
-
-  ctx.actions.register("create-goal", async (params) => {
-    const companyId = getCurrentCompanyId(params);
-    const title = typeof params.title === "string" && params.title.trim().length > 0
-      ? params.title.trim()
-      : "Kitchen Sink demo goal";
-    const description = typeof params.description === "string" ? params.description : undefined;
-    const goal = await ctx.goals.create({ companyId, title, description, level: "team", status: "planned" });
-    pushRecord({
-      level: "info",
-      source: "goals.create",
-      message: `Created goal ${goal.title}`,
-      data: { goalId: goal.id },
-    });
-    return goal;
-  });
-
-  ctx.actions.register("advance-goal-status", async (params) => {
-    const companyId = getCurrentCompanyId(params);
-    const goalId = typeof params.goalId === "string" ? params.goalId : "";
-    const status = typeof params.status === "string" ? params.status : "";
-    if (!goalId || !status) {
-      throw new Error("goalId and status are required");
-    }
-    const goal = await ctx.goals.update(goalId, { status: status as Goal["status"] }, companyId);
-    pushRecord({
-      level: "info",
-      source: "goals.update",
-      message: `Updated goal ${goal.id} to ${goal.status}`,
-    });
-    return goal;
   });
 
   ctx.actions.register("write-activity", async (params) => {
@@ -839,15 +793,13 @@ async function registerToolHandlers(ctx: PluginContext): Promise<void> {
     async (_params, runCtx): Promise<ToolResult> => {
       const projects = await ctx.projects.list({ companyId: runCtx.companyId, limit: 50, offset: 0 });
       const issues = await ctx.issues.list({ companyId: runCtx.companyId, limit: 50, offset: 0 });
-      const goals = await ctx.goals.list({ companyId: runCtx.companyId, limit: 50, offset: 0 });
       const agents = await ctx.agents.list({ companyId: runCtx.companyId, limit: 50, offset: 0 });
       return {
-        content: `Company has ${projects.length} projects, ${issues.length} issues, ${goals.length} goals, and ${agents.length} agents.`,
+        content: `Company has ${projects.length} projects, ${issues.length} issues, and ${agents.length} agents.`,
         data: {
           companyId: runCtx.companyId,
           projects: projects.length,
           issues: issues.length,
-          goals: goals.length,
           agents: agents.length,
         },
       };

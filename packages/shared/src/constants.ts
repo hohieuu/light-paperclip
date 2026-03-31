@@ -135,12 +135,6 @@ export type IssuePriority = (typeof ISSUE_PRIORITIES)[number];
 export const ISSUE_ORIGIN_KINDS = ["manual", "routine_execution"] as const;
 export type IssueOriginKind = (typeof ISSUE_ORIGIN_KINDS)[number];
 
-export const GOAL_LEVELS = ["company", "team", "agent", "task"] as const;
-export type GoalLevel = (typeof GOAL_LEVELS)[number];
-
-export const GOAL_STATUSES = ["planned", "active", "achieved", "cancelled"] as const;
-export type GoalStatus = (typeof GOAL_STATUSES)[number];
-
 export const PROJECT_STATUSES = [
   "backlog",
   "planned",
@@ -194,7 +188,7 @@ export const PROJECT_COLORS = [
   "#3b82f6", // blue
 ] as const;
 
-export const APPROVAL_TYPES = ["hire_agent", "approve_ceo_strategy", "budget_override_required"] as const;
+export const APPROVAL_TYPES = ["hire_agent"] as const;
 export type ApprovalType = (typeof APPROVAL_TYPES)[number];
 
 export const APPROVAL_STATUSES = [

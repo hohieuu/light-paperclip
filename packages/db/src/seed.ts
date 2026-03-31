@@ -1,5 +1,5 @@
 import { createDb } from "./client.js";
-import { companies, agents, goals, projects, issues } from "./schema/index.js";
+import { companies, agents, projects, issues } from "./schema/index.js";
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL is required");
@@ -11,8 +11,8 @@ console.log("Seeding database...");
 const [company] = await db
   .insert(companies)
   .values({
-    name: "Paperclip Demo Co",
-    description: "A demo autonomous company",
+    name: "Light Paperclip Demo",
+    description: "A lightweight personal agent manager",
     status: "active",
     budgetMonthlyCents: 50000,
   })
@@ -47,25 +47,12 @@ const [engineer] = await db
   })
   .returning();
 
-const [goal] = await db
-  .insert(goals)
-  .values({
-    companyId: company!.id,
-    title: "Ship V1",
-    description: "Deliver first control plane release",
-    level: "company",
-    status: "active",
-    ownerAgentId: ceo!.id,
-  })
-  .returning();
-
 const [project] = await db
   .insert(projects)
   .values({
     companyId: company!.id,
-    goalId: goal!.id,
-    name: "Control Plane MVP",
-    description: "Implement core board + agent loop",
+    name: "Sample Project",
+    description: "Demo project with sample tasks",
     status: "in_progress",
     leadAgentId: ceo!.id,
   })
@@ -75,9 +62,8 @@ await db.insert(issues).values([
   {
     companyId: company!.id,
     projectId: project!.id,
-    goalId: goal!.id,
-    title: "Implement atomic task checkout",
-    description: "Ensure in_progress claiming is conflict-safe",
+    title: "Task 1: Setup",
+    description: "Initialize the workspace",
     status: "todo",
     priority: "high",
     assigneeAgentId: engineer!.id,
@@ -86,9 +72,8 @@ await db.insert(issues).values([
   {
     companyId: company!.id,
     projectId: project!.id,
-    goalId: goal!.id,
-    title: "Add budget auto-pause",
-    description: "Pause agent at hard budget ceiling",
+    title: "Task 2: Implementation",
+    description: "Implement core features",
     status: "backlog",
     priority: "medium",
     createdByAgentId: ceo!.id,

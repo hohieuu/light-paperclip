@@ -21,7 +21,6 @@ import {
   accessService,
   agentService,
   executionWorkspaceService,
-  goalService,
   heartbeatService,
   issueApprovalService,
   issueService,
@@ -50,7 +49,6 @@ export function issueRoutes(db: Db, storage: StorageService) {
   const heartbeat = heartbeatService(db);
   const agentsSvc = agentService(db);
   const projectsSvc = projectService(db);
-  const goalsSvc = goalService(db);
   const issueApprovalsSvc = issueApprovalService(db);
   const executionWorkspacesSvc = executionWorkspaceService(db);
   const workProductsSvc = workProductService(db);
@@ -197,33 +195,6 @@ export function issueRoutes(db: Db, storage: StorageService) {
       }
     }
     return rawId;
-  }
-
-  async function resolveIssueProjectAndGoal(issue: {
-    companyId: string;
-    projectId: string | null;
-    goalId: string | null;
-  }) {
-    const projectPromise = issue.projectId ? projectsSvc.getById(issue.projectId) : Promise.resolve(null);
-    const directGoalPromise = issue.goalId ? goalsSvc.getById(issue.goalId) : Promise.resolve(null);
-    const [project, directGoal] = await Promise.all([projectPromise, directGoalPromise]);
-
-    if (directGoal) {
-      return { project, goal: directGoal };
-    }
-
-    const projectGoalId = project?.goalId ?? project?.goalIds[0] ?? null;
-    if (projectGoalId) {
-      const projectGoal = await goalsSvc.getById(projectGoalId);
-      return { project, goal: projectGoal };
-    }
-
-    if (!issue.projectId) {
-      const defaultGoal = await goalsSvc.getDefaultCompanyGoal(issue.companyId);
-      return { project, goal: defaultGoal };
-    }
-
-    return { project, goal: null };
   }
 
   // Resolve issue identifiers (e.g. "PAP-39") to UUIDs for all /issues/:id routes
@@ -377,8 +348,8 @@ export function issueRoutes(db: Db, storage: StorageService) {
       return;
     }
     assertCompanyAccess(req, issue.companyId);
-    const [{ project, goal }, ancestors, mentionedProjectIds, documentPayload] = await Promise.all([
-      resolveIssueProjectAndGoal(issue),
+    const [project, ancestors, mentionedProjectIds, documentPayload] = await Promise.all([
+      issue.projectId ? projectsSvc.getById(issue.projectId) : Promise.resolve(null),
       svc.getAncestors(issue.id),
       svc.findMentionedProjectIds(issue.id),
       documentsSvc.getIssueDocumentPayload(issue),
@@ -396,7 +367,6 @@ export function issueRoutes(db: Db, storage: StorageService) {
       ancestors,
       ...documentPayload,
       project: project ?? null,
-      goal: goal ?? null,
       mentionedProjects,
       currentExecutionWorkspace,
       workProducts,
@@ -417,8 +387,8 @@ export function issueRoutes(db: Db, storage: StorageService) {
         ? req.query.wakeCommentId.trim()
         : null;
 
-    const [{ project, goal }, ancestors, commentCursor, wakeComment] = await Promise.all([
-      resolveIssueProjectAndGoal(issue),
+    const [project, ancestors, commentCursor, wakeComment] = await Promise.all([
+      issue.projectId ? projectsSvc.getById(issue.projectId) : Promise.resolve(null),
       svc.getAncestors(issue.id),
       svc.getCommentCursor(issue.id),
       wakeCommentId ? svc.getComment(wakeCommentId) : null,
@@ -452,15 +422,6 @@ export function issueRoutes(db: Db, storage: StorageService) {
             name: project.name,
             status: project.status,
             targetDate: project.targetDate,
-          }
-        : null,
-      goal: goal
-        ? {
-            id: goal.id,
-            title: goal.title,
-            status: goal.status,
-            level: goal.level,
-            parentId: goal.parentId,
           }
         : null,
       commentCursor,

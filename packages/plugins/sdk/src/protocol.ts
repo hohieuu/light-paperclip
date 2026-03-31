@@ -28,7 +28,6 @@ import type {
   IssueDocument,
   IssueDocumentSummary,
   Agent,
-  Goal,
 } from "@paperclipai/shared";
 export type { PluginLauncherRenderContextSnapshot } from "@paperclipai/shared";
 
@@ -670,36 +669,6 @@ export interface WorkerToHostMethods {
   "agents.sessions.close": [
     params: { sessionId: string; companyId: string },
     result: void,
-  ];
-
-  // Goals
-  "goals.list": [
-    params: { companyId: string; level?: string; status?: string; limit?: number; offset?: number },
-    result: Goal[],
-  ];
-  "goals.get": [
-    params: { goalId: string; companyId: string },
-    result: Goal | null,
-  ];
-  "goals.create": [
-    params: {
-      companyId: string;
-      title: string;
-      description?: string;
-      level?: string;
-      status?: string;
-      parentId?: string;
-      ownerAgentId?: string;
-    },
-    result: Goal,
-  ];
-  "goals.update": [
-    params: {
-      goalId: string;
-      patch: Record<string, unknown>;
-      companyId: string;
-    },
-    result: Goal,
   ];
 }
 

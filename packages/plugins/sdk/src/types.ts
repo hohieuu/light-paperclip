@@ -22,7 +22,6 @@ import type {
   IssueDocument,
   IssueDocumentSummary,
   Agent,
-  Goal,
 } from "@paperclipai/shared";
 
 // ---------------------------------------------------------------------------
@@ -66,7 +65,6 @@ export type {
   IssueDocument,
   IssueDocumentSummary,
   Agent,
-  Goal,
 } from "@paperclipai/shared";
 
 // ---------------------------------------------------------------------------
@@ -981,41 +979,6 @@ export interface PluginAgentSessionsClient {
 }
 
 /**
- * `ctx.goals` — read and mutate goals.
- *
- * Requires:
- * - `goals.read` for read operations
- * - `goals.create` for create
- * - `goals.update` for update
- */
-export interface PluginGoalsClient {
-  list(input: {
-    companyId: string;
-    level?: Goal["level"];
-    status?: Goal["status"];
-    limit?: number;
-    offset?: number;
-  }): Promise<Goal[]>;
-  get(goalId: string, companyId: string): Promise<Goal | null>;
-  create(input: {
-    companyId: string;
-    title: string;
-    description?: string;
-    level?: Goal["level"];
-    status?: Goal["status"];
-    parentId?: string;
-    ownerAgentId?: string;
-  }): Promise<Goal>;
-  update(
-    goalId: string,
-    patch: Partial<Pick<
-      Goal,
-      "title" | "description" | "level" | "status" | "parentId" | "ownerAgentId"
-    >>,
-    companyId: string,
-  ): Promise<Goal>;
-}
-
 // ---------------------------------------------------------------------------
 // Streaming (worker → UI push channel)
 // ---------------------------------------------------------------------------
@@ -1137,9 +1100,6 @@ export interface PluginContext {
 
   /** Read and manage agents. Requires `agents.read` for reads; `agents.pause` / `agents.resume` / `agents.invoke` for write ops. */
   agents: PluginAgentsClient;
-
-  /** Read and mutate goals. Requires `goals.read` for reads; `goals.create` / `goals.update` for write ops. */
-  goals: PluginGoalsClient;
 
   /** Register getData handlers for the plugin's UI components. */
   data: PluginDataClient;

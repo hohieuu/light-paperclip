@@ -709,42 +709,6 @@ export function startWorkerRpcHost(options: WorkerRpcHostOptions): WorkerRpcHost
         },
       },
 
-      goals: {
-        async list(input) {
-          return callHost("goals.list", {
-            companyId: input.companyId,
-            level: input.level,
-            status: input.status,
-            limit: input.limit,
-            offset: input.offset,
-          });
-        },
-
-        async get(goalId: string, companyId: string) {
-          return callHost("goals.get", { goalId, companyId });
-        },
-
-        async create(input) {
-          return callHost("goals.create", {
-            companyId: input.companyId,
-            title: input.title,
-            description: input.description,
-            level: input.level,
-            status: input.status,
-            parentId: input.parentId,
-            ownerAgentId: input.ownerAgentId,
-          });
-        },
-
-        async update(goalId: string, patch, companyId: string) {
-          return callHost("goals.update", {
-            goalId,
-            patch: patch as Record<string, unknown>,
-            companyId,
-          });
-        },
-      },
-
       data: {
         register(key: string, handler: (params: Record<string, unknown>) => Promise<unknown>): void {
           dataHandlers.set(key, handler);

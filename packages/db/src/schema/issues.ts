@@ -12,7 +12,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { agents } from "./agents.js";
 import { projects } from "./projects.js";
-import { goals } from "./goals.js";
 import { companies } from "./companies.js";
 import { heartbeatRuns } from "./heartbeat_runs.js";
 import { projectWorkspaces } from "./project_workspaces.js";
@@ -25,7 +24,6 @@ export const issues = pgTable(
     companyId: uuid("company_id").notNull().references(() => companies.id),
     projectId: uuid("project_id").references(() => projects.id),
     projectWorkspaceId: uuid("project_workspace_id").references(() => projectWorkspaces.id, { onDelete: "set null" }),
-    goalId: uuid("goal_id").references(() => goals.id),
     parentId: uuid("parent_id").references((): AnyPgColumn => issues.id),
     title: text("title").notNull(),
     description: text("description"),
