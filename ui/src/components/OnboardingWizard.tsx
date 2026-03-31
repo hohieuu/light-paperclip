@@ -550,7 +550,6 @@ export function OnboardingWizard() {
             description: taskDescription,
             assigneeAgentId: createdAgentId,
             projectId,
-            goalId
           })
         );
         issueRef = issue.identifier ?? issue.id;
