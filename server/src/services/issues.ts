@@ -7,7 +7,6 @@ import {
   companies,
   companyMemberships,
   documents,
-  goals,
   heartbeatRuns,
   executionWorkspaces,
   issueAttachments,
@@ -32,7 +31,6 @@ import {
 import { instanceSettingsService } from "./instance-settings.js";
 import { redactCurrentUserText } from "../log-redaction.js";
 import { resolveIssueGoalId, resolveNextIssueGoalId } from "./issue-goal-fallback.js";
-import { getDefaultCompanyGoal } from "./goals.js";
 
 const ALL_ISSUE_STATUSES = ["backlog", "todo", "in_progress", "in_review", "blocked", "done", "cancelled"];
 const MAX_ISSUE_COMMENT_PAGE_LIMIT = 500;
@@ -129,12 +127,7 @@ async function getProjectDefaultGoalId(
   projectId: string | null | undefined,
 ) {
   if (!projectId) return null;
-  const row = await db
-    .select({ goalId: projects.goalId })
-    .from(projects)
-    .where(and(eq(projects.id, projectId), eq(projects.companyId, companyId)))
-    .then((rows) => rows[0] ?? null);
-  return row?.goalId ?? null;
+  return null;
 }
 
 async function getWorkspaceInheritanceIssue(
@@ -1024,12 +1017,6 @@ export function issueService(db: Db) {
         const values = {
           ...issueData,
           originKind: issueData.originKind ?? "manual",
-          goalId: resolveIssueGoalId({
-            projectId: issueData.projectId,
-            goalId: issueData.goalId,
-            projectGoalId,
-            defaultGoalId: defaultCompanyGoal?.id ?? null,
-          }),
           ...(projectWorkspaceId ? { projectWorkspaceId } : {}),
           ...(executionWorkspaceId ? { executionWorkspaceId } : {}),
           ...(executionWorkspacePreference ? { executionWorkspacePreference } : {}),

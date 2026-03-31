@@ -999,7 +999,6 @@ export function agentRoutes(db: Db) {
         status: issue.status,
         priority: issue.priority,
         projectId: issue.projectId,
-        goalId: issue.goalId,
         parentId: issue.parentId,
         updatedAt: issue.updatedAt,
         activeRun: issue.activeRun,
@@ -1224,8 +1223,7 @@ export function agentRoutes(db: Db) {
       return;
     }
 
-    const requiresApproval = company.requireBoardApprovalForNewAgents;
-    const status = requiresApproval ? "pending_approval" : "idle";
+    const status = "idle";
     const createdAgent = await svc.create(companyId, {
       ...normalizedHireInput,
       status,

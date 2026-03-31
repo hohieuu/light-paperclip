@@ -363,7 +363,6 @@ export function issueRoutes(db: Db, storage: StorageService) {
     const workProducts = await workProductsSvc.listForIssue(issue.id);
     res.json({
       ...issue,
-      goalId: goal?.id ?? issue.goalId,
       ancestors,
       ...documentPayload,
       project: project ?? null,
@@ -403,7 +402,6 @@ export function issueRoutes(db: Db, storage: StorageService) {
         status: issue.status,
         priority: issue.priority,
         projectId: issue.projectId,
-        goalId: goal?.id ?? issue.goalId,
         parentId: issue.parentId,
         assigneeAgentId: issue.assigneeAgentId,
         assigneeUserId: issue.assigneeUserId,

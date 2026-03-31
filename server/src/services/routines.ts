@@ -4,7 +4,6 @@ import type { Db } from "@paperclipai/db";
 import {
   agents,
   companySecrets,
-  goals,
   heartbeatRuns,
   issues,
   projects,
@@ -586,7 +585,6 @@ export function routineService(db: Db, deps: { heartbeat?: IssueAssignmentWakeup
         try {
           createdIssue = await issueSvc.create(input.routine.companyId, {
             projectId: input.routine.projectId,
-            goalId: input.routine.goalId,
             parentId: input.routine.parentIssueId,
             title: input.routine.title,
             description: input.routine.description,
