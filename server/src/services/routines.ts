@@ -190,8 +190,6 @@ export function routineService(db: Db, deps: { heartbeat?: IssueAssignmentWakeup
   async function assertGoal(companyId: string, goalId: string) {
   }
 
-  }
-
   async function assertParentIssue(companyId: string, issueId: string) {
     const parentIssue = await db
       .select({ id: issues.id, companyId: issues.companyId })

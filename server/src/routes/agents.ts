@@ -1235,64 +1235,6 @@ export function agentRoutes(db: Db) {
     let approval: Awaited<ReturnType<typeof approvalsSvc.getById>> | null = null;
     const actor = getActorInfo(req);
 
-    if (false) {
-      const requestedAdapterType = normalizedHireInput.adapterType ?? agent.adapterType;
-      const requestedAdapterConfig =
-        redactEventPayload(
-          (agent.adapterConfig ?? normalizedHireInput.adapterConfig) as Record<string, unknown>,
-        ) ?? {};
-      const requestedRuntimeConfig =
-        redactEventPayload(
-          (normalizedHireInput.runtimeConfig ?? agent.runtimeConfig) as Record<string, unknown>,
-        ) ?? {};
-      const requestedMetadata =
-        redactEventPayload(
-          ((normalizedHireInput.metadata ?? agent.metadata ?? {}) as Record<string, unknown>),
-        ) ?? {};
-      approval = await approvalsSvc.create(companyId, {
-        type: "hire_agent",
-        requestedByAgentId: actor.actorType === "agent" ? actor.actorId : null,
-        requestedByUserId: actor.actorType === "user" ? actor.actorId : null,
-        status: "pending",
-        payload: {
-          name: normalizedHireInput.name,
-          role: normalizedHireInput.role,
-          title: normalizedHireInput.title ?? null,
-          icon: normalizedHireInput.icon ?? null,
-          reportsTo: normalizedHireInput.reportsTo ?? null,
-          capabilities: normalizedHireInput.capabilities ?? null,
-          adapterType: requestedAdapterType,
-          adapterConfig: requestedAdapterConfig,
-          runtimeConfig: requestedRuntimeConfig,
-          budgetMonthlyCents:
-            typeof normalizedHireInput.budgetMonthlyCents === "number"
-              ? normalizedHireInput.budgetMonthlyCents
-              : agent.budgetMonthlyCents,
-          desiredSkills: desiredSkillAssignment.desiredSkills,
-          metadata: requestedMetadata,
-          agentId: agent.id,
-          requestedByAgentId: actor.actorType === "agent" ? actor.actorId : null,
-          requestedConfigurationSnapshot: {
-            adapterType: requestedAdapterType,
-            adapterConfig: requestedAdapterConfig,
-            runtimeConfig: requestedRuntimeConfig,
-            desiredSkills: desiredSkillAssignment.desiredSkills,
-          },
-        },
-        decisionNote: null,
-        decidedByUserId: null,
-        decidedAt: null,
-        updatedAt: new Date(),
-      });
-
-      if (sourceIssueIds.length > 0) {
-        await issueApprovalsSvc.linkManyForApproval(approval.id, sourceIssueIds, {
-          agentId: actor.actorType === "agent" ? actor.actorId : null,
-          userId: actor.actorType === "user" ? actor.actorId : null,
-        });
-      }
-    }
-
     await logActivity(db, {
       companyId,
       actorType: actor.actorType,
@@ -1305,8 +1247,8 @@ export function agentRoutes(db: Db) {
       details: {
         name: agent.name,
         role: agent.role,
-        approvalId: approval?.id ?? null,
-        issueIds: sourceIssueIds,
+        approvalId: null,
+        issueIds: [],
         desiredSkills: desiredSkillAssignment.desiredSkills,
       },
     });

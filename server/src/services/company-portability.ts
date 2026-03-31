@@ -2304,6 +2304,7 @@ function buildManifestFromPackageFiles(
       description: asString(companyFrontmatter.description),
       brandColor: asString(paperclipCompany.brandColor),
       logoPath: asString(paperclipCompany.logoPath) ?? asString(paperclipCompany.logo),
+      requireBoardApprovalForNewAgents: false,
     },
     sidebar: paperclipSidebar,
     agents: [],
