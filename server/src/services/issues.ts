@@ -1782,7 +1782,7 @@ export function issueService(db: Db) {
           id: issues.id, identifier: issues.identifier, title: issues.title, description: issues.description,
           status: issues.status, priority: issues.priority,
           assigneeAgentId: issues.assigneeAgentId, projectId: issues.projectId,
-          goalId: issues.goalId, parentId: issues.parentId,
+          parentId: issues.parentId,
         }).from(issues).where(eq(issues.id, currentId)).then(r => r[0] ?? null);
         if (!parent) break;
         raw.push({
@@ -1876,18 +1876,14 @@ export function issueService(db: Db) {
         }
       }
 
-      if (goalIds.length > 0) {
-        const rows = await db.select({
-          id: goals.id, title: goals.title, description: goals.description,
-          level: goals.level, status: goals.status,
-        }).from(goals).where(inArray(goals.id, goalIds));
-        for (const r of rows) goalMap.set(r.id, r);
+      if (false) {
+        const goalIds: string[] = [];
+        const goalMap = new Map();
       }
 
       return raw.map(a => ({
         ...a,
         project: a.projectId ? projectMap.get(a.projectId) ?? null : null,
-        goal: a.goalId ? goalMap.get(a.goalId) ?? null : null,
       }));
     },
   };

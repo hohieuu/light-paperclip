@@ -188,13 +188,8 @@ export function routineService(db: Db, deps: { heartbeat?: IssueAssignmentWakeup
   }
 
   async function assertGoal(companyId: string, goalId: string) {
-    const goal = await db
-      .select({ id: goals.id, companyId: goals.companyId })
-      .from(goals)
-      .where(eq(goals.id, goalId))
-      .then((rows) => rows[0] ?? null);
-    if (!goal) throw notFound("Goal not found");
-    if (goal.companyId !== companyId) throw unprocessable("Goal must belong to same company");
+  }
+
   }
 
   async function assertParentIssue(companyId: string, issueId: string) {
