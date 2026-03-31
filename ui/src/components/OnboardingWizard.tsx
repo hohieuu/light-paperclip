@@ -5,7 +5,6 @@ import { useLocation, useNavigate, useParams } from "@/lib/router";
 import { useDialog } from "../context/DialogContext";
 import { useCompany } from "../context/CompanyContext";
 import { companiesApi } from "../api/companies";
-import { goalsApi } from "../api/goals";
 import { agentsApi } from "../api/agents";
 import { issuesApi } from "../api/issues";
 import { projectsApi } from "../api/projects";
@@ -24,11 +23,9 @@ import {
 } from "../lib/model-utils";
 import { getUIAdapter } from "../adapters";
 import { defaultCreateValues } from "./agent-config-defaults";
-import { parseOnboardingGoalInput } from "../lib/onboarding-goal";
 import {
   buildOnboardingIssuePayload,
   buildOnboardingProjectPayload,
-  selectDefaultCompanyGoalId
 } from "../lib/onboarding-launch";
 import {
   DEFAULT_CODEX_LOCAL_BYPASS_APPROVALS_AND_SANDBOX,
@@ -391,23 +388,7 @@ export function OnboardingWizard() {
       setSelectedCompanyId(company.id);
       queryClient.invalidateQueries({ queryKey: queryKeys.companies.all });
 
-      if (companyGoal.trim()) {
-        const parsedGoal = parseOnboardingGoalInput(companyGoal);
-        const goal = await goalsApi.create(company.id, {
-          title: parsedGoal.title,
-          ...(parsedGoal.description
-            ? { description: parsedGoal.description }
-            : {}),
-          level: "company",
-          status: "active"
-        });
-        setCreatedCompanyGoalId(goal.id);
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.goals.list(company.id)
-        });
-      } else {
-        setCreatedCompanyGoalId(null);
-      }
+      setCreatedCompanyGoalId(null);
 
       setStep(2);
     } catch (err) {
@@ -547,18 +528,11 @@ export function OnboardingWizard() {
     setLoading(true);
     setError(null);
     try {
-      let goalId = createdCompanyGoalId;
-      if (!goalId) {
-        const goals = await goalsApi.list(createdCompanyId);
-        goalId = selectDefaultCompanyGoalId(goals);
-        setCreatedCompanyGoalId(goalId);
-      }
-
       let projectId = createdProjectId;
       if (!projectId) {
         const project = await projectsApi.create(
           createdCompanyId,
-          buildOnboardingProjectPayload(goalId)
+          buildOnboardingProjectPayload()
         );
         projectId = project.id;
         setCreatedProjectId(projectId);

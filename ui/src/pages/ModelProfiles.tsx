@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { modelProfilesApi } from "@/api";
 import { queryKeys } from "@/lib/queryKeys";
-import { DataTable } from "@/components/DataTable";
 import { Badge } from "@/components/ui/badge";
 
 export function ModelProfiles() {
@@ -9,34 +8,6 @@ export function ModelProfiles() {
     queryKey: queryKeys.modelProfiles.list,
     queryFn: () => modelProfilesApi.list({ isActive: true }),
   });
-
-  const columns = [
-    {
-      header: "Name",
-      accessor: "name",
-    },
-    {
-      header: "Provider",
-      accessor: "provider",
-    },
-    {
-      header: "Tier",
-      accessor: "tier",
-      cell: (value: string) => (
-        <Badge variant="secondary">{value}</Badge>
-      ),
-    },
-    {
-      header: "Input Cost",
-      accessor: "inputCostPerMillionTokens",
-      cell: (value: number) => `$${(value / 100).toFixed(2)}`,
-    },
-    {
-      header: "Output Cost",
-      accessor: "outputCostPerMillionTokens",
-      cell: (value: number) => `$${(value / 100).toFixed(2)}`,
-    },
-  ];
 
   return (
     <div className="space-y-6">
@@ -49,12 +20,41 @@ export function ModelProfiles() {
 
       {isLoading ? (
         <div className="text-sm text-muted-foreground">Loading...</div>
+      ) : profiles && profiles.length > 0 ? (
+        <div className="rounded-lg border border-border overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/50 border-b border-border">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium">Name</th>
+                <th className="px-4 py-3 text-left font-medium">Provider</th>
+                <th className="px-4 py-3 text-left font-medium">Tier</th>
+                <th className="px-4 py-3 text-left font-medium">Input Cost</th>
+                <th className="px-4 py-3 text-left font-medium">Output Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {profiles.map((profile) => (
+                <tr key={profile.id} className="border-b border-border hover:bg-muted/30">
+                  <td className="px-4 py-3">{profile.name}</td>
+                  <td className="px-4 py-3">{profile.provider}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant="secondary">{profile.tier}</Badge>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    ${(profile.inputCostPerMillionTokens / 100).toFixed(4)}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    ${(profile.outputCostPerMillionTokens / 100).toFixed(4)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
-        <DataTable
-          data={profiles ?? []}
-          columns={columns}
-          keyField="id"
-        />
+        <div className="text-sm text-muted-foreground py-8 text-center">
+          No model profiles available
+        </div>
       )}
     </div>
   );
