@@ -65,19 +65,19 @@ describe("AgiloApiClient", () => {
 
     const client = new AgiloApiClient({ apiBase: "http://localhost:3100" });
 
-    await expect(client.post("/api/companies/import/preview", {})).rejects.toBeInstanceOf(ApiConnectionError);
-    await expect(client.post("/api/companies/import/preview", {})).rejects.toMatchObject({
-      url: "http://localhost:3100/api/companies/import/preview",
+    await expect(client.post("/api/preview", {})).rejects.toBeInstanceOf(ApiConnectionError);
+    await expect(client.post("/api/preview", {})).rejects.toMatchObject({
+      url: "http://localhost:3100/api/preview",
       method: "POST",
       causeMessage: "fetch failed",
     } satisfies Partial<ApiConnectionError>);
-    await expect(client.post("/api/companies/import/preview", {})).rejects.toThrow(
+    await expect(client.post("/api/preview", {})).rejects.toThrow(
       /Could not reach the Agilo API\./,
     );
-    await expect(client.post("/api/companies/import/preview", {})).rejects.toThrow(
+    await expect(client.post("/api/preview", {})).rejects.toThrow(
       /curl http:\/\/localhost:3100\/api\/health/,
     );
-    await expect(client.post("/api/companies/import/preview", {})).rejects.toThrow(
+    await expect(client.post("/api/preview", {})).rejects.toThrow(
       /pnpm dev|pnpm agilo run/,
     );
   });

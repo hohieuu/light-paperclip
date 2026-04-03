@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -51,7 +52,7 @@ describe("pi_local environment diagnostics", () => {
     await writeFakePiCommand(binDir, "success");
 
     const result = await testEnvironment({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "pi_local",
       config: {
         command: "pi",
@@ -82,7 +83,7 @@ describe("pi_local environment diagnostics", () => {
     await writeFakePiCommand(binDir, "stale-package");
 
     const result = await testEnvironment({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "pi_local",
       config: {
         command: "pi",

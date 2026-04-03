@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -50,7 +51,7 @@ describeEmbeddedPostgres("issueService.list participantAgentId", () => {
     await db.delete(projects);
     await db.delete(agents);
     await db.delete(instanceSettings);
-    await db.delete(companies);
+    // await db.delete(companies);
   });
 
   afterAll(async () => {
@@ -58,16 +59,16 @@ describeEmbeddedPostgres("issueService.list participantAgentId", () => {
   });
 
   it("returns issues an agent participated in across the supported signals", async () => {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const agentId = randomUUID();
     const otherAgentId = randomUUID();
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
 
     await db.insert(agents).values([
       {
@@ -176,15 +177,15 @@ describeEmbeddedPostgres("issueService.list participantAgentId", () => {
   });
 
   it("combines participation filtering with search", async () => {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const agentId = randomUUID();
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
 
     await db.insert(agents).values({
       id: agentId,
@@ -229,7 +230,7 @@ describeEmbeddedPostgres("issueService.list participantAgentId", () => {
   });
 
   it("filters issues by execution workspace id", async () => {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const projectId = randomUUID();
     const targetWorkspaceId = randomUUID();
     const otherWorkspaceId = randomUUID();
@@ -237,12 +238,12 @@ describeEmbeddedPostgres("issueService.list participantAgentId", () => {
     const otherLinkedIssueId = randomUUID();
     const unlinkedIssueId = randomUUID();
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
 
     await db.insert(projects).values({
       id: projectId,
@@ -309,16 +310,16 @@ describeEmbeddedPostgres("issueService.list participantAgentId", () => {
   });
 
   it("hides archived inbox issues until new external activity arrives", async () => {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const userId = "user-1";
     const otherUserId = "user-2";
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
 
     const visibleIssueId = randomUUID();
     const archivedIssueId = randomUUID();
@@ -425,7 +426,7 @@ describeEmbeddedPostgres("issueService.create workspace inheritance", () => {
     await db.delete(projects);
     await db.delete(agents);
     await db.delete(instanceSettings);
-    await db.delete(companies);
+    // await db.delete(companies);
   });
 
   afterAll(async () => {
@@ -433,18 +434,18 @@ describeEmbeddedPostgres("issueService.create workspace inheritance", () => {
   });
 
   it("inherits the parent issue workspace linkage when child workspace fields are omitted", async () => {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const projectId = randomUUID();
     const parentIssueId = randomUUID();
     const projectWorkspaceId = randomUUID();
     const executionWorkspaceId = randomUUID();
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
     await instanceSettingsService(db).updateExperimental({ enableIsolatedWorkspaces: true });
 
     await db.insert(projects).values({
@@ -509,7 +510,7 @@ describeEmbeddedPostgres("issueService.create workspace inheritance", () => {
   });
 
   it("keeps explicit workspace fields instead of inheriting the parent linkage", async () => {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const projectId = randomUUID();
     const parentIssueId = randomUUID();
     const parentProjectWorkspaceId = randomUUID();
@@ -517,12 +518,12 @@ describeEmbeddedPostgres("issueService.create workspace inheritance", () => {
     const explicitProjectWorkspaceId = randomUUID();
     const explicitExecutionWorkspaceId = randomUUID();
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
     await instanceSettingsService(db).updateExperimental({ enableIsolatedWorkspaces: true });
 
     await db.insert(projects).values({
@@ -608,18 +609,18 @@ describeEmbeddedPostgres("issueService.create workspace inheritance", () => {
   });
 
   it("inherits workspace linkage from an explicit source issue without creating a parent-child relationship", async () => {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const projectId = randomUUID();
     const sourceIssueId = randomUUID();
     const projectWorkspaceId = randomUUID();
     const executionWorkspaceId = randomUUID();
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
     await instanceSettingsService(db).updateExperimental({ enableIsolatedWorkspaces: true });
 
     await db.insert(projects).values({

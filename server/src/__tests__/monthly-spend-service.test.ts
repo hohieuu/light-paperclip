@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { companyService } from "../services/companies.ts";
 import { agentService } from "../services/agents.ts";
@@ -27,7 +28,7 @@ describe("monthly spend hydration", () => {
   it("recomputes company spentMonthlyCents from the current utc month instead of returning stale stored values", async () => {
     const dbStub = createSelectSequenceDb([
       [{
-        id: "company-1",
+        id: GLOBAL_COMPANY_ID,
         name: "Agilo",
         description: null,
         status: "active",
@@ -42,7 +43,7 @@ describe("monthly spend hydration", () => {
         updatedAt: new Date(),
       }],
       [{
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         spentMonthlyCents: 420,
       }],
     ]);
@@ -57,7 +58,7 @@ describe("monthly spend hydration", () => {
     const dbStub = createSelectSequenceDb([
       [{
         id: "agent-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         name: "Budget Agent",
         role: "general",
         title: null,

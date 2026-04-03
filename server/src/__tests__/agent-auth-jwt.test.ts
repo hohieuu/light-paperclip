@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLocalAgentJwt, verifyLocalAgentJwt } from "../agent-auth-jwt.js";
 
@@ -36,13 +37,13 @@ describe("agent local JWT", () => {
 
   it("creates and verifies a token", () => {
     vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
-    const token = createLocalAgentJwt("agent-1", "company-1", "claude_local", "run-1");
+    const token = createLocalAgentJwt("agent-1", GLOBAL_COMPANY_ID, "claude_local", "run-1");
     expect(typeof token).toBe("string");
 
     const claims = verifyLocalAgentJwt(token!);
     expect(claims).toMatchObject({
       sub: "agent-1",
-      company_id: "company-1",
+      company_id: GLOBAL_COMPANY_ID,
       adapter_type: "claude_local",
       run_id: "run-1",
       iss: "agilo",
@@ -52,7 +53,7 @@ describe("agent local JWT", () => {
 
   it("returns null when secret is missing", () => {
     process.env[secretEnv] = "";
-    const token = createLocalAgentJwt("agent-1", "company-1", "claude_local", "run-1");
+    const token = createLocalAgentJwt("agent-1", GLOBAL_COMPANY_ID, "claude_local", "run-1");
     expect(token).toBeNull();
     expect(verifyLocalAgentJwt("abc.def.ghi")).toBeNull();
   });
@@ -60,7 +61,7 @@ describe("agent local JWT", () => {
   it("rejects expired tokens", () => {
     process.env[ttlEnv] = "1";
     vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
-    const token = createLocalAgentJwt("agent-1", "company-1", "claude_local", "run-1");
+    const token = createLocalAgentJwt("agent-1", GLOBAL_COMPANY_ID, "claude_local", "run-1");
 
     vi.setSystemTime(new Date("2026-01-01T00:00:05.000Z"));
     expect(verifyLocalAgentJwt(token!)).toBeNull();
@@ -70,7 +71,7 @@ describe("agent local JWT", () => {
     process.env[issuerEnv] = "custom-issuer";
     process.env[audienceEnv] = "custom-audience";
     vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
-    const token = createLocalAgentJwt("agent-1", "company-1", "codex_local", "run-1");
+    const token = createLocalAgentJwt("agent-1", GLOBAL_COMPANY_ID, "codex_local", "run-1");
 
     process.env[issuerEnv] = "agilo";
     process.env[audienceEnv] = "agilo-api";

@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { and, eq } from "drizzle-orm";
 import { Router } from "express";
 import type { Db } from "@agilo/db";
@@ -20,8 +21,8 @@ export function executionWorkspaceRoutes(db: Db) {
   const svc = executionWorkspaceService(db);
   const workspaceOperationsSvc = workspaceOperationService(db);
 
-  router.get("/companies/:companyId/execution-workspaces", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/execution-workspaces", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const workspaces = await svc.list(companyId, {
       projectId: req.query.projectId as string | undefined,

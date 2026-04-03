@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { projectsApi } from "../api/projects";
-import { useCompany } from "../context/CompanyContext";
 import { useDialog } from "../context/DialogContext";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
 import { queryKeys } from "../lib/queryKeys";
@@ -14,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Hexagon, Plus } from "lucide-react";
 
 export function Projects() {
-  const { selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const { openNewProject } = useDialog();
   const { setBreadcrumbs } = useBreadcrumbs();
 

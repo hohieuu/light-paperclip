@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -46,7 +47,7 @@ function createApp() {
     (req as any).actor = {
       type: "board",
       userId: "user-1",
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
       source: "session",
       isInstanceAdmin: false,
     };
@@ -69,7 +70,7 @@ describe("approval routes idempotent retries", () => {
     mockApprovalService.approve.mockResolvedValue({
       approval: {
         id: "approval-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         type: "hire_agent",
         status: "approved",
         payload: {},
@@ -92,7 +93,7 @@ describe("approval routes idempotent retries", () => {
     mockApprovalService.reject.mockResolvedValue({
       approval: {
         id: "approval-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         type: "hire_agent",
         status: "rejected",
         payload: {},

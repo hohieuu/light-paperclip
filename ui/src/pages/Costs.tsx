@@ -25,7 +25,6 @@ import { PageTabBar } from "../components/PageTabBar";
 import { ProviderQuotaCard } from "../components/ProviderQuotaCard";
 import { StatusBadge } from "../components/StatusBadge";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
-import { useCompany } from "../context/CompanyContext";
 import { useDateRange, PRESET_KEYS, PRESET_LABELS } from "../hooks/useDateRange";
 import { queryKeys } from "../lib/queryKeys";
 import { billingTypeDisplayName, cn, formatCents, formatTokens, providerDisplayName } from "../lib/utils";
@@ -147,7 +146,7 @@ function FinanceSummaryCard({
 }
 
 export function Costs() {
-  const { selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const { setBreadcrumbs } = useBreadcrumbs();
   const queryClient = useQueryClient();
 

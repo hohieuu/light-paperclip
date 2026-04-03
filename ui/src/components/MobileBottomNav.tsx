@@ -7,7 +7,6 @@ import {
   Users,
   Inbox,
 } from "lucide-react";
-import { useCompany } from "../context/CompanyContext";
 import { useDialog } from "../context/DialogContext";
 import { cn } from "../lib/utils";
 import { useInboxBadge } from "../hooks/useInboxBadge";
@@ -35,7 +34,7 @@ type MobileNavItem = MobileNavLinkItem | MobileNavActionItem;
 
 export function MobileBottomNav({ visible }: MobileBottomNavProps) {
   const location = useLocation();
-  const { selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const { openNewIssue } = useDialog();
   const inboxBadge = useInboxBadge(selectedCompanyId);
 

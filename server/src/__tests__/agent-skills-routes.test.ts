@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -84,7 +85,7 @@ function createDb(requireBoardApprovalForNewAgents = false) {
       from: vi.fn(() => ({
         where: vi.fn(async () => [
           {
-            id: "company-1",
+            id: GLOBAL_COMPANY_ID,
             requireBoardApprovalForNewAgents,
           },
         ]),
@@ -100,7 +101,7 @@ function createApp(db: Record<string, unknown> = createDb()) {
     (req as any).actor = {
       type: "board",
       userId: "local-board",
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
       source: "local_implicit",
       isInstanceAdmin: false,
     };
@@ -114,7 +115,7 @@ function createApp(db: Record<string, unknown> = createDb()) {
 function makeAgent(adapterType: string) {
   return {
     id: "11111111-1111-4111-8111-111111111111",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     name: "Agent",
     role: "engineer",
     title: "Engineer",
@@ -184,7 +185,7 @@ describe("agent skill routes", () => {
     }));
     mockApprovalService.create.mockImplementation(async (_companyId: string, input: Record<string, unknown>) => ({
       id: "approval-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       type: "hire_agent",
       status: "pending",
       payload: input.payload ?? {},
@@ -218,7 +219,7 @@ describe("agent skill routes", () => {
       .get("/api/agents/11111111-1111-4111-8111-111111111111/skills?companyId=company-1");
 
     expect(res.status, JSON.stringify(res.body)).toBe(200);
-    expect(mockCompanySkillService.listRuntimeSkillEntries).toHaveBeenCalledWith("company-1", {
+    expect(mockCompanySkillService.listRuntimeSkillEntries).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, {
       materializeMissing: false,
     });
     expect(mockAdapter.listSkills).toHaveBeenCalledWith(
@@ -246,7 +247,7 @@ describe("agent skill routes", () => {
       .get("/api/agents/11111111-1111-4111-8111-111111111111/skills?companyId=company-1");
 
     expect(res.status, JSON.stringify(res.body)).toBe(200);
-    expect(mockCompanySkillService.listRuntimeSkillEntries).toHaveBeenCalledWith("company-1", {
+    expect(mockCompanySkillService.listRuntimeSkillEntries).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, {
       materializeMissing: true,
     });
   });
@@ -259,7 +260,7 @@ describe("agent skill routes", () => {
       .send({ desiredSkills: ["agilo/agilo/agilo"] });
 
     expect(res.status, JSON.stringify(res.body)).toBe(200);
-    expect(mockCompanySkillService.listRuntimeSkillEntries).toHaveBeenCalledWith("company-1", {
+    expect(mockCompanySkillService.listRuntimeSkillEntries).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, {
       materializeMissing: false,
     });
     expect(mockAdapter.syncSkills).toHaveBeenCalled();
@@ -273,7 +274,7 @@ describe("agent skill routes", () => {
       .send({ desiredSkills: ["agilo"] });
 
     expect(res.status, JSON.stringify(res.body)).toBe(200);
-    expect(mockCompanySkillService.resolveRequestedSkillKeys).toHaveBeenCalledWith("company-1", ["agilo"]);
+    expect(mockCompanySkillService.resolveRequestedSkillKeys).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, ["agilo"]);
     expect(mockAgentService.update).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
@@ -289,7 +290,7 @@ describe("agent skill routes", () => {
 
   it("persists canonical desired skills when creating an agent directly", async () => {
     const res = await request(createApp())
-      .post("/api/companies/company-1/agents")
+      .post("/api/agents")
       .send({
         name: "QA Agent",
         role: "engineer",
@@ -299,9 +300,9 @@ describe("agent skill routes", () => {
       });
 
     expect(res.status, JSON.stringify(res.body)).toBe(201);
-    expect(mockCompanySkillService.resolveRequestedSkillKeys).toHaveBeenCalledWith("company-1", ["agilo"]);
+    expect(mockCompanySkillService.resolveRequestedSkillKeys).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, ["agilo"]);
     expect(mockAgentService.create).toHaveBeenCalledWith(
-      "company-1",
+      GLOBAL_COMPANY_ID,
       expect.objectContaining({
         adapterConfig: expect.objectContaining({
           agiloSkillSync: expect.objectContaining({
@@ -314,7 +315,7 @@ describe("agent skill routes", () => {
 
   it("materializes a managed AGENTS.md for directly created local agents", async () => {
     const res = await request(createApp())
-      .post("/api/companies/company-1/agents")
+      .post("/api/agents")
       .send({
         name: "QA Agent",
         role: "engineer",
@@ -352,7 +353,7 @@ describe("agent skill routes", () => {
 
   it("materializes the bundled CEO instruction set for default CEO agents", async () => {
     const res = await request(createApp())
-      .post("/api/companies/company-1/agents")
+      .post("/api/agents")
       .send({
         name: "CEO",
         role: "ceo",
@@ -379,7 +380,7 @@ describe("agent skill routes", () => {
 
   it("materializes the bundled default instruction set for non-CEO agents with no prompt template", async () => {
     const res = await request(createApp())
-      .post("/api/companies/company-1/agents")
+      .post("/api/agents")
       .send({
         name: "Engineer",
         role: "engineer",

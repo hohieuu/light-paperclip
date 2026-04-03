@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -12,7 +13,7 @@ async function makeTempDir(prefix: string): Promise<string> {
 }
 
 describe("codex local skill sync", () => {
-  const agiloKey = "agilo/agilo/agilo";
+  const agiloKey = "agilo/agilo/paperclip";
   const cleanupDirs = new Set<string>();
 
   afterEach(async () => {
@@ -26,7 +27,7 @@ describe("codex local skill sync", () => {
 
     const ctx = {
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "codex_local",
       config: {
         env: {
@@ -52,7 +53,7 @@ describe("codex local skill sync", () => {
 
     const configuredCtx = {
       agentId: "agent-2",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "codex_local",
       config: {
         env: {
@@ -67,7 +68,7 @@ describe("codex local skill sync", () => {
     const after = await syncCodexSkills(configuredCtx, [agiloKey]);
     expect(after.mode).toBe("ephemeral");
     expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("configured");
-    await expect(fs.lstat(path.join(codexHome, "skills", "agilo"))).rejects.toMatchObject({
+    await expect(fs.lstat(path.join(codexHome, "skills", "paperclip"))).rejects.toMatchObject({
       code: "ENOENT",
     });
   });
@@ -78,7 +79,7 @@ describe("codex local skill sync", () => {
 
     const configuredCtx = {
       agentId: "agent-2",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "codex_local",
       config: {
         env: {
@@ -101,21 +102,21 @@ describe("codex local skill sync", () => {
 
     const snapshot = await listCodexSkills({
       agentId: "agent-3",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "codex_local",
       config: {
         env: {
           CODEX_HOME: codexHome,
         },
         agiloSkillSync: {
-          desiredSkills: ["agilo"],
+          desiredSkills: ["paperclip"],
         },
       },
     });
 
     expect(snapshot.warnings).toEqual([]);
     expect(snapshot.desiredSkills).toContain(agiloKey);
-    expect(snapshot.desiredSkills).not.toContain("agilo");
+    expect(snapshot.desiredSkills).not.toContain("paperclip");
     expect(snapshot.entries.find((entry) => entry.key === agiloKey)?.state).toBe("configured");
     expect(snapshot.entries.find((entry) => entry.key === "agilo")).toBeUndefined();
   });

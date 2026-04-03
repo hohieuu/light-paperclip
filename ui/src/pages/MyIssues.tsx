@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { issuesApi } from "../api/issues";
-import { useCompany } from "../context/CompanyContext";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
 import { queryKeys } from "../lib/queryKeys";
 import { StatusIcon } from "../components/StatusIcon";
@@ -13,7 +12,7 @@ import { formatDate } from "../lib/utils";
 import { ListTodo } from "lucide-react";
 
 export function MyIssues() {
-  const { selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const { setBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {

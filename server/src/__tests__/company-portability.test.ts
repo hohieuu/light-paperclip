@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { execFileSync } from "node:child_process";
 import { promises as fs } from "node:fs";
 import os from "node:os";
@@ -109,7 +110,7 @@ describe("company portability", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     companySvc.getById.mockResolvedValue({
-      id: "company-1",
+      id: GLOBAL_COMPANY_ID,
       name: "Agilo",
       description: null,
       issuePrefix: "PAP",
@@ -200,7 +201,7 @@ describe("company portability", () => {
     const companySkills = [
       {
         id: "skill-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         key: agiloKey,
         slug: "agilo",
         name: "agilo",
@@ -226,7 +227,7 @@ describe("company portability", () => {
       },
       {
         id: "skill-2",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         key: companyPlaybookKey,
         slug: "company-playbook",
         name: "company-playbook",
@@ -286,7 +287,7 @@ describe("company portability", () => {
     accessSvc.listActiveUserMemberships.mockResolvedValue([
       {
         id: "membership-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         principalType: "user",
         principalId: "user-1",
         membershipRole: "owner",
@@ -340,7 +341,7 @@ describe("company portability", () => {
   it("exports referenced skills as stubs by default with sanitized Agilo extension data", async () => {
     const portability = companyPortabilityService({} as any);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -386,7 +387,7 @@ describe("company portability", () => {
     projectSvc.list.mockResolvedValue([
       {
         id: "project-2",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         name: "Zulu",
         urlKey: "zulu",
         description: null,
@@ -400,7 +401,7 @@ describe("company portability", () => {
       },
       {
         id: "project-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         name: "Alpha",
         urlKey: "alpha",
         description: null,
@@ -414,7 +415,7 @@ describe("company portability", () => {
       },
     ]);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -441,7 +442,7 @@ describe("company portability", () => {
   it("expands referenced skills when requested", async () => {
     const portability = companyPortabilityService({} as any);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -459,7 +460,7 @@ describe("company portability", () => {
   it("exports only selected skills when skills filter is provided", async () => {
     const portability = companyPortabilityService({} as any);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -477,7 +478,7 @@ describe("company portability", () => {
   it("warns and exports all skills when skills filter matches nothing", async () => {
     const portability = companyPortabilityService({} as any);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -499,7 +500,7 @@ describe("company portability", () => {
       }),
     };
     companySvc.getById.mockResolvedValue({
-      id: "company-1",
+      id: GLOBAL_COMPANY_ID,
       name: "Agilo",
       description: null,
       issuePrefix: "PAP",
@@ -510,7 +511,7 @@ describe("company portability", () => {
     });
     assetSvc.getById.mockResolvedValue({
       id: "logo-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       objectKey: "assets/companies/logo-1",
       contentType: "image/png",
       originalFilename: "logo.png",
@@ -518,7 +519,7 @@ describe("company portability", () => {
 
     const portability = companyPortabilityService({} as any, storage as any);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: false,
@@ -527,7 +528,7 @@ describe("company portability", () => {
       },
     });
 
-    expect(storage.getObject).toHaveBeenCalledWith("company-1", "assets/companies/logo-1");
+    expect(storage.getObject).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, "assets/companies/logo-1");
     expect(exported.files["images/company-logo.png"]).toEqual({
       encoding: "base64",
       data: Buffer.from("png-bytes").toString("base64"),
@@ -566,7 +567,7 @@ describe("company portability", () => {
     companySkillSvc.listFull.mockResolvedValue([
       {
         id: "skill-local",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         key: "local/36dfd631da/release-changelog",
         slug: "release-changelog",
         name: "release-changelog",
@@ -584,7 +585,7 @@ describe("company portability", () => {
       },
       {
         id: "skill-agilo",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         key: "agilo/agilo/release-changelog",
         slug: "release-changelog",
         name: "release-changelog",
@@ -607,7 +608,7 @@ describe("company portability", () => {
       },
     ]);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -655,7 +656,7 @@ describe("company portability", () => {
       },
     ]);
 
-    const preview = await portability.previewExport("company-1", {
+    const preview = await portability.previewExport(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -691,7 +692,7 @@ describe("company portability", () => {
         workspaces: [
           {
             id: "workspace-1",
-            companyId: "company-1",
+            companyId: GLOBAL_COMPANY_ID,
             projectId: "project-1",
             name: "Main Repo",
             sourceType: "git_repo",
@@ -714,7 +715,7 @@ describe("company portability", () => {
           },
           {
             id: "workspace-2",
-            companyId: "company-1",
+            companyId: GLOBAL_COMPANY_ID,
             projectId: "project-1",
             name: "Local Scratch",
             sourceType: "local_path",
@@ -757,7 +758,7 @@ describe("company portability", () => {
       },
     ]);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: false,
@@ -889,7 +890,7 @@ describe("company portability", () => {
         workspaces: [
           {
             id: "workspace-1",
-            companyId: "company-1",
+            companyId: GLOBAL_COMPANY_ID,
             projectId: "project-1",
             name: "agilo",
             sourceType: "local_path",
@@ -930,7 +931,7 @@ describe("company portability", () => {
       },
     ]);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: false,
         agents: false,
@@ -963,7 +964,7 @@ describe("company portability", () => {
         workspaces: [
           {
             id: "workspace-1",
-            companyId: "company-1",
+            companyId: GLOBAL_COMPANY_ID,
             projectId: "project-1",
             name: "Local Scratch",
             sourceType: "local_path",
@@ -1034,7 +1035,7 @@ describe("company portability", () => {
       },
     ]);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: false,
         agents: false,
@@ -1052,7 +1053,7 @@ describe("company portability", () => {
   it("reads env inputs back from .agilo.yaml during preview import", async () => {
     const portability = companyPortabilityService({} as any);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -1264,7 +1265,7 @@ describe("company portability", () => {
       },
     ]);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -1296,7 +1297,7 @@ describe("company portability", () => {
       name: "ClaudeCoder",
     });
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -1367,7 +1368,7 @@ describe("company portability", () => {
     });
 
     const portability = companyPortabilityService({} as any, storage as any);
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -1437,7 +1438,7 @@ describe("company portability", () => {
       name: "ClaudeCoder",
     });
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -1468,11 +1469,11 @@ describe("company portability", () => {
       collisionStrategy: "rename",
     }, null, {
       mode: "agent_safe",
-      sourceCompanyId: "company-1",
+      sourceCompanyId: GLOBAL_COMPANY_ID,
     });
 
-    expect(accessSvc.listActiveUserMemberships).toHaveBeenCalledWith("company-1");
-    expect(accessSvc.copyActiveUserMemberships).toHaveBeenCalledWith("company-1", "company-imported");
+    expect(accessSvc.listActiveUserMemberships).toHaveBeenCalledWith(GLOBAL_COMPANY_ID);
+    expect(accessSvc.copyActiveUserMemberships).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, "company-imported");
     expect(accessSvc.ensureMembership).not.toHaveBeenCalledWith("company-imported", "user", expect.anything(), "owner", "active");
     const textOnlyFiles = Object.fromEntries(Object.entries(exported.files).filter(([, v]) => typeof v === "string"));
     expect(companySkillSvc.importPackageFiles).toHaveBeenCalledWith("company-imported", textOnlyFiles, {
@@ -1494,7 +1495,7 @@ describe("company portability", () => {
       runtimeConfig: input.runtimeConfig,
     }));
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -1538,7 +1539,7 @@ describe("company portability", () => {
   it("imports only selected files and leaves unchecked company metadata alone", async () => {
     const portability = companyPortabilityService({} as any);
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -1550,7 +1551,7 @@ describe("company portability", () => {
     agentSvc.list.mockResolvedValue([]);
     projectSvc.list.mockResolvedValue([]);
     companySvc.getById.mockResolvedValue({
-      id: "company-1",
+      id: GLOBAL_COMPANY_ID,
       name: "Agilo",
       description: "Existing company",
       brandColor: "#123456",
@@ -1576,7 +1577,7 @@ describe("company portability", () => {
       selectedFiles: ["agents/cmo/AGENTS.md"],
       target: {
         mode: "existing_company",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       agents: "all",
       collisionStrategy: "rename",
@@ -1584,7 +1585,7 @@ describe("company portability", () => {
 
     expect(companySvc.update).not.toHaveBeenCalled();
     expect(companySkillSvc.importPackageFiles).toHaveBeenCalledWith(
-      "company-1",
+      GLOBAL_COMPANY_ID,
       expect.objectContaining({
         "COMPANY.md": expect.any(String),
         "agents/cmo/AGENTS.md": expect.any(String),
@@ -1594,7 +1595,7 @@ describe("company portability", () => {
       },
     );
     expect(companySkillSvc.importPackageFiles).toHaveBeenCalledWith(
-      "company-1",
+      GLOBAL_COMPANY_ID,
       expect.not.objectContaining({
         "agents/claudecoder/AGENTS.md": expect.any(String),
       }),
@@ -1603,7 +1604,7 @@ describe("company portability", () => {
       },
     );
     expect(agentSvc.create).toHaveBeenCalledTimes(1);
-    expect(agentSvc.create).toHaveBeenCalledWith("company-1", expect.objectContaining({
+    expect(agentSvc.create).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, expect.objectContaining({
       name: "CMO",
       runtimeConfig: {
         heartbeat: {
@@ -1636,7 +1637,7 @@ describe("company portability", () => {
       name: "ClaudeCoder",
     });
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,
@@ -1716,7 +1717,7 @@ describe("company portability", () => {
       name: "ClaudeCoder",
     });
 
-    const exported = await portability.exportBundle("company-1", {
+    const exported = await portability.exportBundle(GLOBAL_COMPANY_ID, {
       include: {
         company: true,
         agents: true,

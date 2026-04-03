@@ -12,7 +12,6 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useCompany } from "../context/CompanyContext";
 import { useDialog } from "../context/DialogContext";
 import { useSidebar } from "../context/SidebarContext";
 import { authApi } from "../api/auth";
@@ -34,7 +33,6 @@ type ProjectSidebarSlot = ReturnType<typeof usePluginSlots>["slots"][number];
 function SortableProjectItem({
   activeProjectRef,
   companyId,
-  companyPrefix,
   isMobile,
   project,
   projectSidebarSlots,
@@ -42,7 +40,7 @@ function SortableProjectItem({
 }: {
   activeProjectRef: string | null;
   companyId: string | null;
-  companyPrefix: string | null;
+  
   isMobile: boolean;
   project: Project;
   projectSidebarSlots: ProjectSidebarSlot[];
@@ -99,7 +97,6 @@ function SortableProjectItem({
                 slot={slot}
                 context={{
                   companyId,
-                  companyPrefix,
                   projectId: project.id,
                   projectRef: routeRef,
                   entityId: project.id,
@@ -117,7 +114,7 @@ function SortableProjectItem({
 
 export function SidebarProjects() {
   const [open, setOpen] = useState(true);
-  const { selectedCompany, selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const selectedCompany: any = null;
   const { openNewProject } = useDialog();
   const { isMobile, setSidebarOpen } = useSidebar();
   const location = useLocation();

@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -47,7 +48,7 @@ vi.mock("../services/index.js", () => ({
 function createCompany() {
   const now = new Date("2026-03-19T02:00:00.000Z");
   return {
-    id: "company-1",
+    id: GLOBAL_COMPANY_ID,
     name: "Agilo",
     description: null,
     status: "active",
@@ -58,7 +59,7 @@ function createCompany() {
     requireBoardApprovalForNewAgents: false,
     brandColor: "#123456",
     logoAssetId: "11111111-1111-4111-8111-111111111111",
-    logoUrl: "/api/assets/11111111-1111-4111-8111-111111111111/content",
+    logoUrl: "/api/companies/company-1/assets/11111111-1111-4111-8111-111111111111/content",
     createdAt: now,
     updatedAt: now,
   };
@@ -86,13 +87,13 @@ describe("PATCH /api/companies/:companyId/branding", () => {
   it("rejects non-CEO agent callers", async () => {
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       role: "engineer",
     });
     const app = createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       source: "agent_key",
       runId: "run-1",
     });
@@ -110,14 +111,14 @@ describe("PATCH /api/companies/:companyId/branding", () => {
     const company = createCompany();
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       role: "ceo",
     });
     mockCompanyService.update.mockResolvedValue(company);
     const app = createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       source: "agent_key",
       runId: "run-1",
     });
@@ -131,14 +132,14 @@ describe("PATCH /api/companies/:companyId/branding", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.logoAssetId).toBe(company.logoAssetId);
-    expect(mockCompanyService.update).toHaveBeenCalledWith("company-1", {
+    expect(mockCompanyService.update).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, {
       logoAssetId: "11111111-1111-4111-8111-111111111111",
       brandColor: "#123456",
     });
     expect(mockLogActivity).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         actorType: "agent",
         actorId: "agent-1",
         agentId: "agent-1",

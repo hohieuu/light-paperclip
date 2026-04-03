@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { afterEach, describe, expect, it } from "vitest";
 import os from "node:os";
 import path from "node:path";
@@ -28,14 +29,14 @@ describe("local disk storage provider", () => {
     const service = createStorageService(createLocalDiskStorageProvider(root));
     const content = Buffer.from("hello image bytes", "utf8");
     const stored = await service.putFile({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       namespace: "issues/issue-1",
       originalFilename: "demo.png",
       contentType: "image/png",
       body: content,
     });
 
-    const fetched = await service.getObject("company-1", stored.objectKey);
+    const fetched = await service.getObject(GLOBAL_COMPANY_ID, stored.objectKey);
     const fetchedBody = await readStreamToBuffer(fetched.stream);
 
     expect(fetchedBody.toString("utf8")).toBe("hello image bytes");
@@ -64,15 +65,15 @@ describe("local disk storage provider", () => {
 
     const service = createStorageService(createLocalDiskStorageProvider(root));
     const stored = await service.putFile({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       namespace: "issues/issue-1",
       originalFilename: "demo.png",
       contentType: "image/png",
       body: Buffer.from("hello", "utf8"),
     });
 
-    await service.deleteObject("company-1", stored.objectKey);
-    await service.deleteObject("company-1", stored.objectKey);
-    await expect(service.getObject("company-1", stored.objectKey)).rejects.toMatchObject({ status: 404 });
+    await service.deleteObject(GLOBAL_COMPANY_ID, stored.objectKey);
+    await service.deleteObject(GLOBAL_COMPANY_ID, stored.objectKey);
+    await expect(service.getObject(GLOBAL_COMPANY_ID, stored.objectKey)).rejects.toMatchObject({ status: 404 });
   });
 });

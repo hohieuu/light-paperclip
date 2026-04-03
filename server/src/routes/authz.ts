@@ -19,15 +19,8 @@ export function assertCompanyAccess(req: Request, companyId: string) {
   if (req.actor.type === "none") {
     throw unauthorized();
   }
-  if (req.actor.type === "agent" && req.actor.companyId !== companyId) {
-    throw forbidden("Agent key cannot access another company");
-  }
-  if (req.actor.type === "board" && req.actor.source !== "local_implicit" && !req.actor.isInstanceAdmin) {
-    const allowedCompanies = req.actor.companyIds ?? [];
-    if (!allowedCompanies.includes(companyId)) {
-      throw forbidden("User does not have access to this company");
-    }
-  }
+  // With the Global Singleton approach, all authenticated actors have access to the global company.
+  return;
 }
 
 export function getActorInfo(req: Request) {

@@ -15,7 +15,7 @@ export type CompanyStats = Record<string, { agentCount: number; issueCount: numb
 
 export const companiesApi = {
   list: () => api.get<Company[]>("/companies"),
-  get: (companyId: string) => api.get<Company>(`/companies/${companyId}`),
+  get: () => api.get<Company>(`/companies/global`),
   stats: () => api.get<CompanyStats>("/companies/stats"),
   create: (data: {
     name: string;
@@ -24,33 +24,29 @@ export const companiesApi = {
   }) =>
     api.post<Company>("/companies", data),
   update: (
-    companyId: string,
     data: Partial<
       Pick<
         Company,
         "name" | "description" | "status" | "budgetMonthlyCents" | "requireBoardApprovalForNewAgents" | "brandColor" | "logoAssetId"
       >
     >,
-  ) => api.patch<Company>(`/companies/${companyId}`, data),
-  updateBranding: (companyId: string, data: UpdateCompanyBranding) =>
-    api.patch<Company>(`/companies/${companyId}/branding`, data),
-  archive: (companyId: string) => api.post<Company>(`/companies/${companyId}/archive`, {}),
-  remove: (companyId: string) => api.delete<{ ok: true }>(`/companies/${companyId}`),
+  ) => api.patch<Company>(`/companies/global`, data),
+  updateBranding: (data: UpdateCompanyBranding) =>
+    api.patch<Company>(`/companies/global/branding`, data),
+  archive: () => api.post<Company>(`/companies/global/archive`, {}),
+  remove: () => api.delete<{ ok: true }>(`/companies/global`),
   exportBundle: (
-    companyId: string,
     data: CompanyPortabilityExportRequest,
   ) =>
-    api.post<CompanyPortabilityExportResult>(`/companies/${companyId}/export`, data),
+    api.post<CompanyPortabilityExportResult>(`/companies/global/export`, data),
   exportPreview: (
-    companyId: string,
     data: CompanyPortabilityExportRequest,
   ) =>
-    api.post<CompanyPortabilityExportPreviewResult>(`/companies/${companyId}/exports/preview`, data),
+    api.post<CompanyPortabilityExportPreviewResult>(`/companies/global/exports/preview`, data),
   exportPackage: (
-    companyId: string,
     data: CompanyPortabilityExportRequest,
   ) =>
-    api.post<CompanyPortabilityExportResult>(`/companies/${companyId}/exports`, data),
+    api.post<CompanyPortabilityExportResult>(`/companies/global/exports`, data),
   importPreview: (data: CompanyPortabilityPreviewRequest) =>
     api.post<CompanyPortabilityPreviewResult>("/companies/import/preview", data),
   importBundle: (data: CompanyPortabilityImportRequest) =>

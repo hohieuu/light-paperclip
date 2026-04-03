@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -209,7 +210,7 @@ describe("worktree helpers", () => {
             getObject: vi.fn().mockResolvedValue(expected),
           },
         ],
-        "company-1",
+        GLOBAL_COMPANY_ID,
         "company-1/issues/issue-1/missing.png",
       ),
     ).resolves.toEqual(expected);
@@ -227,7 +228,7 @@ describe("worktree helpers", () => {
             getObject: vi.fn().mockRejectedValue(Object.assign(new Error("missing"), { status: 404 })),
           },
         ],
-        "company-1",
+        GLOBAL_COMPANY_ID,
         "company-1/issues/issue-1/missing.png",
       ),
     ).resolves.toBeNull();

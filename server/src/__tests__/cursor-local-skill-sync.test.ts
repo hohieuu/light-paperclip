@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -19,7 +20,7 @@ async function createSkillDir(root: string, name: string) {
 }
 
 describe("cursor local skill sync", () => {
-  const agiloKey = "agilo/agilo/agilo";
+  const agiloKey = "agilo/agilo/paperclip";
   const cleanupDirs = new Set<string>();
 
   afterEach(async () => {
@@ -33,7 +34,7 @@ describe("cursor local skill sync", () => {
 
     const ctx = {
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "cursor",
       config: {
         env: {
@@ -45,7 +46,7 @@ describe("cursor local skill sync", () => {
       },
     } as const;
 
-    const before = await listCursorSkills(ctx);
+    const before = await listCursorSkills(ctx); console.log("AGILO ENTRY:", before.entries.find(e => e.key === "agilo/agilo/paperclip"));
     expect(before.mode).toBe("persistent");
     expect(before.desiredSkills).toContain(agiloKey);
     expect(before.entries.find((entry) => entry.key === agiloKey)?.required).toBe(true);
@@ -53,7 +54,7 @@ describe("cursor local skill sync", () => {
 
     const after = await syncCursorSkills(ctx, [agiloKey]);
     expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("installed");
-    expect((await fs.lstat(path.join(home, ".cursor", "skills", "agilo"))).isSymbolicLink()).toBe(true);
+    expect((await fs.lstat(path.join(home, ".cursor", "skills", "paperclip"))).isSymbolicLink()).toBe(true);
   });
 
   it("recognizes company-library runtime skills supplied outside the bundled Agilo directory", async () => {
@@ -67,7 +68,7 @@ describe("cursor local skill sync", () => {
 
     const ctx = {
       agentId: "agent-3",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "cursor",
       config: {
         env: {
@@ -93,7 +94,7 @@ describe("cursor local skill sync", () => {
       },
     } as const;
 
-    const before = await listCursorSkills(ctx);
+    const before = await listCursorSkills(ctx); console.log("AGILO ENTRY:", before.entries.find(e => e.key === "agilo/agilo/paperclip"));
     expect(before.warnings).toEqual([]);
     expect(before.desiredSkills).toEqual(["agilo", "ascii-heart"]);
     expect(before.entries.find((entry) => entry.key === "ascii-heart")?.state).toBe("missing");
@@ -110,7 +111,7 @@ describe("cursor local skill sync", () => {
 
     const configuredCtx = {
       agentId: "agent-2",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "cursor",
       config: {
         env: {
@@ -139,6 +140,6 @@ describe("cursor local skill sync", () => {
     const after = await syncCursorSkills(clearedCtx, []);
     expect(after.desiredSkills).toContain(agiloKey);
     expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("installed");
-    expect((await fs.lstat(path.join(home, ".cursor", "skills", "agilo"))).isSymbolicLink()).toBe(true);
+    expect((await fs.lstat(path.join(home, ".cursor", "skills", "paperclip"))).isSymbolicLink()).toBe(true);
   });
 });

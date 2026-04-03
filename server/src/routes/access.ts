@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import {
   createHash,
   generateKeyPairSync,
@@ -1934,10 +1935,10 @@ export function accessRoutes(
   });
 
   router.post(
-    "/companies/:companyId/invites",
+    "/invites",
     validate(createCompanyInviteSchema),
     async (req, res) => {
-      const companyId = req.params.companyId as string;
+      const companyId = GLOBAL_COMPANY_ID;
       await assertCompanyPermission(req, companyId, "users:invite");
       const { token, created, normalizedAgentMessage } =
         await createCompanyInviteForCompany({
@@ -1986,10 +1987,10 @@ export function accessRoutes(
   );
 
   router.post(
-    "/companies/:companyId/openclaw/invite-prompt",
+    "/openclaw/invite-prompt",
     validate(createOpenClawInvitePromptSchema),
     async (req, res) => {
-      const companyId = req.params.companyId as string;
+      const companyId = GLOBAL_COMPANY_ID;
       await assertCanGenerateOpenClawInvitePrompt(req, companyId);
       const { token, created, normalizedAgentMessage } =
         await createCompanyInviteForCompany({
@@ -2576,8 +2577,8 @@ export function accessRoutes(
     res.json(revoked);
   });
 
-  router.get("/companies/:companyId/join-requests", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/join-requests", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCompanyPermission(req, companyId, "joins:approve");
     const query = listJoinRequestsQuerySchema.parse(req.query);
     const all = await db
@@ -2595,9 +2596,9 @@ export function accessRoutes(
   });
 
   router.post(
-    "/companies/:companyId/join-requests/:requestId/approve",
+    "/join-requests/:requestId/approve",
     async (req, res) => {
-      const companyId = req.params.companyId as string;
+      const companyId = GLOBAL_COMPANY_ID;
       const requestId = req.params.requestId as string;
       await assertCompanyPermission(req, companyId, "joins:approve");
 
@@ -2741,9 +2742,9 @@ export function accessRoutes(
   );
 
   router.post(
-    "/companies/:companyId/join-requests/:requestId/reject",
+    "/join-requests/:requestId/reject",
     async (req, res) => {
-      const companyId = req.params.companyId as string;
+      const companyId = GLOBAL_COMPANY_ID;
       const requestId = req.params.requestId as string;
       await assertCompanyPermission(req, companyId, "joins:approve");
 
@@ -2869,18 +2870,18 @@ export function accessRoutes(
     }
   );
 
-  router.get("/companies/:companyId/members", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/members", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCompanyPermission(req, companyId, "users:manage_permissions");
     const members = await access.listMembers(companyId);
     res.json(members);
   });
 
   router.patch(
-    "/companies/:companyId/members/:memberId/permissions",
+    "/members/:memberId/permissions",
     validate(updateMemberPermissionsSchema),
     async (req, res) => {
-      const companyId = req.params.companyId as string;
+      const companyId = GLOBAL_COMPANY_ID;
       const memberId = req.params.memberId as string;
       await assertCompanyPermission(req, companyId, "users:manage_permissions");
       const updated = await access.setMemberPermissions(

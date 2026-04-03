@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -71,7 +72,7 @@ describe("cursor execute", () => {
         runId: "run-1",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Cursor Coder",
           adapterType: "cursor",
           adapterConfig: {},
@@ -145,7 +146,7 @@ describe("cursor execute", () => {
         runId: "run-2",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Cursor Coder",
           adapterType: "cursor",
           adapterConfig: {},
@@ -206,7 +207,7 @@ describe("cursor execute", () => {
         runId: "run-3",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Cursor Coder",
           adapterType: "cursor",
           adapterConfig: {},

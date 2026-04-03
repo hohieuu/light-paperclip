@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router, type Request } from "express";
 import type { Db } from "@agilo/db";
 import {
@@ -19,19 +20,7 @@ export function projectRoutes(db: Db) {
   const workspaceOperations = workspaceOperationService(db);
 
   async function resolveCompanyIdForProjectReference(req: Request) {
-    const companyIdQuery = req.query.companyId;
-    const requestedCompanyId =
-      typeof companyIdQuery === "string" && companyIdQuery.trim().length > 0
-        ? companyIdQuery.trim()
-        : null;
-    if (requestedCompanyId) {
-      assertCompanyAccess(req, requestedCompanyId);
-      return requestedCompanyId;
-    }
-    if (req.actor.type === "agent" && req.actor.companyId) {
-      return req.actor.companyId;
-    }
-    return null;
+    return GLOBAL_COMPANY_ID;
   }
 
   async function normalizeProjectReference(req: Request, rawId: string) {
@@ -54,8 +43,8 @@ export function projectRoutes(db: Db) {
     }
   });
 
-  router.get("/companies/:companyId/projects", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/projects", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const result = await svc.list(companyId);
     res.json(result);
@@ -72,8 +61,8 @@ export function projectRoutes(db: Db) {
     res.json(project);
   });
 
-  router.post("/companies/:companyId/projects", validate(createProjectSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/projects", validate(createProjectSchema), async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     type CreateProjectPayload = Parameters<typeof svc.create>[1] & {
       workspace?: Parameters<typeof svc.createWorkspace>[1];

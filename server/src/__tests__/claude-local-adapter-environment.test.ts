@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { afterEach, describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -19,7 +20,7 @@ describe("claude_local environment diagnostics", () => {
     process.env.ANTHROPIC_API_KEY = "sk-test-host";
 
     const result = await testEnvironment({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "claude_local",
       config: {
         command: process.execPath,
@@ -42,7 +43,7 @@ describe("claude_local environment diagnostics", () => {
     delete process.env.ANTHROPIC_API_KEY;
 
     const result = await testEnvironment({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "claude_local",
       config: {
         command: process.execPath,
@@ -74,7 +75,7 @@ describe("claude_local environment diagnostics", () => {
     await fs.rm(path.dirname(cwd), { recursive: true, force: true });
 
     const result = await testEnvironment({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "claude_local",
       config: {
         command: process.execPath,

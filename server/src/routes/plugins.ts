@@ -34,6 +34,7 @@ import type {
 } from "@agilo/shared";
 import {
   PLUGIN_STATUSES,
+  GLOBAL_COMPANY_ID,
 } from "@agilo/shared";
 import { pluginRegistryService } from "../services/plugin-registry.js";
 import { pluginLifecycleManager } from "../services/plugin-lifecycle.js";
@@ -1128,12 +1129,7 @@ export function pluginRoutes(
     }
 
     const { pluginId, channel } = req.params;
-    const companyId = req.query.companyId as string | undefined;
-
-    if (!companyId) {
-      res.status(400).json({ error: '"companyId" query parameter is required' });
-      return;
-    }
+    const companyId = GLOBAL_COMPANY_ID;
 
     const plugin = await resolvePlugin(registry, pluginId);
     if (!plugin) {

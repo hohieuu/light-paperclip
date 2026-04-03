@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -62,7 +63,7 @@ describe("gemini execute", () => {
         runId: "run-1",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Gemini Coder",
           adapterType: "gemini_local",
           adapterConfig: {},

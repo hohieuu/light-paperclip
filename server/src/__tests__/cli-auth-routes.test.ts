@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -124,23 +125,23 @@ describe("cli auth routes", () => {
         id: "challenge-1",
         boardApiKeyId: "board-key-1",
         requestedAccess: "board",
-        requestedCompanyId: "company-1",
+        requestedCompanyId: GLOBAL_COMPANY_ID,
         expiresAt: new Date("2026-03-23T13:00:00.000Z"),
       },
     });
     mockBoardAuthService.resolveBoardAccess.mockResolvedValue({
       user: { id: "user-1", name: "User One", email: "user@example.com" },
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
       isInstanceAdmin: false,
     });
-    mockBoardAuthService.resolveBoardActivityCompanyIds.mockResolvedValue(["company-1"]);
+    mockBoardAuthService.resolveBoardActivityCompanyIds.mockResolvedValue([GLOBAL_COMPANY_ID]);
 
     const app = await createApp({
       type: "board",
       userId: "user-1",
       source: "session",
       isInstanceAdmin: false,
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
     });
     const res = await request(app)
       .post("/api/cli-auth/challenges/challenge-1/approve")
@@ -158,7 +159,7 @@ describe("cli auth routes", () => {
     expect(mockLogActivity).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         action: "board_api_key.created",
       }),
     );

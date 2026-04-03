@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -54,16 +55,16 @@ describe("company skill mutation permissions", () => {
     const res = await request(createApp({
       type: "board",
       userId: "local-board",
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
       source: "local_implicit",
       isInstanceAdmin: false,
     }))
-      .post("/api/companies/company-1/skills/import")
+      .post("/api/skills/import")
       .send({ source: "https://github.com/vercel-labs/agent-browser" });
 
     expect(res.status, JSON.stringify(res.body)).toBe(201);
     expect(mockCompanySkillService.importFromSource).toHaveBeenCalledWith(
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "https://github.com/vercel-labs/agent-browser",
     );
   });
@@ -71,17 +72,17 @@ describe("company skill mutation permissions", () => {
   it("blocks same-company agents without management permission from mutating company skills", async () => {
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       permissions: {},
     });
 
     const res = await request(createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       runId: "run-1",
     }))
-      .post("/api/companies/company-1/skills/import")
+      .post("/api/skills/import")
       .send({ source: "https://github.com/vercel-labs/agent-browser" });
 
     expect(res.status, JSON.stringify(res.body)).toBe(403);
@@ -91,22 +92,22 @@ describe("company skill mutation permissions", () => {
   it("allows agents with canCreateAgents to mutate company skills", async () => {
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       permissions: { canCreateAgents: true },
     });
 
     const res = await request(createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       runId: "run-1",
     }))
-      .post("/api/companies/company-1/skills/import")
+      .post("/api/skills/import")
       .send({ source: "https://github.com/vercel-labs/agent-browser" });
 
     expect(res.status, JSON.stringify(res.body)).toBe(201);
     expect(mockCompanySkillService.importFromSource).toHaveBeenCalledWith(
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "https://github.com/vercel-labs/agent-browser",
     );
   });

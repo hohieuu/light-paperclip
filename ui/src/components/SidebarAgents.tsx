@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { NavLink, useLocation } from "@/lib/router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, Plus } from "lucide-react";
-import { useCompany } from "../context/CompanyContext";
 import { useDialog } from "../context/DialogContext";
 import { useSidebar } from "../context/SidebarContext";
 import { agentsApi } from "../api/agents";
@@ -21,7 +20,7 @@ import {
 import type { Agent } from "@agilo/shared";
 export function SidebarAgents() {
   const [open, setOpen] = useState(true);
-  const { selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const { openNewAgent } = useDialog();
   const { isMobile, setSidebarOpen } = useSidebar();
   const location = useLocation();

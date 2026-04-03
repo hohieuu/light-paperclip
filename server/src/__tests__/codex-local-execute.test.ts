@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -53,7 +54,7 @@ describe("codex execute", () => {
       "instances",
       "default",
       "companies",
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "codex-home",
     );
     await fs.mkdir(workspace, { recursive: true });
@@ -79,7 +80,7 @@ describe("codex execute", () => {
         runId: "run-default",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Codex Coder",
           adapterType: "codex_local",
           adapterConfig: {},
@@ -117,7 +118,7 @@ describe("codex execute", () => {
       expect(await fs.realpath(managedAuth)).toBe(await fs.realpath(path.join(sharedCodexHome, "auth.json")));
       expect((await fs.lstat(managedConfig)).isFile()).toBe(true);
       expect(await fs.readFile(managedConfig, "utf8")).toBe('model = "codex-mini-latest"\n');
-      await expect(fs.lstat(path.join(sharedCodexHome, "companies", "company-1"))).rejects.toThrow();
+      await expect(fs.lstat(path.join(sharedCodexHome, "companies", GLOBAL_COMPANY_ID))).rejects.toThrow();
       expect(logs).toContainEqual(
         expect.objectContaining({
           stream: "stdout",
@@ -156,7 +157,7 @@ describe("codex execute", () => {
         runId: "run-notes",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Codex Coder",
           adapterType: "codex_local",
           adapterConfig: {},
@@ -217,7 +218,7 @@ describe("codex execute", () => {
         runId: "run-meta",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Codex Coder",
           adapterType: "codex_local",
           adapterConfig: {},
@@ -271,10 +272,10 @@ describe("codex execute", () => {
       "instances",
       "worktree-1",
       "companies",
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "codex-home",
     );
-    const homeSkill = path.join(isolatedCodexHome, "skills", "agilo");
+    const homeSkill = path.join(isolatedCodexHome, "skills", "paperclip");
     await fs.mkdir(workspace, { recursive: true });
     await fs.mkdir(sharedCodexHome, { recursive: true });
     await fs.writeFile(path.join(sharedCodexHome, "auth.json"), '{"token":"shared"}\n', "utf8");
@@ -298,7 +299,7 @@ describe("codex execute", () => {
         runId: "run-1",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Codex Coder",
           adapterType: "codex_local",
           adapterConfig: {},
@@ -358,7 +359,7 @@ describe("codex execute", () => {
       expect(logs).toContainEqual(
         expect.objectContaining({
           stream: "stdout",
-          chunk: expect.stringContaining('Injected Codex skill "agilo"'),
+          chunk: expect.stringContaining('Injected Codex skill "paperclip"'),
         }),
       );
     } finally {
@@ -405,7 +406,7 @@ describe("codex execute", () => {
         runId: "run-2",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Codex Coder",
           adapterType: "codex_local",
           adapterConfig: {},
@@ -435,7 +436,7 @@ describe("codex execute", () => {
 
       const capture = JSON.parse(await fs.readFile(capturePath, "utf8")) as CapturePayload;
       expect(capture.codexHome).toBe(explicitCodexHome);
-      expect((await fs.lstat(path.join(explicitCodexHome, "skills", "agilo"))).isSymbolicLink()).toBe(true);
+      expect((await fs.lstat(path.join(explicitCodexHome, "skills", "paperclip"))).isSymbolicLink()).toBe(true);
       await expect(fs.lstat(path.join(agiloHome, "instances", "worktree-1", "codex-home"))).rejects.toThrow();
     } finally {
       if (previousHome === undefined) delete process.env.HOME;

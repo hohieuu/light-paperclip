@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Puzzle, ArrowLeft, ShieldAlert, ActivitySquare, CheckCircle, XCircle, Loader2, Clock, Cpu, Webhook, CalendarClock, AlertTriangle } from "lucide-react";
-import { useCompany } from "@/context/CompanyContext";
 import { useBreadcrumbs } from "@/context/BreadcrumbContext";
 import { Link, Navigate, useParams } from "@/lib/router";
 import { PluginSlotMount, usePluginSlots } from "@/plugins/slots";
@@ -58,9 +57,9 @@ import {
  * @see doc/plugins/PLUGIN_SPEC.md §19.8 — Plugin Settings UI.
  */
 export function PluginSettings() {
-  const { selectedCompany, selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const selectedCompany: any = null;
   const { setBreadcrumbs } = useBreadcrumbs();
-  const { companyPrefix, pluginId } = useParams<{ companyPrefix?: string; pluginId: string }>();
+  const { pluginId } = useParams<{  pluginId: string }>();
   const [activeTab, setActiveTab] = useState<"configuration" | "status">("configuration");
 
   const { data: plugin, isLoading: pluginLoading } = useQuery({
@@ -119,7 +118,7 @@ export function PluginSettings() {
       { label: "Plugins", href: "/instance/settings/plugins" },
       { label: plugin?.manifestJson?.displayName ?? plugin?.packageName ?? "Plugin Details" },
     ]);
-  }, [selectedCompany?.name, setBreadcrumbs, companyPrefix, plugin]);
+  }, [selectedCompany?.name, setBreadcrumbs, plugin]);
 
   useEffect(() => {
     setActiveTab("configuration");
@@ -220,7 +219,7 @@ export function PluginSettings() {
                       slot={slot}
                       context={{
                         companyId: selectedCompanyId,
-                        companyPrefix: companyPrefix ?? null,
+                        
                       }}
                       missingBehavior="placeholder"
                     />

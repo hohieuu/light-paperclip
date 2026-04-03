@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -32,7 +33,7 @@ function createApp() {
     (req as any).actor = {
       type: "board",
       userId: "user-1",
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
       source: "session",
       isInstanceAdmin: false,
     };
@@ -51,7 +52,7 @@ describe("activity routes", () => {
   it("resolves issue identifiers before loading runs", async () => {
     mockIssueService.getByIdentifier.mockResolvedValue({
       id: "issue-uuid-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
     });
     mockActivityService.runsForIssue.mockResolvedValue([
       {
@@ -64,7 +65,7 @@ describe("activity routes", () => {
     expect(res.status).toBe(200);
     expect(mockIssueService.getByIdentifier).toHaveBeenCalledWith("PAP-475");
     expect(mockIssueService.getById).not.toHaveBeenCalled();
-    expect(mockActivityService.runsForIssue).toHaveBeenCalledWith("company-1", "issue-uuid-1");
+    expect(mockActivityService.runsForIssue).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, "issue-uuid-1");
     expect(res.body).toEqual([{ runId: "run-1" }]);
   });
 });

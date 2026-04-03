@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router, type Request } from "express";
 import { generateKeyPairSync, randomUUID } from "node:crypto";
 import path from "node:path";
@@ -254,19 +255,7 @@ export function agentRoutes(db: Db) {
   }
 
   async function resolveCompanyIdForAgentReference(req: Request): Promise<string | null> {
-    const companyIdQuery = req.query.companyId;
-    const requestedCompanyId =
-      typeof companyIdQuery === "string" && companyIdQuery.trim().length > 0
-        ? companyIdQuery.trim()
-        : null;
-    if (requestedCompanyId) {
-      assertCompanyAccess(req, requestedCompanyId);
-      return requestedCompanyId;
-    }
-    if (req.actor.type === "agent" && req.actor.companyId) {
-      return req.actor.companyId;
-    }
-    return null;
+    return GLOBAL_COMPANY_ID;
   }
 
   async function normalizeAgentReference(req: Request, rawId: string): Promise<string> {
@@ -664,16 +653,16 @@ export function agentRoutes(db: Db) {
     }
   });
 
-  router.get("/companies/:companyId/adapters/:type/models", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/adapters/:type/models", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const type = req.params.type as string;
     const models = await listAdapterModels(type);
     res.json(models);
   });
 
-  router.get("/companies/:companyId/adapters/:type/detect-model", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/adapters/:type/detect-model", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const type = req.params.type as string;
 
@@ -682,10 +671,10 @@ export function agentRoutes(db: Db) {
   });
 
   router.post(
-    "/companies/:companyId/adapters/:type/test-environment",
+    "/adapters/:type/test-environment",
     validate(testAdapterEnvironmentSchema),
     async (req, res) => {
-      const companyId = req.params.companyId as string;
+      const companyId = GLOBAL_COMPANY_ID;
       const type = req.params.type as string;
       await assertCanReadConfigurations(req, companyId);
 
@@ -852,8 +841,8 @@ export function agentRoutes(db: Db) {
     },
   );
 
-  router.get("/companies/:companyId/agents", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/agents", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const result = await svc.list(companyId);
     const canReadConfigs = await actorCanReadConfigurationsForCompany(req, companyId);
@@ -927,16 +916,16 @@ export function agentRoutes(db: Db) {
     res.json(items);
   });
 
-  router.get("/companies/:companyId/org", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/org", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const tree = await svc.orgForCompany(companyId);
     const leanTree = tree.map((node) => toLeanOrgNode(node as Record<string, unknown>));
     res.json(leanTree);
   });
 
-  router.get("/companies/:companyId/org.svg", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/org.svg", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const style = (ORG_CHART_STYLES.includes(req.query.style as OrgChartStyle) ? req.query.style : "warmth") as OrgChartStyle;
     const tree = await svc.orgForCompany(companyId);
@@ -947,8 +936,8 @@ export function agentRoutes(db: Db) {
     res.send(svg);
   });
 
-  router.get("/companies/:companyId/org.png", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/org.png", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const style = (ORG_CHART_STYLES.includes(req.query.style as OrgChartStyle) ? req.query.style : "warmth") as OrgChartStyle;
     const tree = await svc.orgForCompany(companyId);
@@ -959,8 +948,8 @@ export function agentRoutes(db: Db) {
     res.send(png);
   });
 
-  router.get("/companies/:companyId/agent-configurations", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/agent-configurations", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCanReadConfigurations(req, companyId);
     const rows = await svc.list(companyId);
     res.json(rows.map((row) => redactAgentConfiguration(row)));
@@ -1178,8 +1167,8 @@ export function agentRoutes(db: Db) {
     res.json(state);
   });
 
-  router.post("/companies/:companyId/agent-hires", validate(createAgentHireSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/agent-hires", validate(createAgentHireSchema), async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCanCreateAgentsForCompany(req, companyId);
     const sourceIssueIds = parseSourceIssueIds(req.body);
     const {
@@ -1262,8 +1251,8 @@ export function agentRoutes(db: Db) {
     res.status(201).json({ agent, approval });
   });
 
-  router.post("/companies/:companyId/agents", validate(createAgentSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/agents", validate(createAgentSchema), async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
 
     if (req.actor.type === "agent") {
@@ -2007,8 +1996,8 @@ export function agentRoutes(db: Db) {
     res.json(result);
   });
 
-  router.get("/companies/:companyId/heartbeat-runs", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/heartbeat-runs", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const agentId = req.query.agentId as string | undefined;
     const limitParam = req.query.limit as string | undefined;
@@ -2017,8 +2006,8 @@ export function agentRoutes(db: Db) {
     res.json(runs);
   });
 
-  router.get("/companies/:companyId/live-runs", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/live-runs", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
 
     const minCountParam = req.query.minCount as string | undefined;

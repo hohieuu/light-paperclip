@@ -2,6 +2,7 @@ import { execFile } from "node:child_process";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { randomUUID } from "node:crypto";
 import { promisify } from "node:util";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
@@ -136,7 +137,7 @@ describeEmbeddedPostgres("executionWorkspaceService.getCloseReadiness", () => {
     await db.delete(executionWorkspaces);
     await db.delete(projectWorkspaces);
     await db.delete(projects);
-    await db.delete(companies);
+    // await db.delete(companies);
 
     for (const dir of tempDirs) {
       await fs.rm(dir, { recursive: true, force: true });
@@ -149,17 +150,17 @@ describeEmbeddedPostgres("executionWorkspaceService.getCloseReadiness", () => {
   });
 
   it("allows archiving shared workspace sessions with warnings even when issues are still open", async () => {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const projectId = randomUUID();
     const projectWorkspaceId = randomUUID();
     const executionWorkspaceId = randomUUID();
 
-    await db.insert(companies).values({
-      id: companyId,
-      name: "Agilo",
-      issuePrefix: "PAP",
-      requireBoardApprovalForNewAgents: false,
-    });
+    // await db.insert(companies).values({
+    //   id: companyId,
+    //   name: "Agilo",
+    //   issuePrefix: "PAP",
+    //   requireBoardApprovalForNewAgents: false,
+    // });
     await db.insert(projects).values({
       id: projectId,
       companyId,
@@ -234,17 +235,17 @@ describeEmbeddedPostgres("executionWorkspaceService.getCloseReadiness", () => {
     await runGit(worktreePath, ["commit", "-m", "Feature commit"]);
     await fs.writeFile(path.join(worktreePath, "untracked.txt"), "left behind\n", "utf8");
 
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const projectId = randomUUID();
     const projectWorkspaceId = randomUUID();
     const executionWorkspaceId = randomUUID();
 
-    await db.insert(companies).values({
-      id: companyId,
-      name: "Agilo",
-      issuePrefix: "PAP",
-      requireBoardApprovalForNewAgents: false,
-    });
+    // await db.insert(companies).values({
+    //   id: companyId,
+    //   name: "Agilo",
+    //   issuePrefix: "PAP",
+    //   requireBoardApprovalForNewAgents: false,
+    // });
     await db.insert(projects).values({
       id: projectId,
       companyId,

@@ -7,7 +7,6 @@ import {
   Search,
   SquarePen,
   Network,
-  Boxes,
   Repeat,
   Settings,
 } from "lucide-react";
@@ -17,7 +16,6 @@ import { SidebarNavItem } from "./SidebarNavItem";
 import { SidebarProjects } from "./SidebarProjects";
 import { SidebarAgents } from "./SidebarAgents";
 import { useDialog } from "../context/DialogContext";
-import { useCompany } from "../context/CompanyContext";
 import { heartbeatsApi } from "../api/heartbeats";
 import { queryKeys } from "../lib/queryKeys";
 import { useInboxBadge } from "../hooks/useInboxBadge";
@@ -26,7 +24,7 @@ import { PluginSlotOutlet } from "@/plugins/slots";
 
 export function Sidebar() {
   const { openNewIssue } = useDialog();
-  const { selectedCompanyId, selectedCompany } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const selectedCompany: any = null;
   const inboxBadge = useInboxBadge(selectedCompanyId);
   const { data: liveRuns } = useQuery({
     queryKey: queryKeys.liveRuns(selectedCompanyId!),
@@ -42,7 +40,7 @@ export function Sidebar() {
 
   const pluginContext = {
     companyId: selectedCompanyId,
-    companyPrefix: selectedCompany?.issuePrefix ?? null,
+    
   };
 
   return (
@@ -106,10 +104,9 @@ export function Sidebar() {
 
         <SidebarSection label="Company">
           <SidebarNavItem to="/org" label="Org" icon={Network} />
-          <SidebarNavItem to="/skills" label="Skills" icon={Boxes} />
           <SidebarNavItem to="/costs" label="Costs" icon={DollarSign} />
           <SidebarNavItem to="/activity" label="Activity" icon={History} />
-          <SidebarNavItem to="/company/settings" label="Settings" icon={Settings} />
+          <SidebarNavItem to="/instance/settings/general" label="Settings" icon={Settings} />
         </SidebarSection>
 
         <PluginSlotOutlet

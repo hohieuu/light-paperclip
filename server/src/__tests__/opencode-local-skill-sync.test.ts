@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -12,7 +13,7 @@ async function makeTempDir(prefix: string): Promise<string> {
 }
 
 describe("opencode local skill sync", () => {
-  const agiloKey = "agilo/agilo/agilo";
+  const agiloKey = "agilo/agilo/paperclip";
   const cleanupDirs = new Set<string>();
 
   afterEach(async () => {
@@ -26,7 +27,7 @@ describe("opencode local skill sync", () => {
 
     const ctx = {
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "opencode_local",
       config: {
         env: {
@@ -47,7 +48,7 @@ describe("opencode local skill sync", () => {
 
     const after = await syncOpenCodeSkills(ctx, [agiloKey]);
     expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("installed");
-    expect((await fs.lstat(path.join(home, ".claude", "skills", "agilo"))).isSymbolicLink()).toBe(true);
+    expect((await fs.lstat(path.join(home, ".claude", "skills", "paperclip"))).isSymbolicLink()).toBe(true);
   });
 
   it("keeps required bundled Agilo skills installed even when the desired set is emptied", async () => {
@@ -56,7 +57,7 @@ describe("opencode local skill sync", () => {
 
     const configuredCtx = {
       agentId: "agent-2",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "opencode_local",
       config: {
         env: {
@@ -85,6 +86,6 @@ describe("opencode local skill sync", () => {
     const after = await syncOpenCodeSkills(clearedCtx, []);
     expect(after.desiredSkills).toContain(agiloKey);
     expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("installed");
-    expect((await fs.lstat(path.join(home, ".claude", "skills", "agilo"))).isSymbolicLink()).toBe(true);
+    expect((await fs.lstat(path.join(home, ".claude", "skills", "paperclip"))).isSymbolicLink()).toBe(true);
   });
 });

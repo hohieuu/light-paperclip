@@ -13,42 +13,42 @@ import { api } from "./client";
 
 export const companySkillsApi = {
   list: (companyId: string) =>
-    api.get<CompanySkillListItem[]>(`/companies/${encodeURIComponent(companyId)}/skills`),
+    api.get<CompanySkillListItem[]>(`/skills`),
   detail: (companyId: string, skillId: string) =>
     api.get<CompanySkillDetail>(
-      `/companies/${encodeURIComponent(companyId)}/skills/${encodeURIComponent(skillId)}`,
+      `/skills/${encodeURIComponent(skillId)}`,
     ),
   updateStatus: (companyId: string, skillId: string) =>
     api.get<CompanySkillUpdateStatus>(
-      `/companies/${encodeURIComponent(companyId)}/skills/${encodeURIComponent(skillId)}/update-status`,
+      `/skills/${encodeURIComponent(skillId)}/update-status`,
     ),
   file: (companyId: string, skillId: string, relativePath: string) =>
     api.get<CompanySkillFileDetail>(
-      `/companies/${encodeURIComponent(companyId)}/skills/${encodeURIComponent(skillId)}/files?path=${encodeURIComponent(relativePath)}`,
+      `/skills/${encodeURIComponent(skillId)}/files?path=${encodeURIComponent(relativePath)}`,
     ),
   updateFile: (companyId: string, skillId: string, path: string, content: string) =>
     api.patch<CompanySkillFileDetail>(
-      `/companies/${encodeURIComponent(companyId)}/skills/${encodeURIComponent(skillId)}/files`,
+      `/skills/${encodeURIComponent(skillId)}/files`,
       { path, content },
     ),
   create: (companyId: string, payload: CompanySkillCreateRequest) =>
     api.post<CompanySkill>(
-      `/companies/${encodeURIComponent(companyId)}/skills`,
+      `/skills`,
       payload,
     ),
   importFromSource: (companyId: string, source: string) =>
     api.post<CompanySkillImportResult>(
-      `/companies/${encodeURIComponent(companyId)}/skills/import`,
+      `/skills/import`,
       { source },
     ),
   scanProjects: (companyId: string, payload: CompanySkillProjectScanRequest = {}) =>
     api.post<CompanySkillProjectScanResult>(
-      `/companies/${encodeURIComponent(companyId)}/skills/scan-projects`,
+      `/skills/scan-projects`,
       payload,
     ),
   installUpdate: (companyId: string, skillId: string) =>
     api.post<CompanySkill>(
-      `/companies/${encodeURIComponent(companyId)}/skills/${encodeURIComponent(skillId)}/install-update`,
+      `/skills/${encodeURIComponent(skillId)}/install-update`,
       {},
     ),
 };

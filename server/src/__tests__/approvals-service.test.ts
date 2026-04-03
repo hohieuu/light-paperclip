@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { approvalService } from "../services/approvals.ts";
 
@@ -29,7 +30,7 @@ type ApprovalRecord = {
 function createApproval(status: string): ApprovalRecord {
   return {
     id: "approval-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     type: "hire_agent",
     status,
     payload: { agentId: "agent-1" },

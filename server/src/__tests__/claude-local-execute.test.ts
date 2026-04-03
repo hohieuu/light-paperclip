@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -52,7 +53,7 @@ describe("claude execute", () => {
         runId: "run-meta",
         agent: {
           id: "agent-1",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
           name: "Claude Coder",
           adapterType: "claude_local",
           adapterConfig: {},

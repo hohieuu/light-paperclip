@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router } from "express";
 import type { Db } from "@agilo/db";
 import { and, eq, sql } from "drizzle-orm";
@@ -13,8 +14,8 @@ export function sidebarBadgeRoutes(db: Db) {
   const access = accessService(db);
   const dashboard = dashboardService(db);
 
-  router.get("/companies/:companyId/sidebar-badges", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/sidebar-badges", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     let canApproveJoins = false;
     if (req.actor.type === "board") {

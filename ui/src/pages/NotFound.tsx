@@ -3,7 +3,6 @@ import { Link, useLocation } from "@/lib/router";
 import { AlertTriangle, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
-import { useCompany } from "../context/CompanyContext";
 
 type NotFoundScope = "board" | "invalid_company_prefix" | "global";
 
@@ -15,7 +14,7 @@ interface NotFoundPageProps {
 export function NotFoundPage({ scope = "global", requestedPrefix }: NotFoundPageProps) {
   const location = useLocation();
   const { setBreadcrumbs } = useBreadcrumbs();
-  const { companies, selectedCompany } = useCompany();
+  const companies: any[] = []; const selectedCompany: any = null;
 
   useEffect(() => {
     setBreadcrumbs([{ label: "Not Found" }]);

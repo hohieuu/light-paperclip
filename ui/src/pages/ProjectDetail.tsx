@@ -11,7 +11,6 @@ import { agentsApi } from "../api/agents";
 import { heartbeatsApi } from "../api/heartbeats";
 import { assetsApi } from "../api/assets";
 import { usePanel } from "../context/PanelContext";
-import { useCompany } from "../context/CompanyContext";
 import { useToast } from "../context/ToastContext";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
 import { queryKeys } from "../lib/queryKeys";
@@ -447,12 +446,12 @@ function ProjectWorkspacesContent({
 /* ── Main project page ── */
 
 export function ProjectDetail() {
-  const { companyPrefix, projectId, filter } = useParams<{
-    companyPrefix?: string;
+  const { projectId, filter } = useParams<{
+    
     projectId: string;
     filter?: string;
   }>();
-  const { companies, selectedCompanyId, setSelectedCompanyId } = useCompany();
+  const companies: any[] = []; const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const setSelectedCompanyId = () => {};
   const { closePanel } = usePanel();
   const { setBreadcrumbs } = useBreadcrumbs();
   const { pushToast } = useToast();
@@ -464,10 +463,8 @@ export function ProjectDetail() {
   const fieldSaveTimers = useRef<Partial<Record<ProjectConfigFieldKey, ReturnType<typeof setTimeout>>>>({});
   const routeProjectRef = projectId ?? "";
   const routeCompanyId = useMemo(() => {
-    if (!companyPrefix) return null;
-    const requestedPrefix = companyPrefix.toUpperCase();
-    return companies.find((company) => company.issuePrefix.toUpperCase() === requestedPrefix)?.id ?? null;
-  }, [companies, companyPrefix]);
+    return null;
+  }, [companies]);
   const lookupCompanyId = routeCompanyId ?? selectedCompanyId ?? undefined;
   const canFetchProject = routeProjectRef.length > 0 && (isUuidLike(routeProjectRef) || Boolean(lookupCompanyId));
   const activeRouteTab = routeProjectRef ? resolveProjectTab(location.pathname, routeProjectRef) : null;
@@ -827,7 +824,7 @@ export function ProjectDetail() {
         entityType="project"
         context={{
           companyId: resolvedCompanyId ?? null,
-          companyPrefix: companyPrefix ?? null,
+          
           projectId: project.id,
           projectRef: canonicalProjectRef,
           entityId: project.id,
@@ -843,7 +840,7 @@ export function ProjectDetail() {
         entityType="project"
         context={{
           companyId: resolvedCompanyId ?? null,
-          companyPrefix: companyPrefix ?? null,
+          
           projectId: project.id,
           projectRef: canonicalProjectRef,
           entityId: project.id,
@@ -933,7 +930,7 @@ export function ProjectDetail() {
           slot={activePluginTab.slot}
           context={{
             companyId: resolvedCompanyId,
-            companyPrefix: companyPrefix ?? null,
+            
             projectId: project.id,
             projectRef: canonicalProjectRef,
             entityId: project.id,

@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -48,7 +49,7 @@ vi.mock("../services/index.js", () => ({
 function createDbStub() {
   const createdInvite = {
     id: "invite-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     inviteType: "company_join",
     allowedJoinTypes: "agent",
     defaultsPayload: null,
@@ -115,21 +116,21 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
     const db = createDbStub();
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       role: "engineer",
     });
     const app = createApp(
       {
         type: "agent",
         agentId: "agent-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         source: "agent_key",
       },
       db,
     );
 
     const res = await request(app)
-      .post("/api/companies/company-1/openclaw/invite-prompt")
+      .post("/api/openclaw/invite-prompt")
       .send({});
 
     expect(res.status).toBe(403);
@@ -140,21 +141,21 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
     const db = createDbStub();
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       role: "ceo",
     });
     const app = createApp(
       {
         type: "agent",
         agentId: "agent-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         source: "agent_key",
       },
       db,
     );
 
     const res = await request(app)
-      .post("/api/companies/company-1/openclaw/invite-prompt")
+      .post("/api/openclaw/invite-prompt")
       .send({ agentMessage: "Join and configure OpenClaw gateway." });
 
     expect(res.status).toBe(201);
@@ -170,7 +171,7 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
       {
         type: "board",
         userId: "user-1",
-        companyIds: ["company-1"],
+        companyIds: [GLOBAL_COMPANY_ID],
         source: "session",
         isInstanceAdmin: false,
       },
@@ -180,7 +181,7 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
     const res = await request(app).get("/api/invites/pcp_invite_test");
 
     expect(res.status).toBe(200);
-    expect(res.body.companyId).toBe("company-1");
+    expect(res.body.companyId).toBe(GLOBAL_COMPANY_ID);
     expect(res.body.companyName).toBe("Acme AI");
   });
 
@@ -191,7 +192,7 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
       {
         type: "board",
         userId: "user-1",
-        companyIds: ["company-1"],
+        companyIds: [GLOBAL_COMPANY_ID],
         source: "session",
         isInstanceAdmin: false,
       },
@@ -199,7 +200,7 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
     );
 
     const res = await request(app)
-      .post("/api/companies/company-1/openclaw/invite-prompt")
+      .post("/api/openclaw/invite-prompt")
       .send({});
 
     expect(res.status).toBe(201);
@@ -213,7 +214,7 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
       {
         type: "board",
         userId: "user-1",
-        companyIds: ["company-1"],
+        companyIds: [GLOBAL_COMPANY_ID],
         source: "session",
         isInstanceAdmin: false,
       },
@@ -221,7 +222,7 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
     );
 
     const res = await request(app)
-      .post("/api/companies/company-1/openclaw/invite-prompt")
+      .post("/api/openclaw/invite-prompt")
       .send({});
 
     expect(res.status).toBe(403);

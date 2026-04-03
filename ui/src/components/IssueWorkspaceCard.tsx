@@ -4,7 +4,6 @@ import type { Issue, ExecutionWorkspace } from "@agilo/shared";
 import { useQuery } from "@tanstack/react-query";
 import { executionWorkspacesApi } from "../api/execution-workspaces";
 import { instanceSettingsApi } from "../api/instanceSettings";
-import { useCompany } from "../context/CompanyContext";
 import { queryKeys } from "../lib/queryKeys";
 import { cn, projectWorkspaceUrl } from "../lib/utils";
 import { Button } from "@/components/ui/button";
@@ -162,7 +161,7 @@ interface IssueWorkspaceCardProps {
 }
 
 export function IssueWorkspaceCard({ issue, project, onUpdate }: IssueWorkspaceCardProps) {
-  const { selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const companyId = issue.companyId ?? selectedCompanyId;
   const [editing, setEditing] = useState(false);
 

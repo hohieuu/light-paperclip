@@ -2,7 +2,6 @@ import { startTransition, useEffect, useMemo, useState, useCallback, useRef } fr
 import { useQuery } from "@tanstack/react-query";
 import { pickTextColorForPillBg } from "@/lib/color-contrast";
 import { useDialog } from "../context/DialogContext";
-import { useCompany } from "../context/CompanyContext";
 import { issuesApi } from "../api/issues";
 import { authApi } from "../api/auth";
 import { queryKeys } from "../lib/queryKeys";
@@ -229,7 +228,7 @@ export function IssuesList({
   onSearchChange,
   onUpdateIssue,
 }: IssuesListProps) {
-  const { selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const { openNewIssue } = useDialog();
   const { data: session } = useQuery({
     queryKey: queryKeys.auth.session,

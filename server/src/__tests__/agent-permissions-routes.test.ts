@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -6,7 +7,7 @@ import { agentRoutes } from "../routes/agents.js";
 import { errorHandler } from "../middleware/index.js";
 
 const agentId = "11111111-1111-4111-8111-111111111111";
-const companyId = "22222222-2222-4222-8222-222222222222";
+const companyId = GLOBAL_COMPANY_ID;
 
 const baseAgent = {
   id: agentId,
@@ -187,7 +188,7 @@ describe("agent permission routes", () => {
     });
 
     const res = await request(app)
-      .post(`/api/companies/${companyId}/agents`)
+      .post(`/api/agents`)
       .send({
         name: "Builder",
         role: "engineer",

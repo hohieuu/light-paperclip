@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router } from "express";
 import { z } from "zod";
 import type { Db } from "@agilo/db";
@@ -29,8 +30,8 @@ export function activityRoutes(db: Db) {
     return issueSvc.getById(rawId);
   }
 
-  router.get("/companies/:companyId/activity", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/activity", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
 
     const filters = {
@@ -43,9 +44,9 @@ export function activityRoutes(db: Db) {
     res.json(result);
   });
 
-  router.post("/companies/:companyId/activity", validate(createActivitySchema), async (req, res) => {
+  router.post("/activity", validate(createActivitySchema), async (req, res) => {
     assertBoard(req);
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     const event = await svc.create({
       companyId,
       ...req.body,

@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDialog } from "../context/DialogContext";
-import { useCompany } from "../context/CompanyContext";
 import { projectsApi } from "../api/projects";
 import { agentsApi } from "../api/agents";
 import { assetsApi } from "../api/assets";
@@ -46,7 +45,7 @@ const projectStatuses = [
 
 export function NewProjectDialog() {
   const { newProjectOpen, closeNewProject } = useDialog();
-  const { selectedCompanyId, selectedCompany } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const selectedCompany: any = null;
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");

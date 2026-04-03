@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -15,7 +16,7 @@ describe("opencode_local environment diagnostics", () => {
     await fs.rm(path.dirname(cwd), { recursive: true, force: true });
 
     const result = await testEnvironment({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "opencode_local",
       config: {
         command: process.execPath,
@@ -35,7 +36,7 @@ describe("opencode_local environment diagnostics", () => {
 
     try {
       const result = await testEnvironment({
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         adapterType: "opencode_local",
         config: {
           command: process.execPath,
@@ -76,7 +77,7 @@ describe("opencode_local environment diagnostics", () => {
       await fs.chmod(fakeOpencode, 0o755);
 
       const result = await testEnvironment({
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         adapterType: "opencode_local",
         config: {
           command: fakeOpencode,

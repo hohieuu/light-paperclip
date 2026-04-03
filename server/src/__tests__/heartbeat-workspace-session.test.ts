@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { describe, expect, it } from "vitest";
 import type { agents } from "@agilo/db";
 import { sessionCodec as codexSessionCodec } from "@agilo/adapter-codex-local/server";
@@ -32,7 +33,7 @@ function buildResolvedWorkspace(overrides: Partial<ResolvedWorkspaceForRun> = {}
 function buildAgent(adapterType: string, runtimeConfig: Record<string, unknown> = {}) {
   return {
     id: "agent-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     projectId: null,
     goalId: null,
     name: "Agent",
@@ -164,7 +165,7 @@ describe("buildRealizedExecutionWorkspaceFromPersisted", () => {
       }),
       workspace: {
         id: "execution-workspace-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         projectId: "project-1",
         projectWorkspaceId: "workspace-1",
         sourceIssueId: "issue-1",
@@ -207,7 +208,7 @@ describe("buildRealizedExecutionWorkspaceFromPersisted", () => {
       }),
       workspace: {
         id: "execution-workspace-2",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         projectId: "project-1",
         projectWorkspaceId: "workspace-1",
         sourceIssueId: "issue-2",

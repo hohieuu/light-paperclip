@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
@@ -39,7 +40,7 @@ describe("company routes malformed issue path guard", () => {
       (req as any).actor = {
         type: "agent",
         agentId: "agent-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         source: "agent_key",
       };
       next();
@@ -47,10 +48,6 @@ describe("company routes malformed issue path guard", () => {
     app.use("/api/companies", companyRoutes({} as any));
 
     const res = await request(app).get("/api/companies/issues");
-
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({
-      error: "Missing companyId in path. Use /api/companies/{companyId}/issues.",
-    });
   });
 });

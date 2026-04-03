@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router, type Request, type Response } from "express";
 import multer from "multer";
 import { z } from "zod";
@@ -215,15 +216,9 @@ export function issueRoutes(db: Db, storage: StorageService) {
     }
   });
 
-  // Common malformed path when companyId is empty in "/api/companies/{companyId}/issues".
-  router.get("/issues", (_req, res) => {
-    res.status(400).json({
-      error: "Missing companyId in path. Use /api/companies/{companyId}/issues.",
-    });
-  });
 
-  router.get("/companies/:companyId/issues", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/issues", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const assigneeUserFilterRaw = req.query.assigneeUserId as string | undefined;
     const touchedByUserFilterRaw = req.query.touchedByUserId as string | undefined;
@@ -284,15 +279,15 @@ export function issueRoutes(db: Db, storage: StorageService) {
     res.json(result);
   });
 
-  router.get("/companies/:companyId/labels", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/labels", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const result = await svc.listLabels(companyId);
     res.json(result);
   });
 
-  router.post("/companies/:companyId/labels", validate(createIssueLabelSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/labels", validate(createIssueLabelSchema), async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const label = await svc.createLabel(companyId, req.body);
     const actor = getActorInfo(req);
@@ -866,8 +861,8 @@ export function issueRoutes(db: Db, storage: StorageService) {
     res.json({ ok: true });
   });
 
-  router.post("/companies/:companyId/issues", validate(createIssueSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/issues", validate(createIssueSchema), async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     if (req.body.assigneeAgentId || req.body.assigneeUserId) {
       await assertCanAssignTasks(req, companyId);
@@ -1576,8 +1571,8 @@ export function issueRoutes(db: Db, storage: StorageService) {
     res.json(attachments.map(withContentPath));
   });
 
-  router.post("/companies/:companyId/issues/:issueId/attachments", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/issues/:issueId/attachments", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     const issueId = req.params.issueId as string;
     assertCompanyAccess(req, companyId);
     const issue = await svc.getById(issueId);

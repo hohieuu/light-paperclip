@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -61,7 +62,7 @@ function createApp() {
     (req as any).actor = {
       type: "board",
       userId: "local-board",
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
       source: "local_implicit",
       isInstanceAdmin: false,
     };
@@ -75,7 +76,7 @@ function createApp() {
 function makeAgent() {
   return {
     id: "11111111-1111-4111-8111-111111111111",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     name: "Agent",
     role: "engineer",
     title: "Engineer",
@@ -100,7 +101,7 @@ describe("agent instructions bundle routes", () => {
     }));
     mockAgentInstructionsService.getBundle.mockResolvedValue({
       agentId: "11111111-1111-4111-8111-111111111111",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       mode: "managed",
       rootPath: "/tmp/agent-1",
       managedRootPath: "/tmp/agent-1",

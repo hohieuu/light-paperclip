@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -19,8 +20,8 @@ async function createSkillDir(root: string, name: string) {
 }
 
 describe("claude local skill sync", () => {
-  const agiloKey = "agilo/agilo/agilo";
-  const createAgentKey = "agilo/agilo/agilo-create-agent";
+  const agiloKey = "agilo/agilo/paperclip";
+  const createAgentKey = "agilo/agilo/paperclip-create-agent";
   const cleanupDirs = new Set<string>();
 
   afterEach(async () => {
@@ -31,7 +32,7 @@ describe("claude local skill sync", () => {
   it("defaults to mounting all built-in Agilo skills when no explicit selection exists", async () => {
     const snapshot = await listClaudeSkills({
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "claude_local",
       config: {},
     });
@@ -46,7 +47,7 @@ describe("claude local skill sync", () => {
   it("respects an explicit desired skill list without mutating a persistent home", async () => {
     const snapshot = await syncClaudeSkills({
       agentId: "agent-2",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "claude_local",
       config: {
         agiloSkillSync: {
@@ -63,18 +64,18 @@ describe("claude local skill sync", () => {
   it("normalizes legacy flat Agilo skill refs to canonical keys", async () => {
     const snapshot = await listClaudeSkills({
       agentId: "agent-3",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "claude_local",
       config: {
         agiloSkillSync: {
-          desiredSkills: ["agilo"],
+          desiredSkills: ["paperclip"],
         },
       },
     });
 
     expect(snapshot.warnings).toEqual([]);
     expect(snapshot.desiredSkills).toContain(agiloKey);
-    expect(snapshot.desiredSkills).not.toContain("agilo");
+    expect(snapshot.desiredSkills).not.toContain("paperclip");
     expect(snapshot.entries.find((entry) => entry.key === agiloKey)?.state).toBe("configured");
     expect(snapshot.entries.find((entry) => entry.key === "agilo")).toBeUndefined();
   });
@@ -86,7 +87,7 @@ describe("claude local skill sync", () => {
 
     const snapshot = await listClaudeSkills({
       agentId: "agent-4",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "claude_local",
       config: {
         env: {

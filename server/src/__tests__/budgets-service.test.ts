@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { budgetService } from "../services/budgets.ts";
 
@@ -68,7 +69,7 @@ describe("budgetService", () => {
   it("creates a hard-stop incident and pauses an agent when spend exceeds a budget", async () => {
     const policy = {
       id: "policy-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       scopeType: "agent",
       scopeId: "agent-1",
       metric: "billed_cents",
@@ -85,7 +86,7 @@ describe("budgetService", () => {
       [{ total: 150 }],
       [],
       [{
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         name: "Budget Agent",
         status: "running",
         pauseReason: null,
@@ -94,12 +95,12 @@ describe("budgetService", () => {
 
     dbStub.queueInsert([{
       id: "approval-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       status: "pending",
     }]);
     dbStub.queueInsert([{
       id: "incident-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       policyId: "policy-1",
       approvalId: "approval-1",
     }]);
@@ -108,21 +109,21 @@ describe("budgetService", () => {
 
     const service = budgetService(dbStub.db as any, { cancelWorkForScope });
     await service.evaluateCostEvent({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       agentId: "agent-1",
       projectId: null,
     } as any);
 
     expect(dbStub.insertValues).toHaveBeenCalledWith(
       expect.objectContaining({
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         type: "budget_override_required",
         status: "pending",
       }),
     );
     expect(dbStub.insertValues).toHaveBeenCalledWith(
       expect.objectContaining({
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         policyId: "policy-1",
         thresholdType: "hard",
         amountLimit: 100,
@@ -145,7 +146,7 @@ describe("budgetService", () => {
       }),
     );
     expect(cancelWorkForScope).toHaveBeenCalledWith({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       scopeType: "agent",
       scopeId: "agent-1",
     });
@@ -154,7 +155,7 @@ describe("budgetService", () => {
   it("blocks new work when an agent hard-stop remains exceeded even if the agent is not paused yet", async () => {
     const agentPolicy = {
       id: "policy-agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       scopeType: "agent",
       scopeId: "agent-1",
       metric: "billed_cents",
@@ -170,7 +171,7 @@ describe("budgetService", () => {
       [{
         status: "running",
         pauseReason: null,
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         name: "Budget Agent",
       }],
       [{
@@ -183,7 +184,7 @@ describe("budgetService", () => {
     ]);
 
     const service = budgetService(dbStub.db as any);
-    const block = await service.getInvocationBlock("company-1", "agent-1");
+    const block = await service.getInvocationBlock(GLOBAL_COMPANY_ID, "agent-1");
 
     expect(block).toEqual({
       scopeType: "agent",
@@ -198,7 +199,7 @@ describe("budgetService", () => {
       [{
         status: "idle",
         pauseReason: null,
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         name: "Budget Agent",
       }],
       [{
@@ -209,11 +210,11 @@ describe("budgetService", () => {
     ]);
 
     const service = budgetService(dbStub.db as any);
-    const block = await service.getInvocationBlock("company-1", "agent-1");
+    const block = await service.getInvocationBlock(GLOBAL_COMPANY_ID, "agent-1");
 
     expect(block).toEqual({
       scopeType: "company",
-      scopeId: "company-1",
+      scopeId: GLOBAL_COMPANY_ID,
       scopeName: "Agilo",
       reason: "Company is paused because its budget hard-stop was reached.",
     });
@@ -223,16 +224,16 @@ describe("budgetService", () => {
     const dbStub = createDbStub([
       [{
         id: "incident-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         policyId: "policy-1",
         amountObserved: 120,
         approvalId: "approval-1",
       }],
       [{
         id: "policy-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         scopeType: "company",
-        scopeId: "company-1",
+        scopeId: GLOBAL_COMPANY_ID,
         metric: "billed_cents",
         windowKind: "calendar_month_utc",
       }],
@@ -243,7 +244,7 @@ describe("budgetService", () => {
 
     await expect(
       service.resolveIncident(
-        "company-1",
+        GLOBAL_COMPANY_ID,
         "incident-1",
         { action: "raise_budget_and_resume", amount: 140 },
         "board-user",
@@ -256,10 +257,10 @@ describe("budgetService", () => {
     const dbStub = createDbStub([
       [{
         id: "incident-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         policyId: "policy-1",
         scopeType: "company",
-        scopeId: "company-1",
+        scopeId: GLOBAL_COMPANY_ID,
         metric: "billed_cents",
         windowKind: "calendar_month_utc",
         windowStart: now,
@@ -275,9 +276,9 @@ describe("budgetService", () => {
       }],
       [{
         id: "policy-1",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         scopeType: "company",
-        scopeId: "company-1",
+        scopeId: GLOBAL_COMPANY_ID,
         metric: "billed_cents",
         windowKind: "calendar_month_utc",
         amount: 100,
@@ -285,7 +286,7 @@ describe("budgetService", () => {
       [{ total: 120 }],
       [{ id: "approval-1", status: "approved" }],
       [{
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         name: "Agilo",
         status: "paused",
         pauseReason: "budget",
@@ -295,7 +296,7 @@ describe("budgetService", () => {
 
     const service = budgetService(dbStub.db as any);
     await service.resolveIncident(
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "incident-1",
       { action: "raise_budget_and_resume", amount: 175 },
       "board-user",

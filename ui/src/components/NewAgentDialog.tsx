@@ -2,7 +2,6 @@ import { useState, type ComponentType } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@/lib/router";
 import { useDialog } from "../context/DialogContext";
-import { useCompany } from "../context/CompanyContext";
 import { agentsApi } from "../api/agents";
 import { queryKeys } from "../lib/queryKeys";
 import {
@@ -94,7 +93,7 @@ const ADVANCED_ADAPTER_OPTIONS: Array<{
 
 export function NewAgentDialog() {
   const { newAgentOpen, closeNewAgent, openNewIssue } = useDialog();
-  const { selectedCompanyId } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const navigate = useNavigate();
   const [showAdvancedCards, setShowAdvancedCards] = useState(false);
 

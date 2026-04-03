@@ -4,11 +4,9 @@ import type { Agent, Issue, LiveEvent } from "@agilo/shared";
 import type { RunForIssue } from "../api/activity";
 import type { ActiveRunForIssue, LiveRunForIssue } from "../api/heartbeats";
 import { authApi } from "../api/auth";
-import { useCompany } from "./CompanyContext";
 import type { ToastInput } from "./ToastContext";
 import { useToast } from "./ToastContext";
 import { queryKeys } from "../lib/queryKeys";
-import { toCompanyRelativePath } from "../lib/company-routes";
 import { useLocation } from "../lib/router";
 
 const TOAST_COOLDOWN_WINDOW_MS = 10_000;
@@ -165,7 +163,7 @@ function resolveVisibleIssueRouteContext(
   const isForegrounded = options?.isForegrounded ?? isPageForegrounded();
   if (!isForegrounded) return null;
 
-  const relativePath = toCompanyRelativePath(pathname);
+  const relativePath = pathname;
   const segments = relativePath.split("/").filter(Boolean);
   if (segments[0] !== "issues" || !segments[1]) return null;
 
@@ -709,7 +707,7 @@ export const __liveUpdatesTestUtils = {
 };
 
 export function LiveUpdatesProvider({ children }: { children: ReactNode }) {
-  const { selectedCompanyId, selectedCompany } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const selectedCompany: any = null;
   const queryClient = useQueryClient();
   const { pushToast } = useToast();
   const location = useLocation();

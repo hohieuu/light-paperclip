@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -53,7 +54,7 @@ describe("instance settings routes", () => {
         autoRestartDevServerWhenIdle: false,
       },
     });
-    mockInstanceSettingsService.listCompanyIds.mockResolvedValue(["company-1", "company-2"]);
+    mockInstanceSettingsService.listCompanyIds.mockResolvedValue([GLOBAL_COMPANY_ID, "company-2"]);
   });
 
   it("allows local board users to read and update experimental settings", async () => {
@@ -129,7 +130,7 @@ describe("instance settings routes", () => {
       userId: "user-1",
       source: "session",
       isInstanceAdmin: false,
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
     });
 
     const res = await request(app).get("/api/instance/settings/general");
@@ -142,7 +143,7 @@ describe("instance settings routes", () => {
     const app = createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       source: "agent_key",
     });
 

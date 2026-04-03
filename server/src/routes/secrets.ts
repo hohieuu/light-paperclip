@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router } from "express";
 import type { Db } from "@agilo/db";
 import {
@@ -21,24 +22,24 @@ export function secretRoutes(db: Db) {
       : "local_encrypted"
   ) as SecretProvider;
 
-  router.get("/companies/:companyId/secret-providers", (req, res) => {
+  router.get("/secret-providers", (req, res) => {
     assertBoard(req);
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     res.json(svc.listProviders());
   });
 
-  router.get("/companies/:companyId/secrets", async (req, res) => {
+  router.get("/secrets", async (req, res) => {
     assertBoard(req);
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const secrets = await svc.list(companyId);
     res.json(secrets);
   });
 
-  router.post("/companies/:companyId/secrets", validate(createSecretSchema), async (req, res) => {
+  router.post("/secrets", validate(createSecretSchema), async (req, res) => {
     assertBoard(req);
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
 
     const created = await svc.create(

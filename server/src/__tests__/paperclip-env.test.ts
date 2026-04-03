@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildAgiloEnv } from "../adapters/utils.js";
 
@@ -30,7 +31,7 @@ describe("buildAgiloEnv", () => {
     process.env.AGILO_LISTEN_HOST = "127.0.0.1";
     process.env.AGILO_LISTEN_PORT = "3101";
 
-    const env = buildAgiloEnv({ id: "agent-1", companyId: "company-1" });
+    const env = buildAgiloEnv({ id: "agent-1", companyId: GLOBAL_COMPANY_ID });
 
     expect(env.AGILO_API_URL).toBe("http://localhost:4100");
   });
@@ -41,7 +42,7 @@ describe("buildAgiloEnv", () => {
     process.env.AGILO_LISTEN_PORT = "3101";
     process.env.PORT = "3100";
 
-    const env = buildAgiloEnv({ id: "agent-1", companyId: "company-1" });
+    const env = buildAgiloEnv({ id: "agent-1", companyId: GLOBAL_COMPANY_ID });
 
     expect(env.AGILO_API_URL).toBe("http://localhost:3101");
   });
@@ -51,7 +52,7 @@ describe("buildAgiloEnv", () => {
     process.env.AGILO_LISTEN_HOST = "::1";
     process.env.AGILO_LISTEN_PORT = "3101";
 
-    const env = buildAgiloEnv({ id: "agent-1", companyId: "company-1" });
+    const env = buildAgiloEnv({ id: "agent-1", companyId: GLOBAL_COMPANY_ID });
 
     expect(env.AGILO_API_URL).toBe("http://[::1]:3101");
   });

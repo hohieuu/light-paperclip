@@ -2,7 +2,6 @@ import { Link } from "@/lib/router";
 import { Menu } from "lucide-react";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
 import { useSidebar } from "../context/SidebarContext";
-import { useCompany } from "../context/CompanyContext";
 import { Button } from "@/components/ui/button";
 import {
   Breadcrumb,
@@ -16,7 +15,7 @@ import { Fragment, useMemo } from "react";
 import { PluginSlotOutlet, usePluginSlots } from "@/plugins/slots";
 import { PluginLauncherOutlet, usePluginLaunchers } from "@/plugins/launchers";
 
-type GlobalToolbarContext = { companyId: string | null; companyPrefix: string | null };
+type GlobalToolbarContext = { companyId: string | null;  };
 
 function GlobalToolbarPlugins({ context }: { context: GlobalToolbarContext }) {
   const { slots } = usePluginSlots({ slotTypes: ["globalToolbarButton"], companyId: context.companyId });
@@ -33,12 +32,12 @@ function GlobalToolbarPlugins({ context }: { context: GlobalToolbarContext }) {
 export function BreadcrumbBar() {
   const { breadcrumbs } = useBreadcrumbs();
   const { toggleSidebar, isMobile } = useSidebar();
-  const { selectedCompanyId, selectedCompany } = useCompany();
+  const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const selectedCompany: any = null;
 
   const globalToolbarSlotContext = useMemo(
     () => ({
       companyId: selectedCompanyId ?? null,
-      companyPrefix: selectedCompany?.issuePrefix ?? null,
+      
     }),
     [selectedCompanyId, selectedCompany?.issuePrefix],
   );

@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -54,7 +55,7 @@ function createApp() {
     (req as any).actor = {
       type: "board",
       userId: "local-board",
-      companyIds: ["company-1"],
+      companyIds: [GLOBAL_COMPANY_ID],
       source: "local_implicit",
       isInstanceAdmin: false,
     };
@@ -68,9 +69,9 @@ function createApp() {
 function makeIssue(status: "todo" | "done") {
   return {
     id: "11111111-1111-4111-8111-111111111111",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     status,
-    assigneeAgentId: "22222222-2222-4222-8222-222222222222",
+    assigneeAgentId: GLOBAL_COMPANY_ID,
     assigneeUserId: null,
     createdByUserId: "local-board",
     identifier: "PAP-580",
@@ -84,7 +85,7 @@ describe("issue comment reopen routes", () => {
     mockIssueService.addComment.mockResolvedValue({
       id: "comment-1",
       issueId: "11111111-1111-4111-8111-111111111111",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       body: "hello",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -159,14 +160,14 @@ describe("issue comment reopen routes", () => {
     }));
     mockHeartbeatService.getRun.mockResolvedValue({
       id: "run-1",
-      companyId: "company-1",
-      agentId: "22222222-2222-4222-8222-222222222222",
+      companyId: GLOBAL_COMPANY_ID,
+      agentId: GLOBAL_COMPANY_ID,
       status: "running",
     });
     mockHeartbeatService.cancelRun.mockResolvedValue({
       id: "run-1",
-      companyId: "company-1",
-      agentId: "22222222-2222-4222-8222-222222222222",
+      companyId: GLOBAL_COMPANY_ID,
+      agentId: GLOBAL_COMPANY_ID,
       status: "cancelled",
     });
 

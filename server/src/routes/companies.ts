@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router, type Request } from "express";
 import type { Db } from "@agilo/db";
 import {
@@ -90,7 +91,7 @@ export function companyRoutes(db: Db, storage?: StorageService) {
   });
 
   router.get("/:companyId", async (req, res) => {
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     // Allow agents (CEO) to read their own company; board always allowed
     if (req.actor.type !== "agent") {
@@ -105,7 +106,7 @@ export function companyRoutes(db: Db, storage?: StorageService) {
   });
 
   router.post("/:companyId/export", validate(companyPortabilityExportSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const result = await portability.exportBundle(companyId, req.body);
     res.json(result);
@@ -147,21 +148,21 @@ export function companyRoutes(db: Db, storage?: StorageService) {
   });
 
   router.post("/:companyId/exports/preview", validate(companyPortabilityExportSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCanManagePortability(req, companyId, "exports");
     const preview = await portability.previewExport(companyId, req.body);
     res.json(preview);
   });
 
   router.post("/:companyId/exports", validate(companyPortabilityExportSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCanManagePortability(req, companyId, "exports");
     const result = await portability.exportBundle(companyId, req.body);
     res.json(result);
   });
 
   router.post("/:companyId/imports/preview", validate(companyPortabilityPreviewSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCanManagePortability(req, companyId, "imports");
     if (req.body.target.mode === "existing_company" && req.body.target.companyId !== companyId) {
       throw forbidden("Safe import route can only target the route company");
@@ -177,7 +178,7 @@ export function companyRoutes(db: Db, storage?: StorageService) {
   });
 
   router.post("/:companyId/imports/apply", validate(companyPortabilityImportSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCanManagePortability(req, companyId, "imports");
     if (req.body.target.mode === "existing_company" && req.body.target.companyId !== companyId) {
       throw forbidden("Safe import route can only target the route company");
@@ -242,7 +243,7 @@ export function companyRoutes(db: Db, storage?: StorageService) {
   });
 
   router.patch("/:companyId", async (req, res) => {
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
 
     const actor = getActorInfo(req);
@@ -284,7 +285,7 @@ export function companyRoutes(db: Db, storage?: StorageService) {
   });
 
   router.patch("/:companyId/branding", validate(updateCompanyBrandingSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     await assertCanUpdateBranding(req, companyId);
     const company = await svc.update(companyId, req.body);
     if (!company) {
@@ -308,7 +309,7 @@ export function companyRoutes(db: Db, storage?: StorageService) {
 
   router.post("/:companyId/archive", async (req, res) => {
     assertBoard(req);
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const company = await svc.archive(companyId);
     if (!company) {
@@ -328,7 +329,7 @@ export function companyRoutes(db: Db, storage?: StorageService) {
 
   router.delete("/:companyId", async (req, res) => {
     assertBoard(req);
-    const companyId = req.params.companyId as string;
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const company = await svc.remove(companyId);
     if (!company) {

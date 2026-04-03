@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -70,19 +71,19 @@ describe("company portability routes", () => {
   it("rejects non-CEO agents from CEO-safe export preview routes", async () => {
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "11111111-1111-4111-8111-111111111111",
+      companyId: GLOBAL_COMPANY_ID,
       role: "engineer",
     });
     const app = await createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "11111111-1111-4111-8111-111111111111",
+      companyId: GLOBAL_COMPANY_ID,
       source: "agent_key",
       runId: "run-1",
     });
 
     const res = await request(app)
-      .post("/api/companies/11111111-1111-4111-8111-111111111111/exports/preview")
+      .post("/api/companies/company-1/exports/preview")
       .send({ include: { company: true, agents: true, projects: true } });
 
     expect(res.status).toBe(403);
@@ -93,7 +94,7 @@ describe("company portability routes", () => {
   it("allows CEO agents to use company-scoped export preview routes", async () => {
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "11111111-1111-4111-8111-111111111111",
+      companyId: GLOBAL_COMPANY_ID,
       role: "ceo",
     });
     mockCompanyPortabilityService.previewExport.mockResolvedValue({
@@ -108,17 +109,17 @@ describe("company portability routes", () => {
     const app = await createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "11111111-1111-4111-8111-111111111111",
+      companyId: GLOBAL_COMPANY_ID,
       source: "agent_key",
       runId: "run-1",
     });
 
     const res = await request(app)
-      .post("/api/companies/11111111-1111-4111-8111-111111111111/exports/preview")
+      .post("/api/companies/company-1/exports/preview")
       .send({ include: { company: true, agents: true, projects: true } });
 
     expect(res.status).toBe(200);
-    expect(mockCompanyPortabilityService.previewExport).toHaveBeenCalledWith("11111111-1111-4111-8111-111111111111", {
+    expect(mockCompanyPortabilityService.previewExport).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, {
       include: { company: true, agents: true, projects: true },
     });
   });
@@ -126,23 +127,23 @@ describe("company portability routes", () => {
   it("rejects replace collision strategy on CEO-safe import routes", async () => {
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
-      companyId: "11111111-1111-4111-8111-111111111111",
+      companyId: GLOBAL_COMPANY_ID,
       role: "ceo",
     });
     const app = await createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "11111111-1111-4111-8111-111111111111",
+      companyId: GLOBAL_COMPANY_ID,
       source: "agent_key",
       runId: "run-1",
     });
 
     const res = await request(app)
-      .post("/api/companies/11111111-1111-4111-8111-111111111111/imports/preview")
+      .post("/api/companies/company-1/imports/preview")
       .send({
         source: { type: "inline", files: { "COMPANY.md": "---\nname: Test\n---\n" } },
         include: { company: true, agents: true, projects: false, issues: false },
-        target: { mode: "existing_company", companyId: "11111111-1111-4111-8111-111111111111" },
+        target: { mode: "existing_company", companyId: GLOBAL_COMPANY_ID },
         collisionStrategy: "replace",
       });
 
@@ -155,7 +156,7 @@ describe("company portability routes", () => {
     const app = await createApp({
       type: "agent",
       agentId: "agent-1",
-      companyId: "11111111-1111-4111-8111-111111111111",
+      companyId: GLOBAL_COMPANY_ID,
       source: "agent_key",
       runId: "run-1",
     });
@@ -165,7 +166,7 @@ describe("company portability routes", () => {
       .send({
         source: { type: "inline", files: { "COMPANY.md": "---\nname: Test\n---\n" } },
         include: { company: true, agents: true, projects: false, issues: false },
-        target: { mode: "existing_company", companyId: "11111111-1111-4111-8111-111111111111" },
+        target: { mode: "existing_company", companyId: GLOBAL_COMPANY_ID },
         collisionStrategy: "rename",
       });
 

@@ -8,7 +8,6 @@ import { runCommand } from "./commands/run.js";
 import { bootstrapCeoInvite } from "./commands/auth-bootstrap-ceo.js";
 import { dbBackupCommand } from "./commands/db-backup.js";
 import { registerContextCommands } from "./commands/client/context.js";
-import { registerCompanyCommands } from "./commands/client/company.js";
 import { registerIssueCommands } from "./commands/client/issue.js";
 import { registerAgentCommands } from "./commands/client/agent.js";
 import { registerApprovalCommands } from "./commands/client/approval.js";
@@ -121,7 +120,6 @@ heartbeat
   .action(heartbeatRun);
 
 registerContextCommands(program);
-registerCompanyCommands(program);
 registerIssueCommands(program);
 registerAgentCommands(program);
 registerApprovalCommands(program);

@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router } from "express";
 import type { Db } from "@agilo/db";
 import {
@@ -34,8 +35,8 @@ export function approvalRoutes(db: Db) {
   const secretsSvc = secretService(db);
   const strictSecretsMode = process.env.AGILO_SECRETS_STRICT_MODE === "true";
 
-  router.get("/companies/:companyId/approvals", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.get("/approvals", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const status = req.query.status as string | undefined;
     const result = await svc.list(companyId, status);
@@ -53,8 +54,8 @@ export function approvalRoutes(db: Db) {
     res.json(redactApprovalPayload(approval));
   });
 
-  router.post("/companies/:companyId/approvals", validate(createApprovalSchema), async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/approvals", validate(createApprovalSchema), async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
     const rawIssueIds = req.body.issueIds;
     const issueIds = Array.isArray(rawIssueIds)

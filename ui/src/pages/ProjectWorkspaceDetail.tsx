@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { ChoosePathButton } from "../components/PathInstructionsModal";
 import { projectsApi } from "../api/projects";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
-import { useCompany } from "../context/CompanyContext";
 import { queryKeys } from "../lib/queryKeys";
 import { projectRouteRef, projectWorkspaceUrl } from "../lib/utils";
 
@@ -205,12 +204,12 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
 }
 
 export function ProjectWorkspaceDetail() {
-  const { companyPrefix, projectId, workspaceId } = useParams<{
-    companyPrefix?: string;
+  const { projectId, workspaceId } = useParams<{
+    
     projectId: string;
     workspaceId: string;
   }>();
-  const { companies, selectedCompanyId, setSelectedCompanyId } = useCompany();
+  const companies: any[] = []; const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const setSelectedCompanyId = () => {};
   const { setBreadcrumbs } = useBreadcrumbs();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -221,10 +220,8 @@ export function ProjectWorkspaceDetail() {
   const routeWorkspaceId = workspaceId ?? "";
 
   const routeCompanyId = useMemo(() => {
-    if (!companyPrefix) return null;
-    const requestedPrefix = companyPrefix.toUpperCase();
-    return companies.find((company) => company.issuePrefix.toUpperCase() === requestedPrefix)?.id ?? null;
-  }, [companies, companyPrefix]);
+    return null;
+  }, [companies]);
 
   const lookupCompanyId = routeCompanyId ?? selectedCompanyId ?? undefined;
   const canFetchProject = routeProjectRef.length > 0 && (isUuidLike(routeProjectRef) || Boolean(lookupCompanyId));

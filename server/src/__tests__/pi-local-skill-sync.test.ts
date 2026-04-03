@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -12,7 +13,7 @@ async function makeTempDir(prefix: string): Promise<string> {
 }
 
 describe("pi local skill sync", () => {
-  const agiloKey = "agilo/agilo/agilo";
+  const agiloKey = "agilo/agilo/paperclip";
   const cleanupDirs = new Set<string>();
 
   afterEach(async () => {
@@ -26,7 +27,7 @@ describe("pi local skill sync", () => {
 
     const ctx = {
       agentId: "agent-1",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "pi_local",
       config: {
         env: {
@@ -46,7 +47,7 @@ describe("pi local skill sync", () => {
 
     const after = await syncPiSkills(ctx, [agiloKey]);
     expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("installed");
-    expect((await fs.lstat(path.join(home, ".pi", "agent", "skills", "agilo"))).isSymbolicLink()).toBe(true);
+    expect((await fs.lstat(path.join(home, ".pi", "agent", "skills", "paperclip"))).isSymbolicLink()).toBe(true);
   });
 
   it("keeps required bundled Agilo skills installed even when the desired set is emptied", async () => {
@@ -55,7 +56,7 @@ describe("pi local skill sync", () => {
 
     const configuredCtx = {
       agentId: "agent-2",
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       adapterType: "pi_local",
       config: {
         env: {
@@ -84,6 +85,6 @@ describe("pi local skill sync", () => {
     const after = await syncPiSkills(clearedCtx, []);
     expect(after.desiredSkills).toContain(agiloKey);
     expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("installed");
-    expect((await fs.lstat(path.join(home, ".pi", "agent", "skills", "agilo"))).isSymbolicLink()).toBe(true);
+    expect((await fs.lstat(path.join(home, ".pi", "agent", "skills", "paperclip"))).isSymbolicLink()).toBe(true);
   });
 });

@@ -1,10 +1,11 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { describe, expect, it } from "vitest";
 import { buildWorktreeMergePlan, parseWorktreeMergeScopes } from "../commands/worktree-merge-history-lib.js";
 
 function makeIssue(overrides: Record<string, unknown> = {}) {
   return {
     id: "issue-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     projectId: null,
     projectWorkspaceId: null,
     goalId: "goal-1",
@@ -42,7 +43,7 @@ function makeIssue(overrides: Record<string, unknown> = {}) {
 function makeComment(overrides: Record<string, unknown> = {}) {
   return {
     id: "comment-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     issueId: "issue-1",
     authorAgentId: null,
     authorUserId: "local-board",
@@ -56,7 +57,7 @@ function makeComment(overrides: Record<string, unknown> = {}) {
 function makeIssueDocument(overrides: Record<string, unknown> = {}) {
   return {
     id: "issue-document-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     issueId: "issue-1",
     documentId: "document-1",
     key: "plan",
@@ -80,7 +81,7 @@ function makeIssueDocument(overrides: Record<string, unknown> = {}) {
 function makeDocumentRevision(overrides: Record<string, unknown> = {}) {
   return {
     id: "revision-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     documentId: "document-1",
     revisionNumber: 1,
     body: "# Plan",
@@ -95,7 +96,7 @@ function makeDocumentRevision(overrides: Record<string, unknown> = {}) {
 function makeAttachment(overrides: Record<string, unknown> = {}) {
   return {
     id: "attachment-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     issueId: "issue-1",
     issueCommentId: null,
     assetId: "asset-1",
@@ -118,7 +119,7 @@ function makeAttachment(overrides: Record<string, unknown> = {}) {
 function makeProject(overrides: Record<string, unknown> = {}) {
   return {
     id: "project-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     goalId: null,
     name: "Project",
     description: null,
@@ -139,7 +140,7 @@ function makeProject(overrides: Record<string, unknown> = {}) {
 function makeProjectWorkspace(overrides: Record<string, unknown> = {}) {
   return {
     id: "workspace-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     projectId: "project-1",
     name: "Workspace",
     sourceType: "local_path",
@@ -183,7 +184,7 @@ describe("worktree merge history planner", () => {
     });
 
     const plan = buildWorktreeMergePlan({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
       issuePrefix: "PAP",
       previewIssueCounterStart: 500,
@@ -206,7 +207,7 @@ describe("worktree merge history planner", () => {
 
   it("clears missing references and coerces in_progress without an assignee", () => {
     const plan = buildWorktreeMergePlan({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
       issuePrefix: "PAP",
       previewIssueCounterStart: 10,
@@ -245,7 +246,7 @@ describe("worktree merge history planner", () => {
 
   it("applies an explicit project mapping override instead of clearing the project", () => {
     const plan = buildWorktreeMergePlan({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
       issuePrefix: "PAP",
       previewIssueCounterStart: 10,
@@ -291,7 +292,7 @@ describe("worktree merge history planner", () => {
     });
 
     const plan = buildWorktreeMergePlan({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
       issuePrefix: "PAP",
       previewIssueCounterStart: 10,
@@ -346,7 +347,7 @@ describe("worktree merge history planner", () => {
     });
 
     const plan = buildWorktreeMergePlan({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
       issuePrefix: "PAP",
       previewIssueCounterStart: 10,
@@ -407,7 +408,7 @@ describe("worktree merge history planner", () => {
     });
 
     const plan = buildWorktreeMergePlan({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
       issuePrefix: "PAP",
       previewIssueCounterStart: 10,
@@ -451,7 +452,7 @@ describe("worktree merge history planner", () => {
     });
 
     const plan = buildWorktreeMergePlan({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
       issuePrefix: "PAP",
       previewIssueCounterStart: 10,

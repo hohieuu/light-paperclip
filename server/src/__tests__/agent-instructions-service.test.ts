@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -18,7 +19,7 @@ async function makeTempDir(prefix: string) {
 function makeAgent(adapterConfig: Record<string, unknown>): TestAgent {
   return {
     id: "agent-1",
-    companyId: "company-1",
+    companyId: GLOBAL_COMPANY_ID,
     name: "Agent 1",
     adapterConfig,
   };
@@ -70,7 +71,7 @@ describe("agent instructions service", () => {
         "instances",
         "test-instance",
         "companies",
-        "company-1",
+        GLOBAL_COMPANY_ID,
         "agents",
         "agent-1",
         "instructions",
@@ -88,7 +89,7 @@ describe("agent instructions service", () => {
       "instances",
       "test-instance",
       "companies",
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "agents",
       "agent-1",
       "instructions",
@@ -173,7 +174,7 @@ describe("agent instructions service", () => {
       "instances",
       "test-instance",
       "companies",
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "agents",
       "agent-1",
       "instructions",
@@ -206,7 +207,7 @@ describe("agent instructions service", () => {
       "instances",
       "test-instance",
       "companies",
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "agents",
       "agent-1",
       "instructions",
@@ -249,7 +250,7 @@ describe("agent instructions service", () => {
       "instances",
       "test-instance",
       "companies",
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "agents",
       "agent-1",
       "instructions",
@@ -289,7 +290,7 @@ describe("agent instructions service", () => {
       "instances",
       "test-instance",
       "companies",
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "agents",
       "agent-1",
       "instructions",
@@ -331,7 +332,7 @@ describe("agent instructions service", () => {
       "instances",
       "test-instance",
       "companies",
-      "company-1",
+      GLOBAL_COMPANY_ID,
       "agents",
       "agent-1",
       "instructions",

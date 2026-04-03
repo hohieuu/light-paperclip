@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { Router, type Request, type Response } from "express";
 import multer from "multer";
 import createDOMPurify from "dompurify";
@@ -107,8 +108,8 @@ export function assetRoutes(db: Db, storage: StorageService) {
     });
   }
 
-  router.post("/companies/:companyId/assets/images", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/assets/images", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
 
     try {
@@ -210,8 +211,8 @@ export function assetRoutes(db: Db, storage: StorageService) {
     });
   });
 
-  router.post("/companies/:companyId/logo", async (req, res) => {
-    const companyId = req.params.companyId as string;
+  router.post("/logo", async (req, res) => {
+    const companyId = GLOBAL_COMPANY_ID;
     assertCompanyAccess(req, companyId);
 
     try {

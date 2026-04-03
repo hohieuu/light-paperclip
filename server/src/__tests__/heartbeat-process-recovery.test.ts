@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { randomUUID } from "node:crypto";
 import { spawn, type ChildProcess } from "node:child_process";
 import { eq } from "drizzle-orm";
@@ -53,7 +54,7 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
     await db.delete(heartbeatRuns);
     await db.delete(agentWakeupRequests);
     await db.delete(agents);
-    await db.delete(companies);
+    // await db.delete(companies);
   });
 
   afterAll(async () => {
@@ -74,7 +75,7 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
     runErrorCode?: string | null;
     runError?: string | null;
   }) {
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const agentId = randomUUID();
     const runId = randomUUID();
     const wakeupRequestId = randomUUID();
@@ -82,12 +83,12 @@ describeEmbeddedPostgres("heartbeat orphaned process recovery", () => {
     const now = new Date("2026-03-19T00:00:00.000Z");
     const issuePrefix = `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`;
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
 
     await db.insert(agents).values({
       id: agentId,

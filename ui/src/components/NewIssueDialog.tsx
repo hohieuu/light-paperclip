@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback, useMemo, type ChangeEvent, ty
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { pickTextColorForSolidBg } from "@/lib/color-contrast";
 import { useDialog } from "../context/DialogContext";
-import { useCompany } from "../context/CompanyContext";
 import { executionWorkspacesApi } from "../api/execution-workspaces";
 import { issuesApi } from "../api/issues";
 import { instanceSettingsApi } from "../api/instanceSettings";
@@ -269,7 +268,7 @@ function issueExecutionWorkspaceModeForExistingWorkspace(mode: string | null | u
 
 export function NewIssueDialog() {
   const { newIssueOpen, newIssueDefaults, closeNewIssue } = useDialog();
-  const { companies, selectedCompanyId, selectedCompany } = useCompany();
+  const companies: any[] = []; const selectedCompanyId = "00000000-0000-0000-0000-000000000000"; const selectedCompany: any = null;
   const queryClient = useQueryClient();
   const { pushToast } = useToast();
   const [title, setTitle] = useState("");

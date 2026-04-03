@@ -1,3 +1,4 @@
+import { GLOBAL_COMPANY_ID } from "@agilo/shared";
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
@@ -115,7 +116,7 @@ function createWorkspaceOperationRecorderDouble() {
       });
       return {
         id: `op-${operations.length}`,
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
         executionWorkspaceId,
         heartbeatRunId: "run-1",
         phase: input.phase,
@@ -205,7 +206,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -238,7 +239,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -273,7 +274,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -310,7 +311,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -359,7 +360,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -397,7 +398,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -515,7 +516,7 @@ describe("realizeExecutionWorkspace", () => {
         agent: {
           id: "agent-1",
           name: "Codex Coder",
-          companyId: "company-1",
+          companyId: GLOBAL_COMPANY_ID,
         },
       });
 
@@ -595,7 +596,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       recorder,
     });
@@ -646,7 +647,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -682,7 +683,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -744,7 +745,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -811,7 +812,7 @@ describe("realizeExecutionWorkspace", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
     });
 
@@ -897,7 +898,7 @@ describe("ensureRuntimeServicesForRun", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace,
@@ -916,7 +917,7 @@ describe("ensureRuntimeServicesForRun", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace,
@@ -940,7 +941,7 @@ describe("ensureRuntimeServicesForRun", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace,
@@ -1010,7 +1011,7 @@ describe("ensureRuntimeServicesForRun", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace: primaryWorkspace,
@@ -1023,7 +1024,7 @@ describe("ensureRuntimeServicesForRun", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace: executionWorkspace,
@@ -1083,7 +1084,7 @@ describe("ensureRuntimeServicesForRun", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace,
@@ -1139,7 +1140,7 @@ describe("ensureRuntimeServicesForRun", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace,
@@ -1198,7 +1199,7 @@ describe("ensureRuntimeServicesForRun", () => {
       agent: {
         id: "agent-1",
         name: "Codex Coder",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace: siblingWorkspace,
@@ -1261,7 +1262,7 @@ describeEmbeddedPostgres("workspace runtime startup reconciliation", () => {
     await db.delete(projects);
     await db.delete(heartbeatRuns);
     await db.delete(agents);
-    await db.delete(companies);
+    // await db.delete(companies);
   });
 
   it("adopts a live auto-port shared service after runtime state is reset", async () => {
@@ -1270,17 +1271,17 @@ describeEmbeddedPostgres("workspace runtime startup reconciliation", () => {
     process.env.AGILO_HOME = agiloHome;
     process.env.AGILO_INSTANCE_ID = `runtime-reconcile-${randomUUID()}`;
 
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const agentId = randomUUID();
     const runId = randomUUID();
     const executionWorkspaceId = randomUUID();
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
     await db.insert(agents).values({
       id: agentId,
       companyId,
@@ -1374,18 +1375,18 @@ describeEmbeddedPostgres("workspace runtime startup reconciliation", () => {
 
   it("persists controlled execution workspace stops as stopped", async () => {
     const workspaceRoot = await fs.mkdtemp(path.join(os.tmpdir(), "agilo-runtime-stop-persisted-"));
-    const companyId = randomUUID();
+    const companyId = GLOBAL_COMPANY_ID;
     const agentId = randomUUID();
     const projectId = randomUUID();
     const runId = randomUUID();
     const executionWorkspaceId = randomUUID();
 
-    await db.insert(companies).values({
+    /* await db.insert(companies).values({
       id: companyId,
       name: "Agilo",
       issuePrefix: `T${companyId.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
       requireBoardApprovalForNewAgents: false,
-    });
+    }); */
     await db.insert(agents).values({
       id: agentId,
       companyId,
@@ -1505,7 +1506,7 @@ describe("normalizeAdapterManagedRuntimeServices", () => {
       agent: {
         id: "agent-1",
         name: "Gateway Agent",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: {
         id: "issue-1",
@@ -1530,7 +1531,7 @@ describe("normalizeAdapterManagedRuntimeServices", () => {
       agent: {
         id: "agent-1",
         name: "Gateway Agent",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: {
         id: "issue-1",
@@ -1551,7 +1552,7 @@ describe("normalizeAdapterManagedRuntimeServices", () => {
 
     expect(first).toHaveLength(1);
     expect(first[0]).toMatchObject({
-      companyId: "company-1",
+      companyId: GLOBAL_COMPANY_ID,
       projectId: "project-1",
       projectWorkspaceId: "workspace-1",
       executionWorkspaceId: null,
@@ -1574,7 +1575,7 @@ describe("normalizeAdapterManagedRuntimeServices", () => {
       agent: {
         id: "agent-1",
         name: "Gateway Agent",
-        companyId: "company-1",
+        companyId: GLOBAL_COMPANY_ID,
       },
       issue: null,
       workspace,

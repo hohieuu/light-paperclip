@@ -71,10 +71,10 @@ function agentPath(id: string, companyId?: string, suffix = "") {
 }
 
 export const agentsApi = {
-  list: (companyId: string) => api.get<Agent[]>(`/companies/${companyId}/agents`),
-  org: (companyId: string) => api.get<OrgNode[]>(`/companies/${companyId}/org`),
+  list: (companyId: string) => api.get<Agent[]>(`/agents`),
+  org: (companyId: string) => api.get<OrgNode[]>(`/org`),
   listConfigurations: (companyId: string) =>
-    api.get<Record<string, unknown>[]>(`/companies/${companyId}/agent-configurations`),
+    api.get<Record<string, unknown>[]>(`/agent-configurations`),
   get: async (id: string, companyId?: string) => {
     try {
       return await api.get<AgentDetail>(agentPath(id, companyId));
@@ -93,7 +93,7 @@ export const agentsApi = {
       const urlKey = normalizeAgentUrlKey(id);
       if (!urlKey) throw error;
 
-      const agents = await api.get<Agent[]>(`/companies/${companyId}/agents`);
+      const agents = await api.get<Agent[]>(`/agents`);
       const matches = agents.filter(
         (agent) => agent.status !== "terminated" && normalizeAgentUrlKey(agent.urlKey) === urlKey,
       );
@@ -110,9 +110,9 @@ export const agentsApi = {
   rollbackConfigRevision: (id: string, revisionId: string, companyId?: string) =>
     api.post<Agent>(agentPath(id, companyId, `/config-revisions/${revisionId}/rollback`), {}),
   create: (companyId: string, data: Record<string, unknown>) =>
-    api.post<Agent>(`/companies/${companyId}/agents`, data),
+    api.post<Agent>(`/agents`, data),
   hire: (companyId: string, data: Record<string, unknown>) =>
-    api.post<AgentHireResponse>(`/companies/${companyId}/agent-hires`, data),
+    api.post<AgentHireResponse>(`/agent-hires`, data),
   update: (id: string, data: Record<string, unknown>, companyId?: string) =>
     api.patch<Agent>(agentPath(id, companyId), data),
   updatePermissions: (id: string, data: AgentPermissionUpdate, companyId?: string) =>
@@ -163,11 +163,11 @@ export const agentsApi = {
     api.post<void>(agentPath(id, companyId, "/runtime-state/reset-session"), { taskKey: taskKey ?? null }),
   adapterModels: (companyId: string, type: string) =>
     api.get<AdapterModel[]>(
-      `/companies/${encodeURIComponent(companyId)}/adapters/${encodeURIComponent(type)}/models`,
+      `/adapters/${encodeURIComponent(type)}/models`,
     ),
   detectModel: (companyId: string, type: string) =>
     api.get<DetectedAdapterModel | null>(
-      `/companies/${encodeURIComponent(companyId)}/adapters/${encodeURIComponent(type)}/detect-model`,
+      `/adapters/${encodeURIComponent(type)}/detect-model`,
     ),
   testEnvironment: (
     companyId: string,
@@ -175,7 +175,7 @@ export const agentsApi = {
     data: { adapterConfig: Record<string, unknown> },
   ) =>
     api.post<AdapterEnvironmentTestResult>(
-      `/companies/${companyId}/adapters/${type}/test-environment`,
+      `/adapters/${type}/test-environment`,
       data,
     ),
   invoke: (id: string, companyId?: string) => api.post<HeartbeatRun>(agentPath(id, companyId, "/heartbeat/invoke"), {}),

@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { Link, Navigate, useParams } from "@/lib/router";
 import { useQuery } from "@tanstack/react-query";
-import { useCompany } from "@/context/CompanyContext";
 import { useBreadcrumbs } from "@/context/BreadcrumbContext";
 import { pluginsApi } from "@/api/plugins";
 import { queryKeys } from "@/lib/queryKeys";
@@ -19,12 +18,12 @@ import { NotFoundPage } from "./NotFound";
  * @see doc/plugins/PLUGIN_SPEC.md §24.4 — Company-Context Plugin Page
  */
 export function PluginPage() {
-  const { companyPrefix: routeCompanyPrefix, pluginId, pluginRoutePath } = useParams<{
-    companyPrefix?: string;
+  const { pluginId, pluginRoutePath } = useParams<{
+    
     pluginId?: string;
     pluginRoutePath?: string;
   }>();
-  const { companies, selectedCompanyId } = useCompany();
+  const companies: any[] = []; const selectedCompanyId = "00000000-0000-0000-0000-000000000000";
   const { setBreadcrumbs } = useBreadcrumbs();
   const routeCompany = useMemo(() => {
     if (!routeCompanyPrefix) return null;
@@ -84,9 +83,8 @@ export function PluginPage() {
   const context = useMemo(
     () => ({
       companyId: resolvedCompanyId ?? null,
-      companyPrefix,
-    }),
-    [resolvedCompanyId, companyPrefix],
+      }),
+    [resolvedCompanyId],
   );
 
   useEffect(() => {
@@ -96,7 +94,7 @@ export function PluginPage() {
         { label: pageSlot.pluginDisplayName },
       ]);
     }
-  }, [pageSlot, companyPrefix, setBreadcrumbs]);
+  }, [pageSlot, setBreadcrumbs]);
 
   if (!resolvedCompanyId) {
     if (hasInvalidCompanyPrefix) {

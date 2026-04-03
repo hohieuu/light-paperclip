@@ -51,11 +51,11 @@ export const issuesApi = {
     if (filters?.includeRoutineExecutions) params.set("includeRoutineExecutions", "true");
     if (filters?.q) params.set("q", filters.q);
     const qs = params.toString();
-    return api.get<Issue[]>(`/companies/${companyId}/issues${qs ? `?${qs}` : ""}`);
+    return api.get<Issue[]>(`/issues${qs ? `?${qs}` : ""}`);
   },
-  listLabels: (companyId: string) => api.get<IssueLabel[]>(`/companies/${companyId}/labels`),
+  listLabels: (companyId: string) => api.get<IssueLabel[]>(`/labels`),
   createLabel: (companyId: string, data: { name: string; color: string }) =>
-    api.post<IssueLabel>(`/companies/${companyId}/labels`, data),
+    api.post<IssueLabel>(`/labels`, data),
   deleteLabel: (id: string) => api.delete<IssueLabel>(`/labels/${id}`),
   get: (id: string) => api.get<Issue>(`/issues/${id}`),
   markRead: (id: string) => api.post<{ id: string; lastReadAt: Date }>(`/issues/${id}/read`, {}),
@@ -65,7 +65,7 @@ export const issuesApi = {
   unarchiveFromInbox: (id: string) =>
     api.delete<{ id: string; archivedAt: Date } | { ok: true }>(`/issues/${id}/inbox-archive`),
   create: (companyId: string, data: Record<string, unknown>) =>
-    api.post<Issue>(`/companies/${companyId}/issues`, data),
+    api.post<Issue>(`/issues`, data),
   update: (id: string, data: Record<string, unknown>) =>
     api.patch<IssueUpdateResponse>(`/issues/${id}`, data),
   remove: (id: string) => api.delete<Issue>(`/issues/${id}`),
@@ -105,7 +105,7 @@ export const issuesApi = {
     if (issueCommentId) {
       form.append("issueCommentId", issueCommentId);
     }
-    return api.postForm<IssueAttachment>(`/companies/${companyId}/issues/${issueId}/attachments`, form);
+    return api.postForm<IssueAttachment>(`/issues/${issueId}/attachments`, form);
   },
   deleteAttachment: (id: string) => api.delete<{ ok: true }>(`/attachments/${id}`),
   listApprovals: (id: string) => api.get<Approval[]>(`/issues/${id}/approvals`),

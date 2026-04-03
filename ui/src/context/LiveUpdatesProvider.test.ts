@@ -54,7 +54,7 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
     expect(
       __liveUpdatesTestUtils.shouldSuppressActivityToastForVisibleIssue(
         queryClient as never,
-        "/PAP/issues/PAP-759",
+        "/issues/PAP-759",
         {
           entityType: "issue",
           entityId: "issue-1",
@@ -67,7 +67,7 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
     expect(
       __liveUpdatesTestUtils.shouldSuppressActivityToastForVisibleIssue(
         queryClient as never,
-        "/PAP/issues/PAP-759",
+        "/issues/PAP-759",
         {
           entityType: "issue",
           entityId: "issue-2",
@@ -95,7 +95,7 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
     expect(
       __liveUpdatesTestUtils.shouldSuppressRunStatusToastForVisibleIssue(
         queryClient as never,
-        "/PAP/issues/PAP-759",
+        "/issues/PAP-759",
         {
           runId: "run-1",
           agentId: "agent-1",
@@ -107,7 +107,7 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
     expect(
       __liveUpdatesTestUtils.shouldSuppressAgentStatusToastForVisibleIssue(
         queryClient as never,
-        "/PAP/issues/PAP-759",
+        "/issues/PAP-759",
         {
           agentId: "agent-1",
           status: "running",

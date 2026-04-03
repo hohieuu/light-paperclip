@@ -1,3 +1,5 @@
+export const GLOBAL_COMPANY_ID = "00000000-0000-0000-0000-000000000000";
+
 export const COMPANY_STATUSES = ["active", "paused", "archived"] as const;
 export type CompanyStatus = (typeof COMPANY_STATUSES)[number];
 
