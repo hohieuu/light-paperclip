@@ -2,7 +2,7 @@
 
 ## Context
 
-`PAP-475` asks two related questions:
+`AGILO-475` asks two related questions:
 
 1. What UI kit should Agilo use if we add a chat surface with an agent?
 2. How should chat fit the product without breaking the current issue-centric model?

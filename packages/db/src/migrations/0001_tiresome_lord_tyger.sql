@@ -1,0 +1,1 @@
+ALTER TABLE "companies" ALTER COLUMN "issue_prefix" SET DEFAULT 'AGILO';

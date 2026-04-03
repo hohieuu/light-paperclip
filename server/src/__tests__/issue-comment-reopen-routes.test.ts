@@ -74,7 +74,7 @@ function makeIssue(status: "todo" | "done") {
     assigneeAgentId: GLOBAL_COMPANY_ID,
     assigneeUserId: null,
     createdByUserId: "local-board",
-    identifier: "PAP-580",
+    identifier: "AGILO-580",
     title: "Comment reopen default",
   };
 }

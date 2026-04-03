@@ -158,7 +158,7 @@ describeEmbeddedPostgres("executionWorkspaceService.getCloseReadiness", () => {
     // await db.insert(companies).values({
     //   id: companyId,
     //   name: "Agilo",
-    //   issuePrefix: "PAP",
+    //   issuePrefix: "AGILO",
     //   requireBoardApprovalForNewAgents: false,
     // });
     await db.insert(projects).values({
@@ -243,7 +243,7 @@ describeEmbeddedPostgres("executionWorkspaceService.getCloseReadiness", () => {
     // await db.insert(companies).values({
     //   id: companyId,
     //   name: "Agilo",
-    //   issuePrefix: "PAP",
+    //   issuePrefix: "AGILO",
     //   requireBoardApprovalForNewAgents: false,
     // });
     await db.insert(projects).values({

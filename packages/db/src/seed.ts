@@ -1,8 +1,7 @@
 import { createDb } from "./client.js";
 import { companies, agents, projects, issues } from "./schema/index.js";
 
-const url = process.env.DATABASE_URL;
-if (!url) throw new Error("DATABASE_URL is required");
+const url = process.env.DATABASE_URL || "postgres://agilo:agilo@127.0.0.1:54329/agilo";
 
 const db = createDb(url);
 

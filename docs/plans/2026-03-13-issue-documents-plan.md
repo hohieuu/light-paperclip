@@ -3,7 +3,7 @@
 Status: Draft  
 Owner: Backend + UI + Agent Protocol  
 Date: 2026-03-13  
-Primary issue: `PAP-448`
+Primary issue: `AGILO-448`
 
 ## Summary
 
@@ -11,7 +11,7 @@ Add first-class **documents** to Agilo as editable, revisioned, company-scoped t
 
 The first required convention is a document with key `plan`.
 
-This solves the immediate workflow problem in `PAP-448`:
+This solves the immediate workflow problem in `AGILO-448`:
 
 - plans should stop living inside issue descriptions as `<plan>` blocks
 - agents and board users should be able to create/update issue documents directly
@@ -34,7 +34,7 @@ Recommendation:
 - keep existing attachments as-is
 - defer full artifact unification until there is a second real consumer beyond issue documents + attachments
 
-This keeps `PAP-448` focused while still fitting the larger artifact direction.
+This keeps `AGILO-448` focused while still fitting the larger artifact direction.
 
 ## Goals
 
@@ -278,7 +278,7 @@ interface Issue {
 }
 ```
 
-This directly satisfies the `PAP-448` requirement for heartbeat/API issue fetches.
+This directly satisfies the `AGILO-448` requirement for heartbeat/API issue fetches.
 
 ## API endpoints
 

@@ -423,9 +423,9 @@ describe("openclaw gateway adapter execute", () => {
               wakeReason: "issue_assigned",
               issueIds: ["issue-123"],
               agiloWorkspace: {
-                cwd: "/tmp/worktrees/pap-123",
+                cwd: "/tmp/worktrees/agilo-123",
                 strategy: "git_worktree",
-                branchName: "pap-123-test",
+                branchName: "agilo-123-test",
               },
               agiloWorkspaces: [
                 {

@@ -21,7 +21,7 @@ vi.mock("@/lib/router", () => ({
 function createIssue(overrides: Partial<Issue> = {}): Issue {
   return {
     id: "issue-1",
-    identifier: "PAP-904",
+    identifier: "AGILO-904",
     companyId: "company-1",
     projectId: null,
     projectWorkspaceId: null,

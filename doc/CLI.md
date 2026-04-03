@@ -90,7 +90,7 @@ pnpm agilo company delete <company-id-or-prefix> --yes --confirm <same-id-or-pre
 Examples:
 
 ```sh
-pnpm agilo company delete PAP --yes --confirm PAP
+pnpm agilo company delete AGILO --yes --confirm AGILO
 pnpm agilo company delete 5cbe79ee-acb3-4597-896e-7662742593cd --yes --confirm 5cbe79ee-acb3-4597-896e-7662742593cd
 ```
 

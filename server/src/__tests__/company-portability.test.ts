@@ -113,7 +113,7 @@ describe("company portability", () => {
       id: GLOBAL_COMPANY_ID,
       name: "Agilo",
       description: null,
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       brandColor: "#5c5fff",
       logoAssetId: null,
       logoUrl: null,
@@ -359,8 +359,8 @@ describe("company portability", () => {
     expect(asTextFile(exported.files["skills/agilo/agilo/agilo/SKILL.md"])).toContain("metadata:");
     expect(asTextFile(exported.files["skills/agilo/agilo/agilo/SKILL.md"])).toContain('kind: "github-dir"');
     expect(exported.files["skills/agilo/agilo/agilo/references/api.md"]).toBeUndefined();
-    expect(asTextFile(exported.files["skills/company/PAP/company-playbook/SKILL.md"])).toContain("# Company Playbook");
-    expect(asTextFile(exported.files["skills/company/PAP/company-playbook/references/checklist.md"])).toContain("# Checklist");
+    expect(asTextFile(exported.files["skills/company/AGILO/company-playbook/SKILL.md"])).toContain("# Company Playbook");
+    expect(asTextFile(exported.files["skills/company/AGILO/company-playbook/references/checklist.md"])).toContain("# Checklist");
 
     const extension = asTextFile(exported.files[".agilo.yaml"]);
     expect(extension).toContain('schema: "agilo/v1"');
@@ -470,8 +470,8 @@ describe("company portability", () => {
       skills: ["company-playbook"],
     });
 
-    expect(exported.files["skills/company/PAP/company-playbook/SKILL.md"]).toBeDefined();
-    expect(asTextFile(exported.files["skills/company/PAP/company-playbook/SKILL.md"])).toContain("# Company Playbook");
+    expect(exported.files["skills/company/AGILO/company-playbook/SKILL.md"]).toBeDefined();
+    expect(asTextFile(exported.files["skills/company/AGILO/company-playbook/SKILL.md"])).toContain("# Company Playbook");
     expect(exported.files["skills/agilo/agilo/agilo/SKILL.md"]).toBeUndefined();
   });
 
@@ -489,7 +489,7 @@ describe("company portability", () => {
     });
 
     expect(exported.warnings).toContainEqual(expect.stringContaining("nonexistent-skill"));
-    expect(exported.files["skills/company/PAP/company-playbook/SKILL.md"]).toBeDefined();
+    expect(exported.files["skills/company/AGILO/company-playbook/SKILL.md"]).toBeDefined();
     expect(exported.files["skills/agilo/agilo/agilo/SKILL.md"]).toBeDefined();
   });
 
@@ -503,7 +503,7 @@ describe("company portability", () => {
       id: GLOBAL_COMPANY_ID,
       name: "Agilo",
       description: null,
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       brandColor: "#5c5fff",
       logoAssetId: "logo-1",
       logoUrl: "/api/assets/logo-1/content",
@@ -642,7 +642,7 @@ describe("company portability", () => {
     issueSvc.list.mockResolvedValue([
       {
         id: "issue-1",
-        identifier: "PAP-1",
+        identifier: "AGILO-1",
         title: "Write launch task",
         description: "Task body",
         projectId: "project-1",
@@ -741,7 +741,7 @@ describe("company portability", () => {
     issueSvc.list.mockResolvedValue([
       {
         id: "issue-1",
-        identifier: "PAP-1",
+        identifier: "AGILO-1",
         title: "Write launch task",
         description: "Task body",
         projectId: "project-1",
@@ -916,7 +916,7 @@ describe("company portability", () => {
     issueSvc.list.mockResolvedValue([
       {
         id: "issue-1",
-        identifier: "PAP-1",
+        identifier: "AGILO-1",
         title: "Task one",
         description: "Task body",
         projectId: "project-1",
@@ -990,7 +990,7 @@ describe("company portability", () => {
     issueSvc.list.mockResolvedValue([
       {
         id: "issue-1",
-        identifier: "PAP-1",
+        identifier: "AGILO-1",
         title: "Task one",
         description: null,
         projectId: "project-1",
@@ -1005,7 +1005,7 @@ describe("company portability", () => {
       },
       {
         id: "issue-2",
-        identifier: "PAP-2",
+        identifier: "AGILO-2",
         title: "Task two",
         description: null,
         projectId: "project-1",
@@ -1020,7 +1020,7 @@ describe("company portability", () => {
       },
       {
         id: "issue-3",
-        identifier: "PAP-3",
+        identifier: "AGILO-3",
         title: "Task three",
         description: null,
         projectId: "project-1",
@@ -1045,7 +1045,7 @@ describe("company portability", () => {
     });
 
     expect(exported.warnings).toContain("Project launch workspace Local Scratch was omitted from export because it does not have a portable repoUrl.");
-    expect(exported.warnings).toContain("Tasks pap-1, pap-2, pap-3 reference workspace workspace-1, but that workspace could not be exported portably.");
+    expect(exported.warnings).toContain("Tasks agilo-1, agilo-2, agilo-3 reference workspace workspace-1, but that workspace could not be exported portably.");
     expect(exported.warnings.filter((warning) => warning.includes("workspace reference workspace-1 was omitted from export"))).toHaveLength(0);
     expect(exported.warnings.filter((warning) => warning.includes("could not be exported portably"))).toHaveLength(1);
   });

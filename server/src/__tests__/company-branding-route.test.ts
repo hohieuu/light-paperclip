@@ -52,7 +52,7 @@ function createCompany() {
     name: "Agilo",
     description: null,
     status: "active",
-    issuePrefix: "PAP",
+    issuePrefix: "AGILO",
     issueCounter: 568,
     budgetMonthlyCents: 0,
     spentMonthlyCents: 0,

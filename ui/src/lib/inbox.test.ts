@@ -144,7 +144,7 @@ function makeIssue(id: string, isUnreadForMe: boolean): Issue {
     createdByAgentId: null,
     createdByUserId: null,
     issueNumber: 1,
-    identifier: `PAP-${id}`,
+    identifier: `AGILO-${id}`,
     requestDepth: 0,
     billingCode: null,
     assigneeAdapterOverrides: null,

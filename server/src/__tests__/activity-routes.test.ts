@@ -60,10 +60,10 @@ describe("activity routes", () => {
       },
     ]);
 
-    const res = await request(createApp()).get("/api/issues/PAP-475/runs");
+    const res = await request(createApp()).get("/api/issues/AGILO-475/runs");
 
     expect(res.status).toBe(200);
-    expect(mockIssueService.getByIdentifier).toHaveBeenCalledWith("PAP-475");
+    expect(mockIssueService.getByIdentifier).toHaveBeenCalledWith("AGILO-475");
     expect(mockIssueService.getById).not.toHaveBeenCalled();
     expect(mockActivityService.runsForIssue).toHaveBeenCalledWith(GLOBAL_COMPANY_ID, "issue-uuid-1");
     expect(res.body).toEqual([{ runId: "run-1" }]);

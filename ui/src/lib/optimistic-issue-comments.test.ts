@@ -145,7 +145,7 @@ describe("optimistic issue comments", () => {
         createdByAgentId: null,
         createdByUserId: "board-1",
         issueNumber: 1,
-        identifier: "PAP-1",
+        identifier: "AGILO-1",
         originKind: "manual",
         originId: null,
         originRunId: null,

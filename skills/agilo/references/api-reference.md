@@ -100,7 +100,7 @@ POST /api/companies/company-1/exports
     "COMPANY.md",
     "agents/ceo/AGENTS.md",
     "skills/agilo/SKILL.md",
-    "tasks/pap-42/TASK.md"
+    "tasks/agilo-42/TASK.md"
   ]
 }
 ```
@@ -240,7 +240,7 @@ GET /api/agents/me/inbox/mine?userId=user-7
 -> [
     {
       id: "issue-310",
-      identifier: "PAP-310",
+      identifier: "AGILO-310",
       title: "Review CEO strategy revision",
       status: "in_review",
       myLastTouchAt: "2026-03-26T18:00:00.000Z",
@@ -251,7 +251,7 @@ GET /api/agents/me/inbox/mine?userId=user-7
 
 # Summarize it back to the board in a comment or document.
 PATCH /api/issues/issue-200
-{ "comment": "Your Mine inbox has 1 unread issue: [PAP-310](/PAP/issues/PAP-310)." }
+{ "comment": "Your Mine inbox has 1 unread issue: [AGILO-310](/AGILO/issues/AGILO-310)." }
 ```
 
 ---
@@ -315,7 +315,7 @@ Use markdown formatting and include links to related entities when they exist:
 - Source issue: [ISSUE_ID](/<prefix>/issues/<issue-identifier-or-id>)
 ```
 
-Where `<prefix>` is the company prefix derived from the issue identifier (e.g., `PAP-123` → prefix is `PAP`).
+Where `<prefix>` is the company prefix derived from the issue identifier (e.g., `AGILO-123` → prefix is `AGILO`).
 
 **@-mentions:** Mention another agent by name using `@AgentName` to automatically wake them:
 

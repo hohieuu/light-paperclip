@@ -200,7 +200,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-447",
+        identifier: "AGILO-447",
         title: "Add Worktree Support",
       },
       agent: {
@@ -212,7 +212,7 @@ describe("realizeExecutionWorkspace", () => {
 
     expect(first.strategy).toBe("git_worktree");
     expect(first.created).toBe(true);
-    expect(first.branchName).toBe("PAP-447-add-worktree-support");
+    expect(first.branchName).toBe("AGILO-447-add-worktree-support");
     expect(first.cwd).toContain(path.join(".agilo", "worktrees"));
     await expect(fs.stat(path.join(first.cwd, ".git"))).resolves.toBeTruthy();
 
@@ -233,7 +233,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-447",
+        identifier: "AGILO-447",
         title: "Add Worktree Support",
       },
       agent: {
@@ -268,7 +268,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-unsafe",
-        identifier: "PAP-991",
+        identifier: "AGILO-991",
         title: "there should be a setting for the allowance of thumbs up / thumbs down data; `rm -rf`",
       },
       agent: {
@@ -279,7 +279,7 @@ describe("realizeExecutionWorkspace", () => {
     });
 
     expect(realized.branchName).toBe(
-      "PAP-991-there-should-be-a-setting-for-the-allowance-of-thumbs-up-thumbs-down-data-rm-rf",
+      "AGILO-991-there-should-be-a-setting-for-the-allowance-of-thumbs-up-thumbs-down-data-rm-rf",
     );
     expect(realized.branchName?.includes("/")).toBe(false);
     expect(path.basename(realized.cwd)).toBe(realized.branchName);
@@ -305,7 +305,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-template-safe",
-        identifier: "PAP-992",
+        identifier: "AGILO-992",
         title: "Hotfix / April.1",
       },
       agent: {
@@ -315,8 +315,8 @@ describe("realizeExecutionWorkspace", () => {
       },
     });
 
-    expect(realized.branchName).toBe("release/PAP-992.hotfix-april-1");
-    expect(path.basename(realized.cwd)).toBe("PAP-992.hotfix-april-1");
+    expect(realized.branchName).toBe("release/AGILO-992.hotfix-april-1");
+    expect(path.basename(realized.cwd)).toBe("AGILO-992.hotfix-april-1");
   });
 
   it("runs a configured provision command inside the derived worktree", async () => {
@@ -354,7 +354,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-448",
+        identifier: "AGILO-448",
         title: "Run provision command",
       },
       agent: {
@@ -365,7 +365,7 @@ describe("realizeExecutionWorkspace", () => {
     });
 
     await expect(fs.readFile(path.join(workspace.cwd, ".agilo-provision-branch"), "utf8")).resolves.toBe(
-      "PAP-448-run-provision-command\n",
+      "AGILO-448-run-provision-command\n",
     );
     await expect(fs.readFile(path.join(workspace.cwd, ".agilo-provision-base"), "utf8")).resolves.toBe(
       `${repoRoot}\n`,
@@ -392,7 +392,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-448",
+        identifier: "AGILO-448",
         title: "Run provision command",
       },
       agent: {
@@ -510,7 +510,7 @@ describe("realizeExecutionWorkspace", () => {
         },
         issue: {
           id: "issue-1",
-          identifier: "PAP-885",
+          identifier: "AGILO-885",
           title: "Show worktree banner",
         },
         agent: {
@@ -525,7 +525,7 @@ describe("realizeExecutionWorkspace", () => {
       const envContents = await fs.readFile(envPath, "utf8");
       const configContents = JSON.parse(await fs.readFile(configPath, "utf8"));
       const configStats = await fs.lstat(configPath);
-      const expectedInstanceId = "pap-885-show-worktree-banner";
+      const expectedInstanceId = "agilo-885-show-worktree-banner";
       const expectedInstanceRoot = path.join(
         isolatedWorktreeHome,
         "instances",
@@ -545,7 +545,7 @@ describe("realizeExecutionWorkspace", () => {
       expect(envContents).toContain(`AGILO_CONFIG=${JSON.stringify(configPath)}`);
       expect(envContents).toContain("AGILO_IN_WORKTREE=true");
       expect(envContents).toContain(
-        `AGILO_WORKTREE_NAME=${JSON.stringify("PAP-885-show-worktree-banner")}`,
+        `AGILO_WORKTREE_NAME=${JSON.stringify("AGILO-885-show-worktree-banner")}`,
       );
 
       process.chdir(workspace.cwd);
@@ -590,7 +590,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-540",
+        identifier: "AGILO-540",
         title: "Record workspace operations",
       },
       agent: {
@@ -607,7 +607,7 @@ describe("realizeExecutionWorkspace", () => {
     ]);
     expect(operations[0]?.command).toContain("git worktree add");
     expect(operations[0]?.metadata).toMatchObject({
-      branchName: "PAP-540-record-workspace-operations",
+      branchName: "AGILO-540-record-workspace-operations",
       created: true,
     });
     expect(operations[1]?.command).toBe("bash ./scripts/provision.sh");
@@ -615,7 +615,7 @@ describe("realizeExecutionWorkspace", () => {
 
   it("reuses an existing branch without resetting it when recreating a missing worktree", async () => {
     const repoRoot = await createTempRepo();
-    const branchName = "PAP-450-recreate-missing-worktree";
+    const branchName = "AGILO-450-recreate-missing-worktree";
 
     await runGit(repoRoot, ["checkout", "-b", branchName]);
     await fs.writeFile(path.join(repoRoot, "feature.txt"), "preserve me\n", "utf8");
@@ -641,7 +641,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-450",
+        identifier: "AGILO-450",
         title: "Recreate missing worktree",
       },
       agent: {
@@ -677,7 +677,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-449",
+        identifier: "AGILO-449",
         title: "Cleanup workspace",
       },
       agent: {
@@ -739,7 +739,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-451",
+        identifier: "AGILO-451",
         title: "Keep unmerged branch",
       },
       agent: {
@@ -806,7 +806,7 @@ describe("realizeExecutionWorkspace", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-541",
+        identifier: "AGILO-541",
         title: "Cleanup recorder",
       },
       agent: {
@@ -956,7 +956,7 @@ describe("ensureRuntimeServicesForRun", () => {
 
   it("does not reuse project-scoped shared services across different workspace launch contexts", async () => {
     const primaryWorkspaceRoot = await fs.mkdtemp(path.join(os.tmpdir(), "agilo-runtime-primary-"));
-    const worktreeWorkspaceRoot = path.join(primaryWorkspaceRoot, ".agilo", "worktrees", "PAP-874-chat-speed-issues");
+    const worktreeWorkspaceRoot = path.join(primaryWorkspaceRoot, ".agilo", "worktrees", "AGILO-874-chat-speed-issues");
     await fs.mkdir(worktreeWorkspaceRoot, { recursive: true });
 
     const primaryWorkspace = buildWorkspace(primaryWorkspaceRoot);
@@ -965,7 +965,7 @@ describe("ensureRuntimeServicesForRun", () => {
       source: "task_session",
       strategy: "git_worktree",
       cwd: worktreeWorkspaceRoot,
-      branchName: "PAP-874-chat-speed-issues",
+      branchName: "AGILO-874-chat-speed-issues",
       worktreePath: worktreeWorkspaceRoot,
     };
     const serviceCommand =
@@ -1510,7 +1510,7 @@ describe("normalizeAdapterManagedRuntimeServices", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-447",
+        identifier: "AGILO-447",
         title: "Worktree support",
       },
       workspace,
@@ -1535,7 +1535,7 @@ describe("normalizeAdapterManagedRuntimeServices", () => {
       },
       issue: {
         id: "issue-1",
-        identifier: "PAP-447",
+        identifier: "AGILO-447",
         title: "Worktree support",
       },
       workspace,

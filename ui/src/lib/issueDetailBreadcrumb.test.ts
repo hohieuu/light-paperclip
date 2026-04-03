@@ -25,10 +25,10 @@ describe("issueDetailBreadcrumb", () => {
   it("adds the source query param when building an issue detail path", () => {
     const state = createIssueDetailLocationState("Inbox", "/inbox/mine", "inbox");
 
-    expect(createIssueDetailPath("PAP-465", state)).toBe("/issues/PAP-465?from=inbox");
+    expect(createIssueDetailPath("AGILO-465", state)).toBe("/issues/AGILO-465?from=inbox");
   });
 
   it("reuses the current source query param when state has been dropped", () => {
-    expect(createIssueDetailPath("PAP-465", null, "?from=issues")).toBe("/issues/PAP-465?from=issues");
+    expect(createIssueDetailPath("AGILO-465", null, "?from=issues")).toBe("/issues/AGILO-465?from=issues");
   });
 });

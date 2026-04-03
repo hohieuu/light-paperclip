@@ -2,7 +2,7 @@
 
 ## Context
 
-We observed cascaded wakeups on a single issue (for example PAP-39) that produced multiple runs at once:
+We observed cascaded wakeups on a single issue (for example AGILO-39) that produced multiple runs at once:
 
 - assignee self-wake from `issue_commented`
 - mention wake to manager/CTO from `issue_comment_mentioned`
@@ -124,7 +124,7 @@ For issue-scoped wakeups, run creation is done only while holding a transaction 
 ## Rollout Strategy
 
 1. Ship schema + feature flag (`ISSUE_EXECUTION_LOCK_ENABLED`) default off.
-2. Enable in dev and verify PAP-39 style scenarios.
+2. Enable in dev and verify AGILO-39 style scenarios.
 3. Enable in staging with high log verbosity.
 4. Enable by default after stable run.
 

@@ -431,7 +431,7 @@ export function ExecutionWorkspaceDetail() {
                     className="w-full rounded-lg border border-border bg-background px-3 py-2 font-mono text-sm outline-none"
                     value={form.branchName}
                     onChange={(event) => setForm((current) => current ? { ...current, branchName: event.target.value } : current)}
-                    placeholder="PAP-946-workspace"
+                    placeholder="AGILO-946-workspace"
                   />
                 </Field>
               </div>

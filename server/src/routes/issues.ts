@@ -196,7 +196,7 @@ export function issueRoutes(db: Db, storage: StorageService) {
     return rawId;
   }
 
-  // Resolve issue identifiers (e.g. "PAP-39") to UUIDs for all /issues/:id routes
+  // Resolve issue identifiers (e.g. "AGILO-39") to UUIDs for all /issues/:id routes
   router.param("id", async (req, res, next, rawId) => {
     try {
       req.params.id = await normalizeIssueIdentifier(rawId);
@@ -206,7 +206,7 @@ export function issueRoutes(db: Db, storage: StorageService) {
     }
   });
 
-  // Resolve issue identifiers (e.g. "PAP-39") to UUIDs for company-scoped attachment routes.
+  // Resolve issue identifiers (e.g. "AGILO-39") to UUIDs for company-scoped attachment routes.
   router.param("issueId", async (req, res, next, rawId) => {
     try {
       req.params.issueId = await normalizeIssueIdentifier(rawId);

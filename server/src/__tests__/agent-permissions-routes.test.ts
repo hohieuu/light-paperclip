@@ -279,7 +279,7 @@ describe("agent permission routes", () => {
     mockIssueService.list.mockResolvedValue([
       {
         id: "issue-1",
-        identifier: "PAP-910",
+        identifier: "AGILO-910",
         title: "Inbox follow-up",
         status: "todo",
       },
@@ -306,7 +306,7 @@ describe("agent permission routes", () => {
     expect(res.body).toEqual([
       {
         id: "issue-1",
-        identifier: "PAP-910",
+        identifier: "AGILO-910",
         title: "Inbox follow-up",
         status: "todo",
       },

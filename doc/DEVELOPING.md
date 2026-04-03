@@ -222,9 +222,9 @@ agilo worktree init --force
 Repair an already-created repo-managed worktree and reseed its isolated instance from the main default install:
 
 ```sh
-cd ~/.agilo/worktrees/PAP-884-ai-commits-component
+cd ~/.agilo/worktrees/AGILO-884-ai-commits-component
 pnpm agilo worktree init --force --seed-mode minimal \
-  --name PAP-884-ai-commits-component \
+  --name AGILO-884-ai-commits-component \
   --from-config ~/.agilo/instances/default/config.json
 ```
 

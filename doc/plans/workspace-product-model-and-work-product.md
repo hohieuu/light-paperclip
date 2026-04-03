@@ -735,7 +735,7 @@ If the selected project:
 This dropdown should show only active execution workspaces for the selected project workspace, with labels like:
 
 - `dotta/integration-branch`
-- `PAP-447-add-worktree-support`
+- `AGILO-447-add-worktree-support`
 - `shared primary workspace`
 
 ### Important rule
@@ -766,7 +766,7 @@ Show compact summary chips near the title/status area:
 
 - `Codebase: Web App`
 - `Workspace: Shared`
-- `Workspace: PAP-447-add-worktree-support`
+- `Workspace: AGILO-447-add-worktree-support`
 - `PR: Open`
 - `Preview: Healthy`
 

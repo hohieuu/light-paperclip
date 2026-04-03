@@ -32,7 +32,7 @@ describe("monthly spend hydration", () => {
         name: "Agilo",
         description: null,
         status: "active",
-        issuePrefix: "PAP",
+        issuePrefix: "AGILO",
         issueCounter: 1,
         budgetMonthlyCents: 5000,
         spentMonthlyCents: 999999,

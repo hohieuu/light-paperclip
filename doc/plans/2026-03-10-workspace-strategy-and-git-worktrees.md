@@ -2,7 +2,7 @@
 
 ## Context
 
-`PAP-447` asks how Agilo should support worktree-driven coding workflows for local coding agents without turning that into a universal product requirement.
+`AGILO-447` asks how Agilo should support worktree-driven coding workflows for local coding agents without turning that into a universal product requirement.
 
 The motivating use case is strong:
 

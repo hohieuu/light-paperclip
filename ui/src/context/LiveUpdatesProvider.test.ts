@@ -40,10 +40,10 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
   it("suppresses activity toasts for the issue page currently in view", () => {
     const queryClient = {
       getQueryData: (key: unknown) => {
-        if (JSON.stringify(key) === JSON.stringify(queryKeys.issues.detail("PAP-759"))) {
+        if (JSON.stringify(key) === JSON.stringify(queryKeys.issues.detail("AGILO-759"))) {
           return {
             id: "issue-1",
-            identifier: "PAP-759",
+            identifier: "AGILO-759",
             assigneeAgentId: "agent-1",
           };
         }
@@ -54,11 +54,11 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
     expect(
       __liveUpdatesTestUtils.shouldSuppressActivityToastForVisibleIssue(
         queryClient as never,
-        "/issues/PAP-759",
+        "/issues/AGILO-759",
         {
           entityType: "issue",
           entityId: "issue-1",
-          details: { identifier: "PAP-759" },
+          details: { identifier: "AGILO-759" },
         },
         { isForegrounded: true },
       ),
@@ -67,11 +67,11 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
     expect(
       __liveUpdatesTestUtils.shouldSuppressActivityToastForVisibleIssue(
         queryClient as never,
-        "/issues/PAP-759",
+        "/issues/AGILO-759",
         {
           entityType: "issue",
           entityId: "issue-2",
-          details: { identifier: "PAP-760" },
+          details: { identifier: "AGILO-760" },
         },
         { isForegrounded: true },
       ),
@@ -81,10 +81,10 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
   it("suppresses run and agent status toasts for the assignee of the visible issue", () => {
     const queryClient = {
       getQueryData: (key: unknown) => {
-        if (JSON.stringify(key) === JSON.stringify(queryKeys.issues.detail("PAP-759"))) {
+        if (JSON.stringify(key) === JSON.stringify(queryKeys.issues.detail("AGILO-759"))) {
           return {
             id: "issue-1",
-            identifier: "PAP-759",
+            identifier: "AGILO-759",
             assigneeAgentId: "agent-1",
           };
         }
@@ -95,7 +95,7 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
     expect(
       __liveUpdatesTestUtils.shouldSuppressRunStatusToastForVisibleIssue(
         queryClient as never,
-        "/issues/PAP-759",
+        "/issues/AGILO-759",
         {
           runId: "run-1",
           agentId: "agent-1",
@@ -107,7 +107,7 @@ describe("LiveUpdatesProvider visible issue toast suppression", () => {
     expect(
       __liveUpdatesTestUtils.shouldSuppressAgentStatusToastForVisibleIssue(
         queryClient as never,
-        "/issues/PAP-759",
+        "/issues/AGILO-759",
         {
           agentId: "agent-1",
           status: "running",

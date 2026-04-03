@@ -23,7 +23,7 @@ function makeIssue(overrides: Record<string, unknown> = {}) {
     createdByAgentId: null,
     createdByUserId: "local-board",
     issueNumber: 1,
-    identifier: "PAP-1",
+    identifier: "AGILO-1",
     requestDepth: 0,
     billingCode: null,
     assigneeAdapterOverrides: null,
@@ -169,16 +169,16 @@ describe("worktree merge history planner", () => {
   });
 
   it("dedupes nested worktree issues by preserved source uuid", () => {
-    const sharedIssue = makeIssue({ id: "issue-a", identifier: "PAP-10", title: "Shared" });
+    const sharedIssue = makeIssue({ id: "issue-a", identifier: "AGILO-10", title: "Shared" });
     const branchOneIssue = makeIssue({
       id: "issue-b",
-      identifier: "PAP-22",
+      identifier: "AGILO-22",
       title: "Branch one issue",
       createdAt: new Date("2026-03-20T01:00:00.000Z"),
     });
     const branchTwoIssue = makeIssue({
       id: "issue-c",
-      identifier: "PAP-23",
+      identifier: "AGILO-23",
       title: "Branch two issue",
       createdAt: new Date("2026-03-20T02:00:00.000Z"),
     });
@@ -186,7 +186,7 @@ describe("worktree merge history planner", () => {
     const plan = buildWorktreeMergePlan({
       companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       previewIssueCounterStart: 500,
       scopes: ["issues", "comments"],
       sourceIssues: [sharedIssue, branchOneIssue, branchTwoIssue],
@@ -201,7 +201,7 @@ describe("worktree merge history planner", () => {
     expect(plan.counts.issuesToInsert).toBe(1);
     expect(plan.issuePlans.filter((item) => item.action === "insert").map((item) => item.source.id)).toEqual(["issue-c"]);
     expect(plan.issuePlans.find((item) => item.source.id === "issue-c" && item.action === "insert")).toMatchObject({
-      previewIdentifier: "PAP-501",
+      previewIdentifier: "AGILO-501",
     });
   });
 
@@ -209,13 +209,13 @@ describe("worktree merge history planner", () => {
     const plan = buildWorktreeMergePlan({
       companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       previewIssueCounterStart: 10,
       scopes: ["issues"],
       sourceIssues: [
         makeIssue({
           id: "issue-x",
-          identifier: "PAP-99",
+          identifier: "AGILO-99",
           status: "in_progress",
           assigneeAgentId: "agent-missing",
           projectId: "project-missing",
@@ -248,13 +248,13 @@ describe("worktree merge history planner", () => {
     const plan = buildWorktreeMergePlan({
       companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       previewIssueCounterStart: 10,
       scopes: ["issues"],
       sourceIssues: [
         makeIssue({
           id: "issue-project-map",
-          identifier: "PAP-77",
+          identifier: "AGILO-77",
           projectId: "source-project-1",
           projectWorkspaceId: "source-workspace-1",
         }),
@@ -294,13 +294,13 @@ describe("worktree merge history planner", () => {
     const plan = buildWorktreeMergePlan({
       companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       previewIssueCounterStart: 10,
       scopes: ["issues"],
       sourceIssues: [
         makeIssue({
           id: "issue-project-import",
-          identifier: "PAP-88",
+          identifier: "AGILO-88",
           projectId: "source-project-1",
           projectWorkspaceId: "source-workspace-1",
         }),
@@ -331,10 +331,10 @@ describe("worktree merge history planner", () => {
   });
 
   it("imports comments onto shared or newly imported issues while skipping existing comments", () => {
-    const sharedIssue = makeIssue({ id: "issue-a", identifier: "PAP-10" });
+    const sharedIssue = makeIssue({ id: "issue-a", identifier: "AGILO-10" });
     const newIssue = makeIssue({
       id: "issue-b",
-      identifier: "PAP-11",
+      identifier: "AGILO-11",
       createdAt: new Date("2026-03-20T01:00:00.000Z"),
     });
     const existingComment = makeComment({ id: "comment-existing", issueId: "issue-a" });
@@ -349,7 +349,7 @@ describe("worktree merge history planner", () => {
     const plan = buildWorktreeMergePlan({
       companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       previewIssueCounterStart: 10,
       scopes: ["issues", "comments"],
       sourceIssues: [sharedIssue, newIssue],
@@ -371,7 +371,7 @@ describe("worktree merge history planner", () => {
   });
 
   it("merges document revisions onto an existing shared document and renumbers conflicts", () => {
-    const sharedIssue = makeIssue({ id: "issue-a", identifier: "PAP-10" });
+    const sharedIssue = makeIssue({ id: "issue-a", identifier: "AGILO-10" });
     const sourceDocument = makeIssueDocument({
       issueId: "issue-a",
       documentId: "document-a",
@@ -410,7 +410,7 @@ describe("worktree merge history planner", () => {
     const plan = buildWorktreeMergePlan({
       companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       previewIssueCounterStart: 10,
       scopes: ["issues", "comments"],
       sourceIssues: [sharedIssue],
@@ -444,7 +444,7 @@ describe("worktree merge history planner", () => {
   });
 
   it("imports attachments while clearing missing comment and author references", () => {
-    const sharedIssue = makeIssue({ id: "issue-a", identifier: "PAP-10" });
+    const sharedIssue = makeIssue({ id: "issue-a", identifier: "AGILO-10" });
     const attachment = makeAttachment({
       issueId: "issue-a",
       issueCommentId: "comment-missing",
@@ -454,7 +454,7 @@ describe("worktree merge history planner", () => {
     const plan = buildWorktreeMergePlan({
       companyId: GLOBAL_COMPANY_ID,
       companyName: "Agilo",
-      issuePrefix: "PAP",
+      issuePrefix: "AGILO",
       previewIssueCounterStart: 10,
       scopes: ["issues"],
       sourceIssues: [sharedIssue],

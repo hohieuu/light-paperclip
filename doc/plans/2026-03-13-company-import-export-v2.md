@@ -391,7 +391,7 @@ Projects and issues should not be exported by default.
 They should be opt-in through selectors such as:
 
 - `--projects project-shortname-1,project-shortname-2`
-- `--issues PAP-1,PAP-3`
+- `--issues AGILO-1,AGILO-3`
 - `--project-issues project-shortname-1,project-shortname-2`
 
 This supports “clean public company package” workflows where a maintainer exports a follower-facing company package without bundling active work items every time.

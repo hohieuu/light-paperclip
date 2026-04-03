@@ -19,7 +19,7 @@ Important follow-up finding from real-run review:
 - `codex_local` currently injects Agilo skills into the shared Codex skills home (`$CODEX_HOME/skills` or `~/.codex/skills`) rather than mounting a worktree-local skill directory.
 - If a Agilo-owned skill symlink already points at another live checkout, the adapter currently skips it instead of repointing it.
 - In practice, this means a worktree can contain newer `skills/agilo/SKILL.md` guidance while Codex still follows an older checkout's skill content.
-- That likely explains why PAP-507 still showed full issue/comment reload behavior even though the incremental context work was already implemented in this branch.
+- That likely explains why AGILO-507 still showed full issue/comment reload behavior even though the incremental context work was already implemented in this branch.
 - This should be treated as a separate follow-up item for `codex_local` skill isolation or symlink repair.
 
 Files with the most important implementation work:

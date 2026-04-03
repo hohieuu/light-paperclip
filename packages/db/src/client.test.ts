@@ -44,7 +44,7 @@ if (!embeddedPostgresSupport.supported) {
 
 describeEmbeddedPostgres("applyPendingMigrations", () => {
   it(
-    "applies an inserted earlier migration without replaying later legacy migrations",
+    "re-applies a later migration when its journal row is removed and schema drifted",
     async () => {
       const connectionString = await createTempDatabase();
 
@@ -52,12 +52,14 @@ describeEmbeddedPostgres("applyPendingMigrations", () => {
 
       const sql = postgres(connectionString, { max: 1, onnotice: () => {} });
       try {
-        const richMagnetoHash = await migrationHash("0030_rich_magneto.sql");
+        const laterHash = await migrationHash("0001_tiresome_lord_tyger.sql");
 
         await sql.unsafe(
-          `DELETE FROM "drizzle"."__drizzle_migrations" WHERE hash = '${richMagnetoHash}'`,
+          `DELETE FROM "drizzle"."__drizzle_migrations" WHERE hash = '${laterHash}'`,
         );
-        await sql.unsafe(`DROP TABLE "company_logos"`);
+        await sql.unsafe(
+          `ALTER TABLE "companies" ALTER COLUMN "issue_prefix" SET DEFAULT 'WRONG'`,
+        );
       } finally {
         await sql.end();
       }
@@ -65,7 +67,7 @@ describeEmbeddedPostgres("applyPendingMigrations", () => {
       const pendingState = await inspectMigrations(connectionString);
       expect(pendingState).toMatchObject({
         status: "needsMigrations",
-        pendingMigrations: ["0030_rich_magneto.sql"],
+        pendingMigrations: ["0001_tiresome_lord_tyger.sql"],
         reason: "pending-migrations",
       });
 
@@ -76,19 +78,17 @@ describeEmbeddedPostgres("applyPendingMigrations", () => {
 
       const verifySql = postgres(connectionString, { max: 1, onnotice: () => {} });
       try {
-        const rows = await verifySql.unsafe<{ table_name: string }[]>(
+        const rows = await verifySql.unsafe<{ column_default: string | null }[]>(
           `
-            SELECT table_name
-            FROM information_schema.tables
+            SELECT column_default
+            FROM information_schema.columns
             WHERE table_schema = 'public'
-              AND table_name IN ('company_logos', 'execution_workspaces')
-            ORDER BY table_name
+              AND table_name = 'companies'
+              AND column_name = 'issue_prefix'
           `,
         );
-        expect(rows.map((row) => row.table_name)).toEqual([
-          "company_logos",
-          "execution_workspaces",
-        ]);
+        expect(rows).toHaveLength(1);
+        expect(rows[0]?.column_default).toContain("AGILO");
       } finally {
         await verifySql.end();
       }
@@ -97,7 +97,7 @@ describeEmbeddedPostgres("applyPendingMigrations", () => {
   );
 
   it(
-    "replays migration 0044 safely when its schema changes already exist",
+    "replays a later migration safely when its schema changes already exist",
     async () => {
       const connectionString = await createTempDatabase();
 
@@ -105,22 +105,23 @@ describeEmbeddedPostgres("applyPendingMigrations", () => {
 
       const sql = postgres(connectionString, { max: 1, onnotice: () => {} });
       try {
-        const illegalToadHash = await migrationHash("0044_illegal_toad.sql");
+        const laterHash = await migrationHash("0001_tiresome_lord_tyger.sql");
 
         await sql.unsafe(
-          `DELETE FROM "drizzle"."__drizzle_migrations" WHERE hash = '${illegalToadHash}'`,
+          `DELETE FROM "drizzle"."__drizzle_migrations" WHERE hash = '${laterHash}'`,
         );
 
-        const columns = await sql.unsafe<{ column_name: string }[]>(
+        const rows = await sql.unsafe<{ column_default: string | null }[]>(
           `
-            SELECT column_name
+            SELECT column_default
             FROM information_schema.columns
             WHERE table_schema = 'public'
-              AND table_name = 'instance_settings'
-              AND column_name = 'general'
+              AND table_name = 'companies'
+              AND column_name = 'issue_prefix'
           `,
         );
-        expect(columns).toHaveLength(1);
+        expect(rows).toHaveLength(1);
+        expect(rows[0]?.column_default).toContain("AGILO");
       } finally {
         await sql.end();
       }
@@ -128,7 +129,7 @@ describeEmbeddedPostgres("applyPendingMigrations", () => {
       const pendingState = await inspectMigrations(connectionString);
       expect(pendingState).toMatchObject({
         status: "needsMigrations",
-        pendingMigrations: ["0044_illegal_toad.sql"],
+        pendingMigrations: ["0001_tiresome_lord_tyger.sql"],
         reason: "pending-migrations",
       });
 
@@ -141,7 +142,7 @@ describeEmbeddedPostgres("applyPendingMigrations", () => {
   );
 
   it(
-    "enforces a unique board_api_keys.key_hash after migration 0044",
+    "enforces a unique board_api_keys.key_hash",
     async () => {
       const connectionString = await createTempDatabase();
 
