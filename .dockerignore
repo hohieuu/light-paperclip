@@ -1,6 +1,6 @@
 .git
 .github
-.paperclip
+.agilo
 .pnpm-store
 node_modules
 **/node_modules

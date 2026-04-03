@@ -8,7 +8,7 @@ import {
   sanitizeRememberedPathForCompany,
 } from "../lib/company-page-memory";
 
-const STORAGE_KEY = "paperclip.companyPaths";
+const STORAGE_KEY = "agilo.techpanyPaths";
 
 function getCompanyPaths(): Record<string, string> {
   try {

@@ -1,14 +1,14 @@
 {
-  "name": "@paperclipai/shared",
+  "name": "@agilo/shared",
   "version": "0.3.1",
   "license": "MIT",
-  "homepage": "https://github.com/paperclipai/paperclip",
+  "homepage": "https://github.com/agilo/agilo",
   "bugs": {
-    "url": "https://github.com/paperclipai/paperclip/issues"
+    "url": "https://github.com/agilo/agilo/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/paperclipai/paperclip",
+    "url": "https://github.com/agilo/agilo",
     "directory": "packages/shared"
   },
   "type": "module",

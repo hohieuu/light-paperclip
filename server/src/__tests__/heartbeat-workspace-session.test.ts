@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { agents } from "@paperclipai/db";
-import { sessionCodec as codexSessionCodec } from "@paperclipai/adapter-codex-local/server";
+import type { agents } from "@agilo/db";
+import { sessionCodec as codexSessionCodec } from "@agilo/adapter-codex-local/server";
 import { resolveDefaultAgentWorkspaceDir } from "../home-paths.js";
 import {
   applyPersistedExecutionWorkspaceConfig,
@@ -173,7 +173,7 @@ describe("buildRealizedExecutionWorkspaceFromPersisted", () => {
         name: "PAP-880-thumbs-capture-for-evals-feature",
         status: "active",
         cwd: "/tmp/reused-worktree",
-        repoUrl: "https://example.com/paperclip.git",
+        repoUrl: "https://example.com/agilo.git",
         baseRef: "main",
         branchName: "PAP-880-thumbs-capture-for-evals-feature",
         providerType: "git_worktree",
@@ -216,7 +216,7 @@ describe("buildRealizedExecutionWorkspaceFromPersisted", () => {
         name: "PAP-999-missing-provider-ref",
         status: "active",
         cwd: null,
-        repoUrl: "https://example.com/paperclip.git",
+        repoUrl: "https://example.com/agilo.git",
         baseRef: "main",
         branchName: "feature/PAP-999-missing-provider-ref",
         providerType: "git_worktree",
@@ -383,7 +383,7 @@ describe("formatRuntimeWorkspaceWarningLog", () => {
   it("emits informational workspace warnings on stdout", () => {
     expect(formatRuntimeWorkspaceWarningLog("Using fallback workspace")).toEqual({
       stream: "stdout",
-      chunk: "[paperclip] Using fallback workspace\n",
+      chunk: "[agilo] Using fallback workspace\n",
     });
   });
 });
@@ -425,7 +425,7 @@ describe("prioritizeProjectWorkspaceCandidatesForRun", () => {
 });
 
 describe("parseSessionCompactionPolicy", () => {
-  it("disables Paperclip-managed rotation by default for codex and claude local", () => {
+  it("disables Agilo-managed rotation by default for codex and claude local", () => {
     expect(parseSessionCompactionPolicy(buildAgent("codex_local"))).toEqual({
       enabled: true,
       maxSessionRuns: 0,

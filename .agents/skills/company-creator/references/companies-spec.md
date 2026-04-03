@@ -39,7 +39,7 @@ company-package/
 ├── assets/
 ├── scripts/
 ├── references/
-└── .paperclip.yaml          (optional vendor extension)
+└── .agilo.yaml          (optional vendor extension)
 ```
 
 ## Common Frontmatter Fields

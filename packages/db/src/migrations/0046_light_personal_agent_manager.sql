@@ -1,4 +1,4 @@
--- Light Paperclip Refactor: Remove governance, add model profiles
+-- Light Agilo Refactor: Remove governance, add model profiles
 -- Removes goal chains, simplifies approvals, adds provider-agnostic model profiles
 
 -- 1. Remove goal_id FK from issues (drop constraint, then column)

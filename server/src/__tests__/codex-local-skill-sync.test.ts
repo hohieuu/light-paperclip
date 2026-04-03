@@ -5,14 +5,14 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   listCodexSkills,
   syncCodexSkills,
-} from "@paperclipai/adapter-codex-local/server";
+} from "@agilo/adapter-codex-local/server";
 
 async function makeTempDir(prefix: string): Promise<string> {
   return fs.mkdtemp(path.join(os.tmpdir(), prefix));
 }
 
 describe("codex local skill sync", () => {
-  const paperclipKey = "paperclipai/paperclip/paperclip";
+  const agiloKey = "agilo/agilo/agilo";
   const cleanupDirs = new Set<string>();
 
   afterEach(async () => {
@@ -20,8 +20,8 @@ describe("codex local skill sync", () => {
     cleanupDirs.clear();
   });
 
-  it("reports configured Paperclip skills for workspace injection on the next run", async () => {
-    const codexHome = await makeTempDir("paperclip-codex-skill-sync-");
+  it("reports configured Agilo skills for workspace injection on the next run", async () => {
+    const codexHome = await makeTempDir("agilo-codex-skill-sync-");
     cleanupDirs.add(codexHome);
 
     const ctx = {
@@ -32,22 +32,22 @@ describe("codex local skill sync", () => {
         env: {
           CODEX_HOME: codexHome,
         },
-        paperclipSkillSync: {
-          desiredSkills: [paperclipKey],
+        agiloSkillSync: {
+          desiredSkills: [agiloKey],
         },
       },
     } as const;
 
     const before = await listCodexSkills(ctx);
     expect(before.mode).toBe("ephemeral");
-    expect(before.desiredSkills).toContain(paperclipKey);
-    expect(before.entries.find((entry) => entry.key === paperclipKey)?.required).toBe(true);
-    expect(before.entries.find((entry) => entry.key === paperclipKey)?.state).toBe("configured");
-    expect(before.entries.find((entry) => entry.key === paperclipKey)?.detail).toContain("CODEX_HOME/skills/");
+    expect(before.desiredSkills).toContain(agiloKey);
+    expect(before.entries.find((entry) => entry.key === agiloKey)?.required).toBe(true);
+    expect(before.entries.find((entry) => entry.key === agiloKey)?.state).toBe("configured");
+    expect(before.entries.find((entry) => entry.key === agiloKey)?.detail).toContain("CODEX_HOME/skills/");
   });
 
-  it("does not persist Paperclip skills into CODEX_HOME during sync", async () => {
-    const codexHome = await makeTempDir("paperclip-codex-skill-prune-");
+  it("does not persist Agilo skills into CODEX_HOME during sync", async () => {
+    const codexHome = await makeTempDir("agilo-codex-skill-prune-");
     cleanupDirs.add(codexHome);
 
     const configuredCtx = {
@@ -58,22 +58,22 @@ describe("codex local skill sync", () => {
         env: {
           CODEX_HOME: codexHome,
         },
-        paperclipSkillSync: {
-          desiredSkills: [paperclipKey],
+        agiloSkillSync: {
+          desiredSkills: [agiloKey],
         },
       },
     } as const;
 
-    const after = await syncCodexSkills(configuredCtx, [paperclipKey]);
+    const after = await syncCodexSkills(configuredCtx, [agiloKey]);
     expect(after.mode).toBe("ephemeral");
-    expect(after.entries.find((entry) => entry.key === paperclipKey)?.state).toBe("configured");
-    await expect(fs.lstat(path.join(codexHome, "skills", "paperclip"))).rejects.toMatchObject({
+    expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("configured");
+    await expect(fs.lstat(path.join(codexHome, "skills", "agilo"))).rejects.toMatchObject({
       code: "ENOENT",
     });
   });
 
-  it("keeps required bundled Paperclip skills configured even when the desired set is emptied", async () => {
-    const codexHome = await makeTempDir("paperclip-codex-skill-required-");
+  it("keeps required bundled Agilo skills configured even when the desired set is emptied", async () => {
+    const codexHome = await makeTempDir("agilo-codex-skill-required-");
     cleanupDirs.add(codexHome);
 
     const configuredCtx = {
@@ -84,19 +84,19 @@ describe("codex local skill sync", () => {
         env: {
           CODEX_HOME: codexHome,
         },
-        paperclipSkillSync: {
+        agiloSkillSync: {
           desiredSkills: [],
         },
       },
     } as const;
 
     const after = await syncCodexSkills(configuredCtx, []);
-    expect(after.desiredSkills).toContain(paperclipKey);
-    expect(after.entries.find((entry) => entry.key === paperclipKey)?.state).toBe("configured");
+    expect(after.desiredSkills).toContain(agiloKey);
+    expect(after.entries.find((entry) => entry.key === agiloKey)?.state).toBe("configured");
   });
 
-  it("normalizes legacy flat Paperclip skill refs before reporting configured state", async () => {
-    const codexHome = await makeTempDir("paperclip-codex-legacy-skill-sync-");
+  it("normalizes legacy flat Agilo skill refs before reporting configured state", async () => {
+    const codexHome = await makeTempDir("agilo-codex-legacy-skill-sync-");
     cleanupDirs.add(codexHome);
 
     const snapshot = await listCodexSkills({
@@ -107,16 +107,16 @@ describe("codex local skill sync", () => {
         env: {
           CODEX_HOME: codexHome,
         },
-        paperclipSkillSync: {
-          desiredSkills: ["paperclip"],
+        agiloSkillSync: {
+          desiredSkills: ["agilo"],
         },
       },
     });
 
     expect(snapshot.warnings).toEqual([]);
-    expect(snapshot.desiredSkills).toContain(paperclipKey);
-    expect(snapshot.desiredSkills).not.toContain("paperclip");
-    expect(snapshot.entries.find((entry) => entry.key === paperclipKey)?.state).toBe("configured");
-    expect(snapshot.entries.find((entry) => entry.key === "paperclip")).toBeUndefined();
+    expect(snapshot.desiredSkills).toContain(agiloKey);
+    expect(snapshot.desiredSkills).not.toContain("agilo");
+    expect(snapshot.entries.find((entry) => entry.key === agiloKey)?.state).toBe("configured");
+    expect(snapshot.entries.find((entry) => entry.key === "agilo")).toBeUndefined();
   });
 });

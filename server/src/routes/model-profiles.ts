@@ -1,5 +1,5 @@
 import { Router } from "express";
-import type { Db } from "@paperclipai/db";
+import type { Db } from "@agilo/db";
 import { modelProfileService } from "../services/model-profiles.js";
 import { assertBoard, getActorInfo } from "./authz.js";
 import { logActivity } from "../services/index.js";

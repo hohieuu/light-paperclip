@@ -9,12 +9,12 @@ describe("applyAgentSkillSnapshot", () => {
         lastSaved: [],
         hasHydratedSnapshot: false,
       },
-      ["paperclip", "para-memory-files"],
+      ["agilo", "para-memory-files"],
     );
 
     expect(result).toEqual({
-      draft: ["paperclip", "para-memory-files"],
-      lastSaved: ["paperclip", "para-memory-files"],
+      draft: ["agilo", "para-memory-files"],
+      lastSaved: ["agilo", "para-memory-files"],
       hasHydratedSnapshot: true,
       shouldSkipAutosave: true,
     });
@@ -23,16 +23,16 @@ describe("applyAgentSkillSnapshot", () => {
   it("keeps unsaved local edits when a fresh snapshot arrives", () => {
     const result = applyAgentSkillSnapshot(
       {
-        draft: ["paperclip", "custom-skill"],
-        lastSaved: ["paperclip"],
+        draft: ["agilo", "custom-skill"],
+        lastSaved: ["agilo"],
         hasHydratedSnapshot: true,
       },
-      ["paperclip"],
+      ["agilo"],
     );
 
     expect(result).toEqual({
-      draft: ["paperclip", "custom-skill"],
-      lastSaved: ["paperclip"],
+      draft: ["agilo", "custom-skill"],
+      lastSaved: ["agilo"],
       hasHydratedSnapshot: true,
       shouldSkipAutosave: false,
     });
@@ -41,16 +41,16 @@ describe("applyAgentSkillSnapshot", () => {
   it("adopts server state after a successful save and skips the follow-up autosave pass", () => {
     const result = applyAgentSkillSnapshot(
       {
-        draft: ["paperclip", "custom-skill"],
-        lastSaved: ["paperclip", "custom-skill"],
+        draft: ["agilo", "custom-skill"],
+        lastSaved: ["agilo", "custom-skill"],
         hasHydratedSnapshot: true,
       },
-      ["paperclip", "custom-skill"],
+      ["agilo", "custom-skill"],
     );
 
     expect(result).toEqual({
-      draft: ["paperclip", "custom-skill"],
-      lastSaved: ["paperclip", "custom-skill"],
+      draft: ["agilo", "custom-skill"],
+      lastSaved: ["agilo", "custom-skill"],
       hasHydratedSnapshot: true,
       shouldSkipAutosave: true,
     });
@@ -64,18 +64,18 @@ describe("applyAgentSkillSnapshot", () => {
       managed: false,
       state: "external",
       origin: "user_installed",
-    }, new Set(["paperclip"]))).toBe(true);
+    }, new Set(["agilo"]))).toBe(true);
   });
 
   it("keeps company-library entries in the managed section even when the adapter reports an external conflict", () => {
     expect(isReadOnlyUnmanagedSkillEntry({
-      key: "paperclip",
-      runtimeName: "paperclip",
+      key: "agilo",
+      runtimeName: "agilo",
       desired: true,
       managed: false,
       state: "external",
       origin: "company_managed",
-    }, new Set(["paperclip"]))).toBe(false);
+    }, new Set(["agilo"]))).toBe(false);
   });
 
   it("falls back to legacy snapshots that only mark unmanaged external entries", () => {

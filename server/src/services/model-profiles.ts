@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
-import type { Db } from "@paperclipai/db";
-import { modelProfiles } from "@paperclipai/db";
+import type { Db } from "@agilo/db";
+import { modelProfiles } from "@agilo/db";
 
 export interface CreateModelProfileInput {
   name: string;

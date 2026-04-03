@@ -33,5 +33,5 @@ Operational fields:
 - graceSec (number, optional): SIGTERM grace period in seconds
 
 Notes:
-- When Paperclip realizes a workspace/runtime for a run, it injects PAPERCLIP_WORKSPACE_* and PAPERCLIP_RUNTIME_* env vars for agent-side tooling.
+- When Agilo realizes a workspace/runtime for a run, it injects AGILO_WORKSPACE_* and AGILO_RUNTIME_* env vars for agent-side tooling.
 `;

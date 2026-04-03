@@ -1,11 +1,11 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
-import type { Db } from "@paperclipai/db";
+import type { Db } from "@agilo/db";
 import {
   companyMemberships,
   instanceUserRoles,
   principalPermissionGrants,
-} from "@paperclipai/db";
-import type { PermissionKey, PrincipalType } from "@paperclipai/shared";
+} from "@agilo/db";
+import type { PermissionKey, PrincipalType } from "@agilo/shared";
 
 type MembershipRow = typeof companyMemberships.$inferSelect;
 type GrantInput = {

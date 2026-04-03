@@ -49,11 +49,11 @@ function BootstrapPendingPage({ hasActiveInvite = false }: { hasActiveInvite?: b
         <h1 className="text-xl font-semibold">Instance setup required</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {hasActiveInvite
-            ? "No instance admin exists yet. A bootstrap invite is already active. Check your Paperclip startup logs for the first admin invite URL, or run this command to rotate it:"
-            : "No instance admin exists yet. Run this command in your Paperclip environment to generate the first admin invite URL:"}
+            ? "No instance admin exists yet. A bootstrap invite is already active. Check your Agilo startup logs for the first admin invite URL, or run this command to rotate it:"
+            : "No instance admin exists yet. Run this command in your Agilo environment to generate the first admin invite URL:"}
         </p>
         <pre className="mt-4 overflow-x-auto rounded-md border border-border bg-muted/30 p-3 text-xs">
-{`pnpm paperclipai auth bootstrap-ceo`}
+{`pnpm agilo auth bootstrap-ceo`}
         </pre>
       </div>
     </div>
@@ -185,7 +185,7 @@ function CompanyRootRedirect() {
 
   const targetCompany = selectedCompany ?? companies[0] ?? null;
     if (!targetCompany) {
-      return <NoCompaniesStartPage />;
+      return <Navigate to="/_/dashboard" replace />;
     }
 
   return <Navigate to={`/${targetCompany.issuePrefix}/dashboard`} replace />;
@@ -201,7 +201,12 @@ function UnprefixedBoardRedirect() {
 
   const targetCompany = selectedCompany ?? companies[0] ?? null;
     if (!targetCompany) {
-      return <NoCompaniesStartPage />;
+      return (
+        <Navigate
+          to={`/_${location.pathname}${location.search}${location.hash}`}
+          replace
+        />
+      );
     }
 
   return (
@@ -212,18 +217,6 @@ function UnprefixedBoardRedirect() {
   );
 }
 
-function NoCompaniesStartPage() {
-  return (
-    <div className="mx-auto max-w-xl py-10">
-      <div className="rounded-lg border border-border bg-card p-6">
-        <h1 className="text-xl font-semibold">Create your first company</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Get started by creating a company.
-        </p>
-      </div>
-    </div>
-  );
-}
 
 export function App() {
   return (

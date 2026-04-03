@@ -11,7 +11,7 @@ console.log("Seeding database...");
 const [company] = await db
   .insert(companies)
   .values({
-    name: "Light Paperclip Demo",
+    name: "Light Agilo Demo",
     description: "A lightweight personal agent manager",
     status: "active",
     budgetMonthlyCents: 50000,
