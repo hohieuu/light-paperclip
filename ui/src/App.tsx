@@ -13,8 +13,6 @@ import { ProjectDetail } from "./pages/ProjectDetail";
 import { ProjectWorkspaceDetail } from "./pages/ProjectWorkspaceDetail";
 import { Issues } from "./pages/Issues";
 import { IssueDetail } from "./pages/IssueDetail";
-import { Routines } from "./pages/Routines";
-import { RoutineDetail } from "./pages/RoutineDetail";
 import { ExecutionWorkspaceDetail } from "./pages/ExecutionWorkspaceDetail";
 import { ModelProfiles } from "./pages/ModelProfiles";
 import { Costs } from "./pages/Costs";
@@ -116,7 +114,6 @@ function boardRoutes() {
     <>
       <Route index element={<Navigate to="dashboard" replace />} />
       <Route path="dashboard" element={<Dashboard />} />
-      <Route path="onboarding" element={<OnboardingRoutePage />} />
       <Route path="companies" element={<Companies />} />
       <Route path="company/settings" element={<CompanySettings />} />
       <Route path="company/export/*" element={<CompanyExport />} />
@@ -151,8 +148,6 @@ function boardRoutes() {
       <Route path="issues/done" element={<Navigate to="/issues" replace />} />
       <Route path="issues/recent" element={<Navigate to="/issues" replace />} />
       <Route path="issues/:issueId" element={<IssueDetail />} />
-      <Route path="routines" element={<Routines />} />
-      <Route path="routines/:routineId" element={<RoutineDetail />} />
       <Route path="execution-workspaces/:workspaceId" element={<ExecutionWorkspaceDetail />} />
       <Route path="model-profiles" element={<ModelProfiles />} />
       <Route path="costs" element={<Costs />} />
@@ -180,46 +175,6 @@ function LegacySettingsRedirect() {
   return <Navigate to={`/instance/settings/general${location.search}${location.hash}`} replace />;
 }
 
-function OnboardingRoutePage() {
-  const { companies } = useCompany();
-  const { openOnboarding } = useDialog();
-  const { companyPrefix } = useParams<{ companyPrefix?: string }>();
-  const matchedCompany = companyPrefix
-    ? companies.find((company) => company.issuePrefix.toUpperCase() === companyPrefix.toUpperCase()) ?? null
-    : null;
-
-  const title = matchedCompany
-    ? `Add another agent to ${matchedCompany.name}`
-    : companies.length > 0
-      ? "Create another company"
-      : "Create your first company";
-  const description = matchedCompany
-    ? "Run onboarding again to add an agent and a starter task for this company."
-    : companies.length > 0
-      ? "Run onboarding again to create another company and seed its first agent."
-      : "Get started by creating a company and your first agent.";
-
-  return (
-    <div className="mx-auto max-w-xl py-10">
-      <div className="rounded-lg border border-border bg-card p-6">
-        <h1 className="text-xl font-semibold">{title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-        <div className="mt-4">
-          <Button
-            onClick={() =>
-              matchedCompany
-                ? openOnboarding({ initialStep: 2, companyId: matchedCompany.id })
-                : openOnboarding()
-            }
-          >
-            {matchedCompany ? "Add Agent" : "Start Onboarding"}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function CompanyRootRedirect() {
   const { companies, selectedCompany, loading } = useCompany();
   const location = useLocation();
@@ -229,17 +184,9 @@ function CompanyRootRedirect() {
   }
 
   const targetCompany = selectedCompany ?? companies[0] ?? null;
-  if (!targetCompany) {
-    if (
-      shouldRedirectCompanylessRouteToOnboarding({
-        pathname: location.pathname,
-        hasCompanies: false,
-      })
-    ) {
-      return <Navigate to="/onboarding" replace />;
+    if (!targetCompany) {
+      return <NoCompaniesStartPage />;
     }
-    return <NoCompaniesStartPage />;
-  }
 
   return <Navigate to={`/${targetCompany.issuePrefix}/dashboard`} replace />;
 }
@@ -253,17 +200,9 @@ function UnprefixedBoardRedirect() {
   }
 
   const targetCompany = selectedCompany ?? companies[0] ?? null;
-  if (!targetCompany) {
-    if (
-      shouldRedirectCompanylessRouteToOnboarding({
-        pathname: location.pathname,
-        hasCompanies: false,
-      })
-    ) {
-      return <Navigate to="/onboarding" replace />;
+    if (!targetCompany) {
+      return <NoCompaniesStartPage />;
     }
-    return <NoCompaniesStartPage />;
-  }
 
   return (
     <Navigate
@@ -274,8 +213,6 @@ function UnprefixedBoardRedirect() {
 }
 
 function NoCompaniesStartPage() {
-  const { openOnboarding } = useDialog();
-
   return (
     <div className="mx-auto max-w-xl py-10">
       <div className="rounded-lg border border-border bg-card p-6">
@@ -283,9 +220,6 @@ function NoCompaniesStartPage() {
         <p className="mt-2 text-sm text-muted-foreground">
           Get started by creating a company.
         </p>
-        <div className="mt-4">
-          <Button onClick={() => openOnboarding()}>New Company</Button>
-        </div>
       </div>
     </div>
   );
@@ -302,7 +236,6 @@ export function App() {
 
         <Route element={<CloudAccessGate />}>
           <Route index element={<CompanyRootRedirect />} />
-          <Route path="onboarding" element={<OnboardingRoutePage />} />
           <Route path="instance" element={<Navigate to="/instance/settings/general" replace />} />
           <Route path="instance/settings" element={<Layout />}>
             <Route index element={<Navigate to="general" replace />} />
@@ -315,8 +248,6 @@ export function App() {
           <Route path="companies" element={<UnprefixedBoardRedirect />} />
           <Route path="issues" element={<UnprefixedBoardRedirect />} />
           <Route path="issues/:issueId" element={<UnprefixedBoardRedirect />} />
-          <Route path="routines" element={<UnprefixedBoardRedirect />} />
-          <Route path="routines/:routineId" element={<UnprefixedBoardRedirect />} />
           <Route path="skills/*" element={<UnprefixedBoardRedirect />} />
           <Route path="settings" element={<LegacySettingsRedirect />} />
           <Route path="settings/*" element={<LegacySettingsRedirect />} />

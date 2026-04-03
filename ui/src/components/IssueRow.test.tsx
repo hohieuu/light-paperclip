@@ -22,7 +22,6 @@ function createIssue(overrides: Partial<Issue> = {}): Issue {
     companyId: "company-1",
     projectId: null,
     projectWorkspaceId: null,
-    goalId: null,
     parentId: null,
     title: "Inbox item",
     description: null,

@@ -87,7 +87,6 @@ export interface Issue {
   companyId: string;
   projectId: string | null;
   projectWorkspaceId: string | null;
-  goalId: string | null;
   parentId: string | null;
   ancestors?: IssueAncestor[];
   title: string;

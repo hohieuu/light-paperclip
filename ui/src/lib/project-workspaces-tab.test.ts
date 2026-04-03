@@ -34,7 +34,6 @@ function createIssue(overrides: Partial<Issue>): Issue {
     companyId: overrides.companyId ?? "company-1",
     projectId: overrides.projectId ?? "project-1",
     projectWorkspaceId: overrides.projectWorkspaceId ?? null,
-    goalId: overrides.goalId ?? null,
     parentId: overrides.parentId ?? null,
     title: overrides.title ?? "Issue",
     description: overrides.description ?? null,

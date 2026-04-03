@@ -6,7 +6,6 @@ export { companiesApi } from "./companies";
 export { agentsApi } from "./agents";
 export { projectsApi } from "./projects";
 export { issuesApi } from "./issues";
-export { routinesApi } from "./routines";
 export { modelProfilesApi } from "./model-profiles";
 export { approvalsApi } from "./approvals";
 export { costsApi } from "./costs";

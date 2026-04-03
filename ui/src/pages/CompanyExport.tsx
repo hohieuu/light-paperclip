@@ -55,7 +55,6 @@ function checkedSlugs(checkedFiles: Set<string>): {
   agents: Set<string>;
   projects: Set<string>;
   tasks: Set<string>;
-  routines: Set<string>;
 } {
   const agents = new Set<string>();
   const projects = new Set<string>();
@@ -68,7 +67,7 @@ function checkedSlugs(checkedFiles: Set<string>): {
     const taskMatch = p.match(/^tasks\/([^/]+)\//);
     if (taskMatch) tasks.add(taskMatch[1]);
   }
-  return { agents, projects, tasks, routines: new Set(tasks) };
+  return { agents, projects, tasks };
 }
 
 /**
@@ -83,7 +82,7 @@ function filterPaperclipYaml(yaml: string, checkedFiles: Set<string>): string {
   const out: string[] = [];
 
   // Sections whose entries are slug-keyed and should be filtered
-  const filterableSections = new Set(["agents", "projects", "tasks", "routines"]);
+  const filterableSections = new Set(["agents", "projects", "tasks"]);
   const sidebarSections = new Set(["agents", "projects"]);
 
   let currentSection: string | null = null; // top-level key (e.g. "agents")

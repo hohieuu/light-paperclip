@@ -239,7 +239,6 @@ describe("worktree merge history planner", () => {
       "clear_assignee_agent",
       "clear_project",
       "clear_project_workspace",
-      "clear_goal",
       "coerce_in_progress_to_todo",
     ]);
   });

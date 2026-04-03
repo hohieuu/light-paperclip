@@ -67,22 +67,6 @@ export interface CompanyPortabilityProjectWorkspaceManifestEntry {
   isPrimary: boolean;
 }
 
-export interface CompanyPortabilityIssueRoutineTriggerManifestEntry {
-  kind: string;
-  label: string | null;
-  enabled: boolean;
-  cronExpression: string | null;
-  timezone: string | null;
-  signingMode: string | null;
-  replayWindowSec: number | null;
-}
-
-export interface CompanyPortabilityIssueRoutineManifestEntry {
-  concurrencyPolicy: string | null;
-  catchUpPolicy: string | null;
-  triggers: CompanyPortabilityIssueRoutineTriggerManifestEntry[];
-}
-
 export interface CompanyPortabilityIssueManifestEntry {
   slug: string;
   identifier: string | null;
@@ -93,8 +77,6 @@ export interface CompanyPortabilityIssueManifestEntry {
   assigneeAgentSlug: string | null;
   description: string | null;
   recurring: boolean;
-  routine: CompanyPortabilityIssueRoutineManifestEntry | null;
-  legacyRecurrence: Record<string, unknown> | null;
   status: string | null;
   priority: string | null;
   labelIds: string[];

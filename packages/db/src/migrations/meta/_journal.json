@@ -330,6 +330,13 @@
       "when": 1775000000000,
       "tag": "0046_light_personal_agent_manager",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1775195018162,
+      "tag": "0047_sleepy_diamondback",
+      "breakpoints": true
     }
   ]
 }

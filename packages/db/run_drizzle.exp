@@ -1,0 +1,6 @@
+#!/usr/bin/expect -f
+set timeout -1
+spawn pnpm run db:generate
+expect "Is model_profiles table created or renamed from another table?"
+send "\r"
+expect eof

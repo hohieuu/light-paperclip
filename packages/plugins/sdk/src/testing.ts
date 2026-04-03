@@ -351,7 +351,6 @@ export function createTestHarness(options: TestHarnessOptions): TestHarness {
           companyId: input.companyId,
           projectId: input.projectId ?? null,
           projectWorkspaceId: null,
-          goalId: input.goalId ?? null,
           parentId: input.parentId ?? null,
           title: input.title,
           description: input.description ?? null,

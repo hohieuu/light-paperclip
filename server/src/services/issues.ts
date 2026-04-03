@@ -703,9 +703,6 @@ export function issueService(db: Db) {
           )!,
         );
       }
-      if (!filters?.includeRoutineExecutions && !filters?.originKind && !filters?.originId) {
-        conditions.push(ne(issues.originKind, "routine_execution"));
-      }
       conditions.push(isNull(issues.hiddenAt));
 
       const priorityOrder = sql`CASE ${issues.priority} WHEN 'critical' THEN 0 WHEN 'high' THEN 1 WHEN 'medium' THEN 2 WHEN 'low' THEN 3 ELSE 4 END`;
@@ -787,7 +784,6 @@ export function issueService(db: Db) {
         eq(issues.companyId, companyId),
         isNull(issues.hiddenAt),
         unreadForUserCondition(companyId, userId),
-        ne(issues.originKind, "routine_execution"),
       ];
       if (status) {
         const statuses = status.split(",").map((s) => s.trim()).filter(Boolean);

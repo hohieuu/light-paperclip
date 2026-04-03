@@ -36,7 +36,6 @@ export function Companies() {
     loading,
     error,
   } = useCompany();
-  const { openOnboarding } = useDialog();
   const { setBreadcrumbs } = useBreadcrumbs();
   const queryClient = useQueryClient();
 
@@ -90,7 +89,7 @@ export function Companies() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-end">
-        <Button size="sm" onClick={() => openOnboarding()}>
+        <Button size="sm">
           <Plus className="h-3.5 w-3.5 mr-1.5" />
           New Company
         </Button>

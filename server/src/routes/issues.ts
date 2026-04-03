@@ -27,7 +27,6 @@ import {
   documentService,
   logActivity,
   projectService,
-  routineService,
   workProductService,
 } from "../services/index.js";
 import { logger } from "../middleware/logger.js";
@@ -53,7 +52,6 @@ export function issueRoutes(db: Db, storage: StorageService) {
   const executionWorkspacesSvc = executionWorkspaceService(db);
   const workProductsSvc = workProductService(db);
   const documentsSvc = documentService(db);
-  const routinesSvc = routineService(db);
   const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: MAX_ATTACHMENT_BYTES, files: 1 },
@@ -1013,7 +1011,6 @@ export function issueRoutes(db: Db, storage: StorageService) {
       res.status(404).json({ error: "Issue not found" });
       return;
     }
-    await routinesSvc.syncRunStatusForIssue(issue.id);
 
     if (actor.runId) {
       await heartbeat.reportRunActivity(actor.runId).catch((err) =>

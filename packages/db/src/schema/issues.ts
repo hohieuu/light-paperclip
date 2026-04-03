@@ -74,14 +74,5 @@ export const issues = pgTable(
     projectWorkspaceIdx: index("issues_company_project_workspace_idx").on(table.companyId, table.projectWorkspaceId),
     executionWorkspaceIdx: index("issues_company_execution_workspace_idx").on(table.companyId, table.executionWorkspaceId),
     identifierIdx: uniqueIndex("issues_identifier_idx").on(table.identifier),
-    openRoutineExecutionIdx: uniqueIndex("issues_open_routine_execution_uq")
-      .on(table.companyId, table.originKind, table.originId)
-      .where(
-        sql`${table.originKind} = 'routine_execution'
-          and ${table.originId} is not null
-          and ${table.hiddenAt} is null
-          and ${table.executionRunId} is not null
-          and ${table.status} in ('backlog', 'todo', 'in_progress', 'in_review', 'blocked')`,
-      ),
   }),
 );

@@ -4,7 +4,6 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { bootstrapCeoInvite } from "./auth-bootstrap-ceo.js";
-import { onboard } from "./onboard.js";
 import { doctor } from "./doctor.js";
 import { loadPaperclipEnvFile } from "../config/env.js";
 import { configExists, resolveConfigPath } from "../config/store.js";
@@ -52,12 +51,10 @@ export async function runCommand(opts: RunOptions): Promise<void> {
   if (!configExists(configPath)) {
     if (!process.stdin.isTTY || !process.stdout.isTTY) {
       p.log.error("No config found and terminal is non-interactive.");
-      p.log.message(`Run ${pc.cyan("paperclipai onboard")} once, then retry ${pc.cyan("paperclipai run")}.`);
       process.exit(1);
     }
-
-    p.log.step("No config found. Starting onboarding...");
-    await onboard({ config: configPath, invokedByRun: true });
+    p.log.error("No config found. Please set up the configuration first.");
+    process.exit(1);
   }
 
   p.log.step("Running doctor checks...");

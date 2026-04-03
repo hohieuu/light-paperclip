@@ -33,7 +33,6 @@ function getRecentIssues(issues: Issue[]): Issue[] {
 
 export function Dashboard() {
   const { selectedCompanyId, companies } = useCompany();
-  const { openOnboarding } = useDialog();
   const { setBreadcrumbs } = useBreadcrumbs();
   const [animatedActivityIds, setAnimatedActivityIds] = useState<Set<string>>(new Set());
   const seenActivityIdsRef = useRef<Set<string>>(new Set());
@@ -169,8 +168,6 @@ export function Dashboard() {
         <EmptyState
           icon={LayoutDashboard}
           message="Welcome to Paperclip. Set up your first company and agent to get started."
-          action="Get Started"
-          onAction={openOnboarding}
         />
       );
     }
@@ -198,7 +195,6 @@ export function Dashboard() {
             </p>
           </div>
           <button
-            onClick={() => openOnboarding({ initialStep: 2, companyId: selectedCompanyId! })}
             className="text-sm font-medium text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-100 underline underline-offset-2 shrink-0"
           >
             Create one here

@@ -21,8 +21,6 @@ import type {
   CompanyPortabilityPreviewResult,
   CompanyPortabilityProjectManifestEntry,
   CompanyPortabilityProjectWorkspaceManifestEntry,
-  CompanyPortabilityIssueRoutineManifestEntry,
-  CompanyPortabilityIssueRoutineTriggerManifestEntry,
   CompanyPortabilityIssueManifestEntry,
   CompanyPortabilitySidebarOrder,
   CompanyPortabilitySkillManifestEntry,
@@ -32,11 +30,6 @@ import {
   ISSUE_PRIORITIES,
   ISSUE_STATUSES,
   PROJECT_STATUSES,
-  ROUTINE_CATCH_UP_POLICIES,
-  ROUTINE_CONCURRENCY_POLICIES,
-  ROUTINE_STATUSES,
-  ROUTINE_TRIGGER_KINDS,
-  ROUTINE_TRIGGER_SIGNING_MODES,
   deriveProjectUrlKey,
   normalizeAgentUrlKey,
 } from "@paperclipai/shared";
@@ -57,8 +50,6 @@ import { companyService } from "./companies.js";
 import { validateCron } from "./cron.js";
 import { issueService } from "./issues.js";
 import { projectService } from "./projects.js";
-import { routineService } from "./routines.js";
-
 /** Build OrgNode tree from manifest agent list (slug + reportsToSlug). */
 function buildOrgTreeFromManifest(agents: CompanyPortabilityManifest["agents"]): OrgNode[] {
   const ROLE_LABELS: Record<string, string> = {
@@ -406,7 +397,6 @@ type PaperclipExtensionDoc = {
   agents?: Record<string, Record<string, unknown>> | null;
   projects?: Record<string, Record<string, unknown>> | null;
   tasks?: Record<string, Record<string, unknown>> | null;
-  routines?: Record<string, Record<string, unknown>> | null;
 };
 
 type ProjectLike = {
@@ -450,8 +440,6 @@ type IssueLike = {
   executionWorkspaceSettings: Record<string, unknown> | null;
   assigneeAdapterOverrides: Record<string, unknown> | null;
 };
-
-type RoutineLike = NonNullable<Awaited<ReturnType<ReturnType<typeof routineService>["getDetail"]>>>;
 
 type ImportPlanInternal = {
   preview: CompanyPortabilityPreviewResult;
@@ -550,52 +538,6 @@ function asBoolean(value: unknown): boolean | null {
 
 function asInteger(value: unknown): number | null {
   return typeof value === "number" && Number.isInteger(value) ? value : null;
-}
-
-function normalizeRoutineTriggerExtension(value: unknown): CompanyPortabilityIssueRoutineTriggerManifestEntry | null {
-  if (!isPlainRecord(value)) return null;
-  const kind = asString(value.kind);
-  if (!kind) return null;
-  return {
-    kind,
-    label: asString(value.label),
-    enabled: asBoolean(value.enabled) ?? true,
-    cronExpression: asString(value.cronExpression),
-    timezone: asString(value.timezone),
-    signingMode: asString(value.signingMode),
-    replayWindowSec: asInteger(value.replayWindowSec),
-  };
-}
-
-function normalizeRoutineExtension(value: unknown): CompanyPortabilityIssueRoutineManifestEntry | null {
-  if (!isPlainRecord(value)) return null;
-  const triggers = Array.isArray(value.triggers)
-    ? value.triggers
-      .map((entry) => normalizeRoutineTriggerExtension(entry))
-      .filter((entry): entry is CompanyPortabilityIssueRoutineTriggerManifestEntry => entry !== null)
-    : [];
-  const routine = {
-    concurrencyPolicy: asString(value.concurrencyPolicy),
-    catchUpPolicy: asString(value.catchUpPolicy),
-    triggers,
-  };
-  return stripEmptyValues(routine) ? routine : null;
-}
-
-function buildRoutineManifestFromLiveRoutine(routine: RoutineLike): CompanyPortabilityIssueRoutineManifestEntry {
-  return {
-    concurrencyPolicy: routine.concurrencyPolicy,
-    catchUpPolicy: routine.catchUpPolicy,
-    triggers: routine.triggers.map((trigger) => ({
-      kind: trigger.kind,
-      label: trigger.label ?? null,
-      enabled: Boolean(trigger.enabled),
-      cronExpression: trigger.kind === "schedule" ? trigger.cronExpression ?? null : null,
-      timezone: trigger.kind === "schedule" ? trigger.timezone ?? null : null,
-      signingMode: trigger.kind === "webhook" ? trigger.signingMode ?? null : null,
-      replayWindowSec: trigger.kind === "webhook" ? trigger.replayWindowSec ?? null : null,
-    })),
-  };
 }
 
 function containsAbsolutePathFragment(value: string) {
@@ -918,220 +860,6 @@ function normalizeCronList(values: string[]) {
   return Array.from(new Set(values)).sort((left, right) => Number(left) - Number(right)).join(",");
 }
 
-function buildLegacyRoutineTriggerFromRecurrence(
-  issue: Pick<CompanyPortabilityIssueManifestEntry, "slug" | "legacyRecurrence">,
-  scheduleValue: unknown,
-) {
-  const warnings: string[] = [];
-  const errors: string[] = [];
-  if (!issue.legacyRecurrence || !isPlainRecord(issue.legacyRecurrence)) {
-    return { trigger: null, warnings, errors };
-  }
-
-  const schedule = isPlainRecord(scheduleValue) ? scheduleValue : null;
-  const frequency = asString(issue.legacyRecurrence.frequency);
-  const interval = asInteger(issue.legacyRecurrence.interval) ?? 1;
-  if (!frequency) {
-    errors.push(`Recurring task ${issue.slug} uses legacy recurrence without frequency; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-    return { trigger: null, warnings, errors };
-  }
-  if (interval < 1) {
-    errors.push(`Recurring task ${issue.slug} uses legacy recurrence with an invalid interval; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-    return { trigger: null, warnings, errors };
-  }
-
-  const timezone = asString(schedule?.timezone) ?? "UTC";
-  const startsAt = asString(schedule?.startsAt);
-  const zonedStartsAt = startsAt ? readZonedDateParts(startsAt, timezone) : null;
-  if (startsAt && !zonedStartsAt) {
-    errors.push(`Recurring task ${issue.slug} has an invalid legacy startsAt/timezone combination; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-    return { trigger: null, warnings, errors };
-  }
-
-  const time = isPlainRecord(issue.legacyRecurrence.time) ? issue.legacyRecurrence.time : null;
-  const hour = asInteger(time?.hour) ?? zonedStartsAt?.hour ?? 0;
-  const minute = asInteger(time?.minute) ?? zonedStartsAt?.minute ?? 0;
-  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-    errors.push(`Recurring task ${issue.slug} uses legacy recurrence with an invalid time; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-    return { trigger: null, warnings, errors };
-  }
-
-  if (issue.legacyRecurrence.until != null || issue.legacyRecurrence.count != null) {
-    warnings.push(`Recurring task ${issue.slug} uses legacy recurrence end bounds; Paperclip will import the routine trigger without those limits.`);
-  }
-
-  let cronExpression: string | null = null;
-
-  if (frequency === "hourly") {
-    const hourField = interval === 1
-      ? "*"
-      : zonedStartsAt
-        ? `${zonedStartsAt.hour}-23/${interval}`
-        : `*/${interval}`;
-    cronExpression = `${minute} ${hourField} * * *`;
-  } else if (frequency === "daily") {
-    if (Array.isArray(issue.legacyRecurrence.weekdays) || Array.isArray(issue.legacyRecurrence.monthDays) || Array.isArray(issue.legacyRecurrence.months)) {
-      errors.push(`Recurring task ${issue.slug} uses unsupported legacy daily recurrence constraints; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-      return { trigger: null, warnings, errors };
-    }
-    const dayField = interval === 1 ? "*" : `*/${interval}`;
-    cronExpression = `${minute} ${hour} ${dayField} * *`;
-  } else if (frequency === "weekly") {
-    if (interval !== 1) {
-      errors.push(`Recurring task ${issue.slug} uses legacy weekly recurrence with interval > 1; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-      return { trigger: null, warnings, errors };
-    }
-    const weekdays = Array.isArray(issue.legacyRecurrence.weekdays)
-      ? issue.legacyRecurrence.weekdays
-        .map((entry) => asString(entry))
-        .filter((entry): entry is string => Boolean(entry))
-      : [];
-    const cronWeekdays = weekdays
-      .map((entry) => WEEKDAY_TO_CRON[entry.toLowerCase()])
-      .filter((entry): entry is string => Boolean(entry));
-    if (cronWeekdays.length === 0 && zonedStartsAt?.weekday) {
-      cronWeekdays.push(zonedStartsAt.weekday);
-    }
-    if (cronWeekdays.length === 0) {
-      errors.push(`Recurring task ${issue.slug} uses legacy weekly recurrence without weekdays; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-      return { trigger: null, warnings, errors };
-    }
-    cronExpression = `${minute} ${hour} * * ${normalizeCronList(cronWeekdays)}`;
-  } else if (frequency === "monthly") {
-    if (interval !== 1) {
-      errors.push(`Recurring task ${issue.slug} uses legacy monthly recurrence with interval > 1; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-      return { trigger: null, warnings, errors };
-    }
-    if (Array.isArray(issue.legacyRecurrence.ordinalWeekdays) && issue.legacyRecurrence.ordinalWeekdays.length > 0) {
-      errors.push(`Recurring task ${issue.slug} uses legacy ordinal monthly recurrence; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-      return { trigger: null, warnings, errors };
-    }
-    const monthDays = Array.isArray(issue.legacyRecurrence.monthDays)
-      ? issue.legacyRecurrence.monthDays
-        .map((entry) => asInteger(entry))
-        .filter((entry): entry is number => entry != null && entry >= 1 && entry <= 31)
-      : [];
-    if (monthDays.length === 0 && zonedStartsAt?.day) {
-      monthDays.push(zonedStartsAt.day);
-    }
-    if (monthDays.length === 0) {
-      errors.push(`Recurring task ${issue.slug} uses legacy monthly recurrence without monthDays; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-      return { trigger: null, warnings, errors };
-    }
-    const months = Array.isArray(issue.legacyRecurrence.months)
-      ? issue.legacyRecurrence.months
-        .map((entry) => asInteger(entry))
-        .filter((entry): entry is number => entry != null && entry >= 1 && entry <= 12)
-      : [];
-    const monthField = months.length > 0 ? normalizeCronList(months.map(String)) : "*";
-    cronExpression = `${minute} ${hour} ${normalizeCronList(monthDays.map(String))} ${monthField} *`;
-  } else if (frequency === "yearly") {
-    if (interval !== 1) {
-      errors.push(`Recurring task ${issue.slug} uses legacy yearly recurrence with interval > 1; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-      return { trigger: null, warnings, errors };
-    }
-    const months = Array.isArray(issue.legacyRecurrence.months)
-      ? issue.legacyRecurrence.months
-        .map((entry) => asInteger(entry))
-        .filter((entry): entry is number => entry != null && entry >= 1 && entry <= 12)
-      : [];
-    if (months.length === 0 && zonedStartsAt?.month) {
-      months.push(zonedStartsAt.month);
-    }
-    const monthDays = Array.isArray(issue.legacyRecurrence.monthDays)
-      ? issue.legacyRecurrence.monthDays
-        .map((entry) => asInteger(entry))
-        .filter((entry): entry is number => entry != null && entry >= 1 && entry <= 31)
-      : [];
-    if (monthDays.length === 0 && zonedStartsAt?.day) {
-      monthDays.push(zonedStartsAt.day);
-    }
-    if (months.length === 0 || monthDays.length === 0) {
-      errors.push(`Recurring task ${issue.slug} uses legacy yearly recurrence without month/monthDay anchors; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-      return { trigger: null, warnings, errors };
-    }
-    cronExpression = `${minute} ${hour} ${normalizeCronList(monthDays.map(String))} ${normalizeCronList(months.map(String))} *`;
-  } else {
-    errors.push(`Recurring task ${issue.slug} uses unsupported legacy recurrence frequency "${frequency}"; add .paperclip.yaml routines.${issue.slug}.triggers.`);
-    return { trigger: null, warnings, errors };
-  }
-
-  return {
-    trigger: {
-      kind: "schedule",
-      label: "Migrated legacy recurrence",
-      enabled: true,
-      cronExpression,
-      timezone,
-      signingMode: null,
-      replayWindowSec: null,
-    } satisfies CompanyPortabilityIssueRoutineTriggerManifestEntry,
-    warnings,
-    errors,
-  };
-}
-
-function resolvePortableRoutineDefinition(
-  issue: Pick<CompanyPortabilityIssueManifestEntry, "slug" | "recurring" | "routine" | "legacyRecurrence">,
-  scheduleValue: unknown,
-) {
-  const warnings: string[] = [];
-  const errors: string[] = [];
-  if (!issue.recurring) {
-    return { routine: null, warnings, errors };
-  }
-
-  const routine = issue.routine
-    ? {
-      concurrencyPolicy: issue.routine.concurrencyPolicy,
-      catchUpPolicy: issue.routine.catchUpPolicy,
-      triggers: [...issue.routine.triggers],
-    }
-    : {
-      concurrencyPolicy: null,
-      catchUpPolicy: null,
-      triggers: [] as CompanyPortabilityIssueRoutineTriggerManifestEntry[],
-    };
-
-  if (routine.concurrencyPolicy && !ROUTINE_CONCURRENCY_POLICIES.includes(routine.concurrencyPolicy as any)) {
-    errors.push(`Recurring task ${issue.slug} uses unsupported routine concurrencyPolicy "${routine.concurrencyPolicy}".`);
-  }
-  if (routine.catchUpPolicy && !ROUTINE_CATCH_UP_POLICIES.includes(routine.catchUpPolicy as any)) {
-    errors.push(`Recurring task ${issue.slug} uses unsupported routine catchUpPolicy "${routine.catchUpPolicy}".`);
-  }
-
-  for (const trigger of routine.triggers) {
-    if (!ROUTINE_TRIGGER_KINDS.includes(trigger.kind as any)) {
-      errors.push(`Recurring task ${issue.slug} uses unsupported trigger kind "${trigger.kind}".`);
-      continue;
-    }
-    if (trigger.kind === "schedule") {
-      if (!trigger.cronExpression || !trigger.timezone) {
-        errors.push(`Recurring task ${issue.slug} has a schedule trigger missing cronExpression/timezone.`);
-        continue;
-      }
-      const cronError = validateCron(trigger.cronExpression);
-      if (cronError) {
-        errors.push(`Recurring task ${issue.slug} has an invalid schedule trigger: ${cronError}`);
-      }
-      continue;
-    }
-    if (trigger.kind === "webhook" && trigger.signingMode && !ROUTINE_TRIGGER_SIGNING_MODES.includes(trigger.signingMode as any)) {
-      errors.push(`Recurring task ${issue.slug} uses unsupported webhook signingMode "${trigger.signingMode}".`);
-    }
-  }
-
-  if (routine.triggers.length === 0 && issue.legacyRecurrence) {
-    const migrated = buildLegacyRoutineTriggerFromRecurrence(issue, scheduleValue);
-    warnings.push(...migrated.warnings);
-    errors.push(...migrated.errors);
-    if (migrated.trigger) {
-      routine.triggers.push(migrated.trigger);
-    }
-  }
-
-  return { routine, warnings, errors };
-}
 
 function toSafeSlug(input: string, fallback: string) {
   return normalizeAgentUrlKey(input) ?? fallback;
@@ -1319,7 +1047,7 @@ function collectSelectedExportSlugs(selectedFiles: Set<string>) {
     const taskMatch = filePath.match(/^tasks\/([^/]+)\//);
     if (taskMatch) tasks.add(taskMatch[1]!);
   }
-  return { agents, projects, tasks, routines: new Set(tasks) };
+  return { agents, projects, tasks };
 }
 
 function normalizePortableSlugList(value: unknown) {
@@ -1377,7 +1105,7 @@ function sortAgentsBySidebarOrder<T extends { id: string; name: string; reportsT
 function filterPortableExtensionYaml(yaml: string, selectedFiles: Set<string>) {
   const selected = collectSelectedExportSlugs(selectedFiles);
   const parsed = parseYamlFile(yaml);
-  for (const section of ["agents", "projects", "tasks", "routines"] as const) {
+  for (const section of ["agents", "projects", "tasks"] as const) {
     const sectionValue = parsed[section];
     if (!isPlainRecord(sectionValue)) continue;
     const sectionSlugs = selected[section];
@@ -2247,7 +1975,6 @@ function buildManifestFromPackageFiles(
   const paperclipAgents = isPlainRecord(paperclipExtension.agents) ? paperclipExtension.agents : {};
   const paperclipProjects = isPlainRecord(paperclipExtension.projects) ? paperclipExtension.projects : {};
   const paperclipTasks = isPlainRecord(paperclipExtension.tasks) ? paperclipExtension.tasks : {};
-  const paperclipRoutines = isPlainRecord(paperclipExtension.routines) ? paperclipExtension.routines : {};
   const companyName =
     asString(companyFrontmatter.name)
     ?? opts?.sourceLabel?.companyName
@@ -2502,8 +2229,6 @@ function buildManifestFromPackageFiles(
     const fallbackSlug = normalizeAgentUrlKey(path.posix.basename(path.posix.dirname(taskPath))) ?? "task";
     const slug = asString(frontmatter.slug) ?? fallbackSlug;
     const extension = isPlainRecord(paperclipTasks[slug]) ? paperclipTasks[slug] : {};
-    const routineExtension = normalizeRoutineExtension(paperclipRoutines[slug]);
-    const routineExtensionRaw = isPlainRecord(paperclipRoutines[slug]) ? paperclipRoutines[slug] : {};
     const schedule = isPlainRecord(frontmatter.schedule) ? frontmatter.schedule : null;
     const legacyRecurrence = schedule && isPlainRecord(schedule.recurrence)
       ? schedule.recurrence
@@ -2512,7 +2237,6 @@ function buildManifestFromPackageFiles(
         : null;
     const recurring =
       asBoolean(frontmatter.recurring) === true
-      || routineExtension !== null
       || legacyRecurrence !== null;
     manifest.issues.push({
       slug,
@@ -2524,10 +2248,8 @@ function buildManifestFromPackageFiles(
       assigneeAgentSlug: asString(frontmatter.assignee),
       description: taskDoc.body || asString(frontmatter.description),
       recurring,
-      routine: routineExtension,
-      legacyRecurrence,
-      status: asString(extension.status) ?? asString(routineExtensionRaw.status),
-      priority: asString(extension.priority) ?? asString(routineExtensionRaw.priority),
+      status: asString(extension.status),
+      priority: asString(extension.priority),
       labelIds: Array.isArray(extension.labelIds)
         ? extension.labelIds.filter((entry): entry is string => typeof entry === "string")
         : [],
@@ -2791,10 +2513,8 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
 
     const projectsSvc = projectService(db);
     const issuesSvc = issueService(db);
-    const routinesSvc = routineService(db);
     const allProjectsRaw = include.projects || include.issues ? await projectsSvc.list(companyId) : [];
     const allProjects = allProjectsRaw.filter((project) => !project.archivedAt);
-    const allRoutines = include.issues ? await routinesSvc.list(companyId) : [];
     const projectById = new Map(allProjects.map((project) => [project.id, project]));
     const projectByReference = new Map<string, typeof allProjects[number]>();
     for (const project of allProjects) {
@@ -2814,8 +2534,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
     }
 
     const selectedIssues = new Map<string, Awaited<ReturnType<typeof issuesSvc.getById>>>();
-    const selectedRoutines = new Map<string, typeof allRoutines[number]>();
-    const routineById = new Map(allRoutines.map((routine) => [routine.id, routine]));
     const resolveIssueBySelector = async (selector: string) => {
       const trimmed = selector.trim();
       if (!trimmed) return null;
@@ -2826,15 +2544,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
     for (const selector of input.issues ?? []) {
       const issue = await resolveIssueBySelector(selector);
       if (!issue || issue.companyId !== companyId) {
-        const routine = routineById.get(selector.trim());
-        if (routine) {
-          selectedRoutines.set(routine.id, routine);
-          if (routine.projectId) {
-            const parentProject = projectById.get(routine.projectId);
-            if (parentProject) selectedProjects.set(parentProject.id, parentProject);
-          }
-          continue;
-        }
         warnings.push(`Issue selector "${selector}" was not found and was skipped.`);
         continue;
       }
@@ -2856,9 +2565,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
       for (const issue of projectIssues) {
         selectedIssues.set(issue.id, issue);
       }
-      for (const routine of allRoutines.filter((entry) => entry.projectId === match.id)) {
-        selectedRoutines.set(routine.id, routine);
-      }
     }
 
     if (include.projects && selectedProjects.size === 0) {
@@ -2876,15 +2582,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
           if (parentProject) selectedProjects.set(parentProject.id, parentProject);
         }
       }
-      if (selectedRoutines.size === 0) {
-        for (const routine of allRoutines) {
-          selectedRoutines.set(routine.id, routine);
-          if (routine.projectId) {
-            const parentProject = projectById.get(routine.projectId);
-            if (parentProject) selectedProjects.set(parentProject.id, parentProject);
-          }
-        }
-      }
     }
 
     const selectedProjectRows = Array.from(selectedProjects.values())
@@ -2892,22 +2589,12 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
     const selectedIssueRows = Array.from(selectedIssues.values())
       .filter((issue): issue is NonNullable<typeof issue> => issue != null)
       .sort((left, right) => (left.identifier ?? left.title).localeCompare(right.identifier ?? right.title));
-    const selectedRoutineSummaries = Array.from(selectedRoutines.values())
-      .sort((left, right) => left.title.localeCompare(right.title));
-    const selectedRoutineRows = (
-      await Promise.all(selectedRoutineSummaries.map((routine) => routinesSvc.getDetail(routine.id)))
-    ).filter((routine): routine is RoutineLike => routine !== null);
 
     const taskSlugByIssueId = new Map<string, string>();
-    const taskSlugByRoutineId = new Map<string, string>();
     const usedTaskSlugs = new Set<string>();
     for (const issue of selectedIssueRows) {
       const baseSlug = normalizeAgentUrlKey(issue.identifier ?? issue.title) ?? "task";
       taskSlugByIssueId.set(issue.id, uniqueSlug(baseSlug, usedTaskSlugs));
-    }
-    for (const routine of selectedRoutineRows) {
-      const baseSlug = normalizeAgentUrlKey(routine.title) ?? "task";
-      taskSlugByRoutineId.set(routine.id, uniqueSlug(baseSlug, usedTaskSlugs));
     }
 
     const projectSlugById = new Map<string, string>();
@@ -2961,7 +2648,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
     const paperclipProjectsOut: Record<string, Record<string, unknown>> = {};
     const paperclipTasksOut: Record<string, Record<string, unknown>> = {};
     const unportableTaskWorkspaceRefs = new Map<string, { workspaceId: string; taskSlugs: string[] }>();
-    const paperclipRoutinesOut: Record<string, Record<string, unknown>> = {};
 
     const skillByReference = new Map<string, typeof companySkillRows[number]>();
     for (const skill of companySkillRows) {
@@ -3168,39 +2854,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
       warnings.push(`Tasks ${preview}${remainder} reference workspace ${workspaceId}, but that workspace could not be exported portably.`);
     }
 
-    for (const routine of selectedRoutineRows) {
-      const taskSlug = taskSlugByRoutineId.get(routine.id)!;
-      const projectSlug = projectSlugById.get(routine.projectId) ?? null;
-      const taskPath = `tasks/${taskSlug}/TASK.md`;
-      const assigneeSlug = idToSlug.get(routine.assigneeAgentId) ?? null;
-      files[taskPath] = buildMarkdown(
-        {
-          name: routine.title,
-          project: projectSlug,
-          assignee: assigneeSlug,
-          recurring: true,
-        },
-        routine.description ?? "",
-      );
-      const extension = stripEmptyValues({
-        status: routine.status !== "active" ? routine.status : undefined,
-        priority: routine.priority !== "medium" ? routine.priority : undefined,
-        concurrencyPolicy: routine.concurrencyPolicy !== "coalesce_if_active" ? routine.concurrencyPolicy : undefined,
-        catchUpPolicy: routine.catchUpPolicy !== "skip_missed" ? routine.catchUpPolicy : undefined,
-        triggers: routine.triggers.map((trigger) => stripEmptyValues({
-          kind: trigger.kind,
-          label: trigger.label ?? null,
-          enabled: trigger.enabled ? undefined : false,
-          cronExpression: trigger.kind === "schedule" ? trigger.cronExpression ?? null : undefined,
-          timezone: trigger.kind === "schedule" ? trigger.timezone ?? null : undefined,
-          signingMode: trigger.kind === "webhook" && trigger.signingMode !== "bearer" ? trigger.signingMode ?? null : undefined,
-          replayWindowSec: trigger.kind === "webhook" && trigger.replayWindowSec !== 300
-            ? trigger.replayWindowSec ?? null
-            : undefined,
-        })),
-      });
-      paperclipRoutinesOut[taskSlug] = isPlainRecord(extension) ? extension : {};
-    }
 
     const paperclipExtensionPath = ".paperclip.yaml";
     const paperclipAgents = Object.fromEntries(
@@ -3211,9 +2864,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
     );
     const paperclipTasks = Object.fromEntries(
       Object.entries(paperclipTasksOut).filter(([, value]) => isPlainRecord(value) && Object.keys(value).length > 0),
-    );
-    const paperclipRoutines = Object.fromEntries(
-      Object.entries(paperclipRoutinesOut).filter(([, value]) => isPlainRecord(value) && Object.keys(value).length > 0),
     );
     files[paperclipExtensionPath] = buildYamlFile(
       {
@@ -3226,7 +2876,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
         agents: Object.keys(paperclipAgents).length > 0 ? paperclipAgents : undefined,
         projects: Object.keys(paperclipProjects).length > 0 ? paperclipProjects : undefined,
         tasks: Object.keys(paperclipTasks).length > 0 ? paperclipTasks : undefined,
-        routines: Object.keys(paperclipRoutines).length > 0 ? paperclipRoutines : undefined,
       },
       { preserveEmptyStrings: true },
     );
@@ -3434,17 +3083,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
             warnings.push(`Task ${issue.slug} references missing project workspace key ${issue.projectWorkspaceKey}.`);
           }
         }
-        if (issue.recurring) {
-          if (!issue.projectSlug) {
-            errors.push(`Recurring task ${issue.slug} must declare a project to import as a routine.`);
-          }
-          if (!issue.assigneeAgentSlug) {
-            errors.push(`Recurring task ${issue.slug} must declare an assignee to import as a routine.`);
-          }
-          const resolvedRoutine = resolvePortableRoutineDefinition(issue, parsed.frontmatter.schedule);
-          warnings.push(...resolvedRoutine.warnings);
-          errors.push(...resolvedRoutine.errors);
-        }
       }
     }
 
@@ -3635,7 +3273,7 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
           slug: manifestIssue.slug,
           action: "create",
           plannedTitle: manifestIssue.title,
-          reason: manifestIssue.recurring ? "Recurring task will be imported as a routine." : null,
+          reason: null,
         });
       }
     }
@@ -4096,7 +3734,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
     }
 
     if (include.issues) {
-      const routines = routineService(db);
       for (const manifestIssue of sourceManifest.issues) {
         const markdownRaw = readPortableTextFile(plan.source.files, manifestIssue.path);
         const parsed = markdownRaw ? parseFrontmatterMarkdown(markdownRaw) : null;
@@ -4116,86 +3753,6 @@ export function companyPortabilityService(db: Db, storage?: StorageService) {
           : null;
         if (manifestIssue.projectWorkspaceKey && !projectWorkspaceId) {
           warnings.push(`Task ${manifestIssue.slug} references workspace key ${manifestIssue.projectWorkspaceKey}, but that workspace was not imported.`);
-        }
-        if (manifestIssue.recurring) {
-          if (!projectId || !assigneeAgentId) {
-            throw unprocessable(`Recurring task ${manifestIssue.slug} is missing the project or assignee required to create a routine.`);
-          }
-          const resolvedRoutine = resolvePortableRoutineDefinition(manifestIssue, parsed?.frontmatter.schedule);
-          if (resolvedRoutine.errors.length > 0) {
-            throw unprocessable(`Recurring task ${manifestIssue.slug} could not be imported as a routine: ${resolvedRoutine.errors.join("; ")}`);
-          }
-          warnings.push(...resolvedRoutine.warnings);
-          const routineDefinition = resolvedRoutine.routine ?? {
-            concurrencyPolicy: null,
-            catchUpPolicy: null,
-            triggers: [],
-          };
-          const createdRoutine = await routines.create(targetCompany.id, {
-            projectId,
-            goalId: null,
-            parentIssueId: null,
-            title: manifestIssue.title,
-            description,
-            assigneeAgentId,
-            priority: manifestIssue.priority && ISSUE_PRIORITIES.includes(manifestIssue.priority as any)
-              ? manifestIssue.priority as typeof ISSUE_PRIORITIES[number]
-              : "medium",
-            status: manifestIssue.status && ROUTINE_STATUSES.includes(manifestIssue.status as any)
-              ? manifestIssue.status as typeof ROUTINE_STATUSES[number]
-              : "active",
-            concurrencyPolicy:
-              routineDefinition.concurrencyPolicy && ROUTINE_CONCURRENCY_POLICIES.includes(routineDefinition.concurrencyPolicy as any)
-                ? routineDefinition.concurrencyPolicy as typeof ROUTINE_CONCURRENCY_POLICIES[number]
-                : "coalesce_if_active",
-            catchUpPolicy:
-              routineDefinition.catchUpPolicy && ROUTINE_CATCH_UP_POLICIES.includes(routineDefinition.catchUpPolicy as any)
-                ? routineDefinition.catchUpPolicy as typeof ROUTINE_CATCH_UP_POLICIES[number]
-                : "skip_missed",
-          }, {
-            agentId: null,
-            userId: actorUserId ?? null,
-          });
-          for (const trigger of routineDefinition.triggers) {
-            if (trigger.kind === "schedule") {
-              await routines.createTrigger(createdRoutine.id, {
-                kind: "schedule",
-                label: trigger.label,
-                enabled: trigger.enabled,
-                cronExpression: trigger.cronExpression!,
-                timezone: trigger.timezone!,
-              }, {
-                agentId: null,
-                userId: actorUserId ?? null,
-              });
-              continue;
-            }
-            if (trigger.kind === "webhook") {
-              await routines.createTrigger(createdRoutine.id, {
-                kind: "webhook",
-                label: trigger.label,
-                enabled: trigger.enabled,
-                signingMode:
-                  trigger.signingMode && ROUTINE_TRIGGER_SIGNING_MODES.includes(trigger.signingMode as any)
-                    ? trigger.signingMode as typeof ROUTINE_TRIGGER_SIGNING_MODES[number]
-                    : "bearer",
-                replayWindowSec: trigger.replayWindowSec ?? 300,
-              }, {
-                agentId: null,
-                userId: actorUserId ?? null,
-              });
-              continue;
-            }
-            await routines.createTrigger(createdRoutine.id, {
-              kind: "api",
-              label: trigger.label,
-              enabled: trigger.enabled,
-            }, {
-              agentId: null,
-              userId: actorUserId ?? null,
-            });
-          }
-          continue;
         }
         await issues.create(targetCompany.id, {
           projectId,

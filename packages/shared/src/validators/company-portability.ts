@@ -106,22 +106,6 @@ export const portabilityProjectManifestEntrySchema = z.object({
   metadata: z.record(z.unknown()).nullable(),
 });
 
-export const portabilityIssueRoutineTriggerManifestEntrySchema = z.object({
-  kind: z.string().min(1),
-  label: z.string().nullable(),
-  enabled: z.boolean(),
-  cronExpression: z.string().nullable(),
-  timezone: z.string().nullable(),
-  signingMode: z.string().nullable(),
-  replayWindowSec: z.number().int().nullable(),
-});
-
-export const portabilityIssueRoutineManifestEntrySchema = z.object({
-  concurrencyPolicy: z.string().nullable(),
-  catchUpPolicy: z.string().nullable(),
-  triggers: z.array(portabilityIssueRoutineTriggerManifestEntrySchema).default([]),
-});
-
 export const portabilityIssueManifestEntrySchema = z.object({
   slug: z.string().min(1),
   identifier: z.string().min(1).nullable(),
@@ -132,8 +116,6 @@ export const portabilityIssueManifestEntrySchema = z.object({
   assigneeAgentSlug: z.string().min(1).nullable(),
   description: z.string().nullable(),
   recurring: z.boolean().default(false),
-  routine: portabilityIssueRoutineManifestEntrySchema.nullable(),
-  legacyRecurrence: z.record(z.unknown()).nullable(),
   status: z.string().nullable(),
   priority: z.string().nullable(),
   labelIds: z.array(z.string().min(1)).default([]),

@@ -131,7 +131,6 @@ describe("optimistic issue comments", () => {
         companyId: "company-1",
         projectId: null,
         projectWorkspaceId: null,
-        goalId: null,
         parentId: null,
         title: "Fix comment flow",
         description: null,
