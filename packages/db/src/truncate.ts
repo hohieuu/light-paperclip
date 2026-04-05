@@ -34,6 +34,26 @@ async function truncateAll() {
     VALUES ('00000000-0000-0000-0000-000000000000', 'Global', 'active', 'AGILO', 0, 0, 0, now(), now())
     ON CONFLICT ("id") DO NOTHING;
   `);
+
+  console.log("Re-seeding global Orchestrator agent...");
+  await db.execute(sql`
+    INSERT INTO "agents" ("id", "company_id", "name", "role", "title", "status", "adapter_type", "adapter_config", "created_at", "updated_at")
+    SELECT
+      gen_random_uuid(),
+      '00000000-0000-0000-0000-000000000000',
+      'Orchestrator',
+      'ceo',
+      'Orchestrator',
+      'idle',
+      'claude_local',
+      '{}'::jsonb,
+      now(),
+      now()
+    WHERE NOT EXISTS (
+      SELECT 1 FROM "agents" WHERE "company_id" = '00000000-0000-0000-0000-000000000000' AND "role" = 'ceo'
+    );
+  `);
+
   
   console.log("Truncate and re-seed complete.");
   process.exit(0);

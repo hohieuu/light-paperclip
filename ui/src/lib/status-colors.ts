@@ -12,12 +12,12 @@
 /** StatusIcon circle: text + border classes */
 export const issueStatusIcon: Record<string, string> = {
   backlog: "text-muted-foreground border-muted-foreground",
-  todo: "text-blue-600 border-blue-600 dark:text-blue-400 dark:border-blue-400",
-  in_progress: "text-yellow-600 border-yellow-600 dark:text-yellow-400 dark:border-yellow-400",
-  in_review: "text-violet-600 border-violet-600 dark:text-violet-400 dark:border-violet-400",
-  done: "text-green-600 border-green-600 dark:text-green-400 dark:border-green-400",
+  todo: "text-blue-500 border-blue-500 dark:text-blue-400 dark:border-blue-400",
+  in_progress: "text-amber-500 border-amber-500 dark:text-amber-400 dark:border-amber-400",
+  in_review: "text-purple-500 border-purple-500 dark:text-purple-400 dark:border-purple-400",
+  done: "text-emerald-500 border-emerald-500 dark:text-emerald-400 dark:border-emerald-400",
   cancelled: "text-neutral-500 border-neutral-500",
-  blocked: "text-red-600 border-red-600 dark:text-red-400 dark:border-red-400",
+  blocked: "text-rose-500 border-rose-500 dark:text-rose-400 dark:border-rose-400",
 };
 
 export const issueStatusIconDefault = "text-muted-foreground border-muted-foreground";
@@ -99,10 +99,10 @@ export const agentStatusDotDefault = "bg-neutral-400";
 // ---------------------------------------------------------------------------
 
 export const priorityColor: Record<string, string> = {
-  critical: "text-red-600 dark:text-red-400",
-  high: "text-orange-600 dark:text-orange-400",
-  medium: "text-yellow-600 dark:text-yellow-400",
-  low: "text-blue-600 dark:text-blue-400",
+  critical: "text-rose-600 dark:text-rose-400",
+  high: "text-orange-500 dark:text-orange-400",
+  medium: "text-amber-500 dark:text-amber-400",
+  low: "text-blue-500 dark:text-blue-400",
 };
 
 export const priorityColorDefault = "text-yellow-600 dark:text-yellow-400";

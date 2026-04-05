@@ -53,8 +53,8 @@ export function IssueRow({
       state={issueLinkState}
       data-inbox-issue-link
       className={cn(
-        "group flex items-start gap-2 border-b border-border py-2.5 pl-2 pr-3 text-sm no-underline text-inherit transition-colors last:border-b-0 sm:items-center sm:py-2 sm:pl-1",
-        selected ? "hover:bg-transparent" : "hover:bg-accent/50",
+        "group flex items-start gap-3 border-b border-border/50 py-3 pl-3 pr-4 text-sm no-underline text-inherit transition-colors last:border-b-0 sm:items-center sm:py-3 sm:pl-3",
+        selected ? "hover:bg-transparent" : "hover:bg-muted/50",
         className,
       )}
     >

@@ -449,6 +449,7 @@ export function agentService(db: Db) {
     terminate: async (id: string) => {
       const existing = await getById(id);
       if (!existing) return null;
+      if (existing.role === "ceo") throw conflict("Cannot terminate the orchestrator agent");
 
       await db
         .update(agents)
@@ -471,6 +472,7 @@ export function agentService(db: Db) {
     remove: async (id: string) => {
       const existing = await getById(id);
       if (!existing) return null;
+      if (existing.role === "ceo") throw conflict("Cannot remove the orchestrator agent");
 
       return db.transaction(async (tx) => {
         await tx.update(agents).set({ reportsTo: null }).where(eq(agents.reportsTo, id));

@@ -894,7 +894,7 @@ export function NewIssueDialog() {
         }}
       >
         {/* Header bar */}
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 shrink-0 rounded-t-xl bg-muted/10">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Popover open={companyOpen} onOpenChange={setCompanyOpen}>
               <PopoverTrigger asChild>
@@ -1331,7 +1331,7 @@ export function NewIssueDialog() {
           {/* Status chip */}
           <Popover open={statusOpen} onOpenChange={setStatusOpen}>
             <PopoverTrigger asChild>
-              <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent/50 transition-colors">
+              <button className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background shadow-sm px-3 py-1.5 text-xs hover:bg-accent/50 transition-all">
                 <CircleDot className={cn("h-3 w-3", currentStatus.color)} />
                 {currentStatus.label}
               </button>
@@ -1356,7 +1356,7 @@ export function NewIssueDialog() {
           {/* Priority chip */}
           <Popover open={priorityOpen} onOpenChange={setPriorityOpen}>
             <PopoverTrigger asChild>
-              <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent/50 transition-colors">
+              <button className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background shadow-sm px-3 py-1.5 text-xs hover:bg-accent/50 transition-all">
                 {currentPriority ? (
                   <>
                     <currentPriority.icon className={cn("h-3 w-3", currentPriority.color)} />
@@ -1388,7 +1388,7 @@ export function NewIssueDialog() {
           </Popover>
 
           {/* Labels chip (placeholder) */}
-          <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent/50 transition-colors text-muted-foreground">
+          <button className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background shadow-sm px-3 py-1.5 text-xs hover:bg-accent/50 transition-all text-muted-foreground">
             <Tag className="h-3 w-3" />
             Labels
           </button>
@@ -1402,7 +1402,7 @@ export function NewIssueDialog() {
             multiple
           />
           <button
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent/50 transition-colors text-muted-foreground"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background shadow-sm px-3 py-1.5 text-xs hover:bg-accent/50 transition-all text-muted-foreground"
             onClick={() => stageFileInputRef.current?.click()}
             disabled={createIssue.isPending}
           >
@@ -1413,7 +1413,7 @@ export function NewIssueDialog() {
           {/* More (dates) */}
           <Popover open={moreOpen} onOpenChange={setMoreOpen}>
             <PopoverTrigger asChild>
-              <button className="inline-flex items-center justify-center rounded-md border border-border p-1 text-xs hover:bg-accent/50 transition-colors text-muted-foreground">
+              <button className="inline-flex items-center justify-center rounded-full border border-border/50 bg-background shadow-sm p-1.5 text-xs hover:bg-accent/50 transition-all text-muted-foreground">
                 <MoreHorizontal className="h-3 w-3" />
               </button>
             </PopoverTrigger>
@@ -1431,7 +1431,7 @@ export function NewIssueDialog() {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-2.5 border-t border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border/50 bg-muted/10 shrink-0 rounded-b-xl">
           <Button
             variant="ghost"
             size="sm"

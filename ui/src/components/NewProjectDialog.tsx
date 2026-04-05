@@ -204,7 +204,7 @@ export function NewProjectDialog() {
         onKeyDown={handleKeyDown}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 shrink-0 rounded-t-xl bg-muted/10">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             {selectedCompany && (
               <span className="bg-muted px-1.5 py-0.5 rounded text-xs font-medium">
@@ -268,7 +268,7 @@ export function NewProjectDialog() {
           />
         </div>
 
-        <div className="px-4 pt-3 pb-3 space-y-3 border-t border-border">
+        <div className="px-4 pt-3 pb-3 space-y-3 border-t border-border/50">
           <div>
             <div className="mb-1 flex items-center gap-1.5">
               <label className="block text-xs text-muted-foreground">Repo URL</label>
@@ -320,11 +320,11 @@ export function NewProjectDialog() {
         </div>
 
         {/* Property chips */}
-        <div className="flex items-center gap-1.5 px-4 py-2 border-t border-border flex-wrap">
+        <div className="flex items-center gap-1.5 px-4 py-3 border-t border-border/50 flex-wrap">
           {/* Status */}
           <Popover open={statusOpen} onOpenChange={setStatusOpen}>
             <PopoverTrigger asChild>
-              <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent/50 transition-colors">
+              <button className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background shadow-sm px-3 py-1.5 text-xs hover:bg-accent/50 transition-all text-muted-foreground">
                 <StatusBadge status={status} />
               </button>
             </PopoverTrigger>
@@ -345,7 +345,7 @@ export function NewProjectDialog() {
           </Popover>
 
           {/* Target date */}
-          <div className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background shadow-sm px-3 py-1.5 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3 text-muted-foreground" />
             <input
               type="date"
@@ -358,7 +358,7 @@ export function NewProjectDialog() {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-2.5 border-t border-border">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border/50 bg-muted/10 shrink-0 rounded-b-xl">
           {createProject.isError ? (
             <p className="text-xs text-destructive">Failed to create project.</p>
           ) : (

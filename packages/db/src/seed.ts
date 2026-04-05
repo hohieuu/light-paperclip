@@ -21,9 +21,9 @@ const [ceo] = await db
   .insert(agents)
   .values({
     companyId: company!.id,
-    name: "CEO Agent",
+    name: "Orchestrator Agent",
     role: "ceo",
-    title: "Chief Executive Officer",
+    title: "Orchestrator",
     status: "idle",
     adapterType: "process",
     adapterConfig: { command: "echo", args: ["hello from ceo"] },

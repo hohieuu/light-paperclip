@@ -61,6 +61,8 @@ import {
   Repeat,
   SlidersHorizontal,
   Trash2,
+  Sparkles,
+  Loader2,
 } from "lucide-react";
 import type { ActivityEvent } from "@agilo/shared";
 import type { Agent, Issue, IssueAttachment, IssueComment } from "@agilo/shared";
@@ -226,6 +228,7 @@ export function IssueDetail() {
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
   const [attachmentDragActive, setAttachmentDragActive] = useState(false);
   const [optimisticComments, setOptimisticComments] = useState<OptimisticIssueComment[]>([]);
+  const [skipGrooming, setSkipGrooming] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const lastMarkedReadIssueIdRef = useRef<string | null>(null);
 
@@ -823,6 +826,21 @@ export function IssueDetail() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const startAgent = useMutation({
+    mutationFn: () => issuesApi.startAgent(issueId!),
+    onSuccess: () => {
+      pushToast({ title: "Agent started", tone: "success" });
+      invalidateIssue();
+    },
+    onError: (err) => {
+      pushToast({
+        title: "Failed to start agent",
+        body: err instanceof Error ? err.message : "Unknown error",
+        tone: "error",
+      });
+    },
+  });
+
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading...</p>;
   if (error) return <p className="text-sm text-destructive">{error.message}</p>;
   if (!issue) return null;
@@ -891,6 +909,10 @@ export function IssueDetail() {
       </Button>
     </>
   );
+
+  const hasPlan = (issue?.documentSummaries ?? []).some((doc) => doc.key === "plan");
+  const isStarted = issue?.status !== "backlog" && issue?.status !== "todo";
+  const canStart = !!issue?.assigneeAgentId && (hasPlan || skipGrooming) && !isStarted;
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -999,7 +1021,28 @@ export function IssueDetail() {
             </Button>
           </div>
 
-          <div className="hidden md:flex items-center md:ml-auto shrink-0">
+          <div className="hidden md:flex items-center md:ml-auto shrink-0 gap-2">
+            {!hasPlan && !!issue.assigneeAgentId && !isStarted && (
+              <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer mr-2">
+                <input 
+                  type="checkbox" 
+                  className="rounded border-border accent-primary"
+                  checked={skipGrooming}
+                  onChange={(e) => setSkipGrooming(e.target.checked)}
+                />
+                Skip grooming
+              </label>
+            )}
+            <Button
+              variant="default"
+              size="sm"
+              className="h-7 text-xs font-semibold px-4"
+              disabled={!canStart || startAgent.isPending || isStarted}
+              onClick={() => startAgent.mutate()}
+            >
+              {startAgent.isPending ? <Loader2 className="h-3 w-3 animate-spin mr-1.5" /> : null}
+              {isStarted ? "Started" : "Start"}
+            </Button>
             <Button
               variant="ghost"
               size="icon-xs"
@@ -1066,6 +1109,17 @@ export function IssueDetail() {
             return attachment.contentPath;
           }}
         />
+
+        <div className="pt-4">
+          <Button 
+            className="w-full md:w-auto font-semibold" 
+            size="lg"
+            onClick={() => navigate(`/issues/${issue.id}/grooming`)}
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            Groom Issue
+          </Button>
+        </div>
       </div>
 
       <PluginSlotOutlet

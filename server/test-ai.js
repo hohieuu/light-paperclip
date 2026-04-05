@@ -1,0 +1,3 @@
+import { streamText } from "ai";
+
+console.log(streamText.constructor.name);

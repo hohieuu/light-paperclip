@@ -15,6 +15,27 @@
       "when": 1775212191273,
       "tag": "0001_tiresome_lord_tyger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775216689716,
+      "tag": "0002_seed_global_ceo",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775219418138,
+      "tag": "0003_omniscient_matthew_murdock",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1775267293372,
+      "tag": "0004_boring_roxanne_simpson",
+      "breakpoints": true
     }
   ]
 }
